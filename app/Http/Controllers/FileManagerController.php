@@ -300,6 +300,7 @@ class FileManagerController extends Controller
         }
 
         try {
+            // ابتدا بررسی کنیم که آیتم وجود دارد
             $query = FileManager::where('id', $id);
 
             if ($project) {
@@ -308,18 +309,59 @@ class FileManagerController extends Controller
                 $query->whereNull('project_id');
             }
 
-            $file = $query->firstOrFail();
+            // استفاده از first() به جای firstOrFail() برای مدیریت بهتر خطا
+            $file = $query->first();
+            
+            if (!$file) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'آیتم مورد نظر یافت نشد'
+                ], 404);
+            }
+
+            // بررسی اینکه آیا نام جدید با نام قدیم یکی نیست
+            if ($file->name === $request->name) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'نام بدون تغییر باقی ماند'
+                ]);
+            }
+
+            // بررسی اینکه نام جدید تکراری نباشد در همان پوشه
+            $duplicate = FileManager::where('name', $request->name)
+                ->where('parent_id', $file->parent_id)
+                ->where('is_folder', $file->is_folder)
+                ->where('id', '!=', $id);
+                
+            if ($project) {
+                $duplicate->where('project_id', $project->id);
+            } else {
+                $duplicate->whereNull('project_id');
+            }
+            
+            if ($duplicate->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'نام انتخاب شده تکراری است'
+                ], 422);
+            }
+
+            // تغییر نام
             $file->update(['name' => $request->name]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'نام با موفقیت تغییر کرد'
+                'message' => 'نام با موفقیت تغییر کرد',
+                'file' => $file
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error in rename: ' . $e->getMessage());
+            
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در تغییر نام: ' . $e->getMessage()
+                'message' => 'خطا در تغییر نام',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -340,7 +382,8 @@ class FileManagerController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها'
+                'message' => 'خطا در اعتبارسنجی داده‌ها',
+                'errors' => $validator->errors()
             ], 422);
         }
 
@@ -355,6 +398,13 @@ class FileManagerController extends Controller
 
             $items = $query->get();
 
+            if ($items->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'آیتم‌های انتخاب شده یافت نشدند'
+                ], 404);
+            }
+
             foreach ($items as $item) {
                 $item->update(['parent_id' => $request->destination_folder_id]);
             }
@@ -365,9 +415,12 @@ class FileManagerController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error in move: ' . $e->getMessage());
+            
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در انتقال آیتم‌ها: ' . $e->getMessage()
+                'message' => 'خطا در انتقال آیتم‌ها',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -387,7 +440,8 @@ class FileManagerController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها'
+                'message' => 'خطا در اعتبارسنجی داده‌ها',
+                'errors' => $validator->errors()
             ], 422);
         }
 
@@ -401,6 +455,13 @@ class FileManagerController extends Controller
             }
 
             $items = $query->get();
+
+            if ($items->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'آیتم‌های انتخاب شده یافت نشدند'
+                ], 404);
+            }
 
             foreach ($items as $item) {
                 if (!$item->is_folder) {
@@ -421,9 +482,12 @@ class FileManagerController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error in delete: ' . $e->getMessage());
+            
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در حذف آیتم‌ها: ' . $e->getMessage()
+                'message' => 'خطا در حذف آیتم‌ها',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
