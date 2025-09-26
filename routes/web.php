@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\EmployeeController;
@@ -156,3 +157,68 @@ Route::post('/projects/{project}/filemanager/move', [FileManagerController::clas
 Route::delete('/projects/{project}/filemanager/delete', [FileManagerController::class, 'delete'])->name('projects.filemanager.delete');
 Route::get('/projects/{project}/filemanager/{id}/details', [FileManagerController::class, 'details'])->name('projects.filemanager.details');
 Route::get('/projects/{project}/filemanager/search', [FileManagerController::class, 'search'])->name('projects.filemanager.search');
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\RequestTypeController;
+use App\Http\Controllers\VisitorController;
+use App\Http\Controllers\MeetingRequestController;
+use App\Http\Controllers\ReportController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+Route::get('/', function () {
+    return redirect('/login');
+});
+
+// مسیر تستی برای ایجاد کاربر
+Route::get('/test', function() {
+    $user = User::create([
+        'name' => 'کاربر تست',
+        'username' => 'admin',
+        'email' => 'test@example.com',
+        'password' => Hash::make('admin123'),
+    ]);
+
+    return "کاربر با موفقیت ایجاد شد: " . $user->name . " - نام کاربری: " . $user->username;
+});
+
+// مسیرهای احراز هویت
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// مسیرهای داشبورد
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
+
+// مسیرهای مدیریت ادارات
+Route::middleware('auth')->group(function () {
+    Route::resource('departments', DepartmentController::class);
+
+    // مسیرهای مدیریت انواع درخواست‌ها
+    Route::resource('request-types', RequestTypeController::class);
+
+    // مسیرهای مدیریت مراجعه‌کنندگان
+    Route::resource('visitors', VisitorController::class);
+
+    // مسیرهای مدیریت درخواست‌های ملاقات
+    Route::resource('meeting-requests', MeetingRequestController::class);
+    Route::post('meeting-requests/{meetingRequest}/change-status', [MeetingRequestController::class, 'changeStatus'])
+        ->name('meeting-requests.change-status');
+
+    // مسیرهای گزارش‌گیری
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('/by-status', [ReportController::class, 'byStatus'])->name('by-status');
+        Route::get('/by-type', [ReportController::class, 'byType'])->name('by-type');
+        Route::get('/by-department', [ReportController::class, 'byDepartment'])->name('by-department');
+        Route::get('/statistics', [ReportController::class, 'statistics'])->name('statistics');
+        Route::get('/advanced', [ReportController::class, 'advanced'])->name('advanced');
+
+        // مسیرهای خروجی گزارش
+        Route::post('/download-pdf', [ReportController::class, 'downloadPDF'])->name('download-pdf');
+        Route::post('/download-excel', [ReportController::class, 'downloadExcel'])->name('download-excel');
+    });
+});
+
