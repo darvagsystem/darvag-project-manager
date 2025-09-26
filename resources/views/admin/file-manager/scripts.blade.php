@@ -130,6 +130,16 @@ class FileManager {
 
         const item = this.selectedItems[0];
         const currentName = item.querySelector('.file-name').textContent;
+        const itemId = item.dataset.id;
+
+        console.log('Rename modal - Item:', item);
+        console.log('Rename modal - Item ID:', itemId);
+        console.log('Rename modal - Current name:', currentName);
+
+        if (!itemId) {
+            this.showError('خطا: شناسه آیتم یافت نشد');
+            return;
+        }
 
         document.getElementById('newName').value = currentName;
 
@@ -276,13 +286,27 @@ class FileManager {
         const newName = document.getElementById('newName').value;
         const currentFolderId = document.getElementById('fileManagerContainer')?.dataset.folderId;
 
+        // Debug: Log the itemId to console
+        console.log('Selected item:', item);
+        console.log('Item ID:', itemId);
+        console.log('New name:', newName);
+
+        if (!itemId) {
+            this.showError('خطا: شناسه آیتم یافت نشد');
+            return;
+        }
+
         try {
             let url;
             if ({{ isset($project) ? 'true' : 'false' }}) {
+                // For project routes: /projects/{project}/filemanager/{id}/rename
                 url = '{{ route("projects.filemanager.rename", [$project->id, ":id"]) }}'.replace(':id', itemId);
             } else {
+                // For general routes: /file-manager/{id}/rename
                 url = '{{ route("file-manager.rename", ":id") }}'.replace(':id', itemId);
             }
+
+            console.log('Request URL:', url);
 
             const response = await fetch(url, {
                 method: 'PUT',
@@ -295,6 +319,7 @@ class FileManager {
             });
 
             const result = await response.json();
+            console.log('Response:', result);
 
             if (result.success) {
                 this.showSuccess('نام با موفقیت تغییر کرد');
