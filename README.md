@@ -1,66 +1,302 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏢 سیستم مدیریت پروژه داروگ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Darvag Project Management System**
 
-## About Laravel
+![Laravel](https://img.shields.io/badge/Laravel-11.x-red.svg)
+![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-green.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 درباره پروژه
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+سیستم مدیریت پروژه داروگ یک نرم‌افزار جامع و حرفه‌ای برای مدیریت پروژه‌ها، کارمندان، مشتریان و فایل‌ها است. این سیستم با رابط کاربری مدرن و قابلیت‌های پیشرفته، امکان مدیریت کامل چرخه حیات پروژه‌ها را فراهم می‌کند.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ ویژگی‌های کلیدی
 
-## Learning Laravel
+### 🎯 مدیریت پروژه
+- ✅ ایجاد و مدیریت پروژه‌ها
+- ✅ تعریف وضعیت‌های مختلف پروژه
+- ✅ مدیریت زمان‌بندی و مهلت‌ها
+- ✅ پیگیری پیشرفت پروژه‌ها
+- ✅ گزارش‌گیری جامع
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 👥 مدیریت کارمندان
+- ✅ ثبت اطلاعات کامل کارمندان
+- ✅ مدیریت حساب‌های بانکی
+- ✅ آپلود و مدیریت مدارک
+- ✅ سیستم حضور و غیاب
+- ✅ تخصیص کارمندان به پروژه‌ها
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 🏢 مدیریت مشتریان
+- ✅ ثبت اطلاعات مشتریان
+- ✅ مدیریت اطلاعات تماس
+- ✅ تاریخچه تعاملات
+- ✅ گزارش‌گیری مشتریان
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📁 سیستم مدیریت فایل
+- ✅ فایل منیجر کامل مشابه Windows
+- ✅ ایجاد پوشه‌ها و زیرپوشه‌ها
+- ✅ آپلود فایل‌های مختلف
+- ✅ دانلود تکی و گروهی
+- ✅ جستجو در فایل‌ها
+- ✅ مدیریت فایل‌های پروژه‌ای
+- ✅ قالب‌های پروژه
 
-## Laravel Sponsors
+### 📊 داشبورد مدیریتی
+- ✅ آمار کلی سیستم
+- ✅ نمودارهای تعاملی
+- ✅ گزارش‌های تحلیلی
+- ✅ اعلان‌ها و هشدارها
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 🎨 رابط کاربری
+- ✅ طراحی ریسپانسیو
+- ✅ پشتیبانی از زبان فارسی
+- ✅ رابط کاربری مدرن
+- ✅ سازگار با موبایل و تبلت
 
-### Premium Partners
+## 🛠️ تکنولوژی‌های استفاده شده
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Backend
+- **Laravel 11.x** - فریمورک PHP
+- **PHP 8.2+** - زبان برنامه‌نویسی
+- **MySQL** - پایگاه داده
+- **Eloquent ORM** - مدیریت دیتابیس
 
-## Contributing
+### Frontend
+- **Bootstrap 5.3** - فریمورک CSS
+- **Material Design Icons** - آیکون‌ها
+- **JavaScript ES6+** - زبان برنامه‌نویسی
+- **Chart.js** - نمودارها
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### ابزارهای توسعه
+- **Composer** - مدیریت وابستگی‌ها
+- **Artisan** - ابزارهای خط فرمان
+- **Git** - کنترل نسخه
 
-## Code of Conduct
+## 📋 نیازمندی‌های سیستم
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### حداقل نیازمندی‌ها
+- PHP >= 8.2
+- MySQL >= 5.7 یا MariaDB >= 10.2
+- Composer
+- Web Server (Apache/Nginx)
 
-## Security Vulnerabilities
+### توصیه شده
+- PHP >= 8.3
+- MySQL >= 8.0
+- 2GB RAM
+- SSD Storage
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🚀 نصب و راه‌اندازی
 
-## License
+### 1. کلون کردن پروژه
+```bash
+git clone https://github.com/darvagsystem/darvag-project-manager.git
+cd darvag-project-manager
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 2. نصب وابستگی‌ها
+```bash
+composer install
+npm install
+```
+
+### 3. تنظیم محیط
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### 4. تنظیم پایگاه داده
+فایل `.env` را ویرایش کنید:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=darvag_project_manager
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+### 5. اجرای مایگریشن‌ها
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### 6. ایجاد لینک سمبلیک
+```bash
+php artisan storage:link
+```
+
+### 7. کامپایل فایل‌های Frontend
+```bash
+npm run build
+```
+
+### 8. اجرای سرور
+```bash
+php artisan serve
+```
+
+## 📁 ساختار پروژه
+
+```
+darvag-project-manager/
+├── app/
+│   ├── Http/Controllers/     # کنترلرها
+│   ├── Models/              # مدل‌ها
+│   ├── Jobs/                # Job ها
+│   └── Console/Commands/     # دستورات Artisan
+├── database/
+│   ├── migrations/          # مایگریشن‌ها
+│   └── seeders/            # سیدرها
+├── resources/
+│   ├── views/              # View ها
+│   ├── css/                # فایل‌های CSS
+│   └── js/                 # فایل‌های JavaScript
+├── public/
+│   ├── css/                # فایل‌های CSS عمومی
+│   ├── js/                 # فایل‌های JS عمومی
+│   └── storage/            # فایل‌های آپلود شده
+├── routes/
+│   └── web.php             # مسیرها
+└── storage/
+    ├── app/                # فایل‌های برنامه
+    └── logs/               # لاگ‌ها
+```
+
+## 🎯 راهنمای استفاده
+
+### ورود به سیستم
+1. به آدرس `http://localhost:8000` بروید
+2. با اطلاعات پیش‌فرض وارد شوید:
+   - **ایمیل**: admin@darvag.com
+   - **رمز عبور**: password
+
+### مدیریت پروژه‌ها
+1. از منوی اصلی "پروژه‌ها" را انتخاب کنید
+2. برای ایجاد پروژه جدید روی "پروژه جدید" کلیک کنید
+3. اطلاعات پروژه را تکمیل کنید
+4. برای مدیریت فایل‌های پروژه، روی "فایل‌های پروژه" کلیک کنید
+
+### مدیریت فایل‌ها
+1. از منوی اصلی "مدیریت فایل‌ها" را انتخاب کنید
+2. برای ایجاد پوشه جدید روی "پوشه جدید" کلیک کنید
+3. برای آپلود فایل روی "آپلود فایل" کلیک کنید
+4. فایل‌ها را می‌توانید انتخاب کرده و دانلود کنید
+
+### مدیریت کارمندان
+1. از منوی اصلی "کارمندان" را انتخاب کنید
+2. برای اضافه کردن کارمند جدید روی "کارمند جدید" کلیک کنید
+3. اطلاعات شخصی و بانکی کارمند را تکمیل کنید
+
+## 🔧 تنظیمات پیشرفته
+
+### تنظیم ایمیل
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+```
+
+### تنظیم کش
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+### تنظیم Queue
+```env
+QUEUE_CONNECTION=database
+```
+
+## 📊 ویژگی‌های امنیتی
+
+- ✅ احراز هویت کامل
+- ✅ کنترل دسترسی بر اساس نقش
+- ✅ محافظت از CSRF
+- ✅ اعتبارسنجی ورودی‌ها
+- ✅ رمزگذاری داده‌های حساس
+- ✅ لاگ‌گیری فعالیت‌ها
+
+## 🧪 تست
+
+### اجرای تست‌ها
+```bash
+php artisan test
+```
+
+### تست Coverage
+```bash
+php artisan test --coverage
+```
+
+## 📈 عملکرد
+
+### بهینه‌سازی
+- استفاده از Eager Loading
+- کش کردن Query ها
+- فشرده‌سازی فایل‌ها
+- بهینه‌سازی تصاویر
+
+### مانیتورینگ
+- لاگ‌گیری خطاها
+- مانیتورینگ عملکرد
+- گزارش‌گیری استفاده
+
+## 🤝 مشارکت
+
+### گزارش باگ
+اگر باگی پیدا کردید، لطفاً:
+1. Issue جدید ایجاد کنید
+2. توضیح کامل مشکل را بنویسید
+3. مراحل تکرار مشکل را ذکر کنید
+
+### پیشنهاد ویژگی
+برای پیشنهاد ویژگی جدید:
+1. Issue جدید ایجاد کنید
+2. عنوان "Feature Request" اضافه کنید
+3. توضیح کامل ویژگی را بنویسید
+
+## 📝 تغییرات
+
+### نسخه 1.0.0
+- ✅ سیستم مدیریت پروژه
+- ✅ مدیریت کارمندان
+- ✅ مدیریت مشتریان
+- ✅ فایل منیجر
+- ✅ سیستم حضور و غیاب
+- ✅ داشبورد مدیریتی
+- ✅ راهنمای کامل
+
+## 📞 پشتیبانی
+
+### تماس با ما
+- **ایمیل**: support@darvagco.ir
+- **وب‌سایت**: [darvagco.ir](https://darvagco.ir)
+- **تلفن**: +98-XXX-XXX-XXXX
+
+### مستندات
+- [راهنمای کاربری](docs/user-guide.md)
+- [راهنمای توسعه‌دهنده](docs/developer-guide.md)
+- [API Documentation](docs/api.md)
+
+## 📄 مجوز
+
+این پروژه تحت مجوز MIT منتشر شده است. برای جزئیات بیشتر فایل [LICENSE](LICENSE) را مطالعه کنید.
+
+## 🙏 تشکر
+
+از تمامی توسعه‌دهندگان و مشارکت‌کنندگان که در ساخت این پروژه همکاری کرده‌اند، تشکر می‌کنیم.
+
+---
+
+**توسعه یافته توسط شرکت کاخ سازان داروگ**  
+**Developed by Kakh Sazan Darvag Company**
+
+![Darvag Logo](public/logo.png)
