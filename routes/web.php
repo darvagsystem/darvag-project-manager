@@ -134,37 +134,9 @@ Route::get('/clients/{client}/contacts/{contact}/edit', [ClientContactController
 Route::put('/clients/{client}/contacts/{contact}', [ClientContactController::class, 'update'])->name('clients.contacts.update');
 Route::delete('/clients/{client}/contacts/{contact}', [ClientContactController::class, 'destroy'])->name('clients.contacts.destroy');
 
-// File Manager routes
-Route::get('/file-manager', [FileManagerController::class, 'index'])->name('file-manager.index');
-Route::post('/file-manager/create-folder', [FileManagerController::class, 'createFolder'])->name('file-manager.create-folder');
-Route::post('/file-manager/upload', [FileManagerController::class, 'upload'])->name('file-manager.upload');
-Route::get('/file-manager/download/{id}', [FileManagerController::class, 'download'])->name('file-manager.download');
-Route::post('/file-manager/bulk-download', [FileManagerController::class, 'bulkDownload'])->name('file-manager.bulk-download');
-Route::put('/file-manager/{id}/rename', [FileManagerController::class, 'rename'])->name('file-manager.rename');
-Route::post('/file-manager/move', [FileManagerController::class, 'move'])->name('file-manager.move');
-Route::delete('/file-manager/delete', [FileManagerController::class, 'delete'])->name('file-manager.delete');
-Route::get('/file-manager/{id}/details', [FileManagerController::class, 'details'])->name('file-manager.details');
-Route::get('/file-manager/search', [FileManagerController::class, 'search'])->name('file-manager.search');
-
-// Project File Manager routes
-Route::get('/projects/{project}/filemanager', [FileManagerController::class, 'projectFiles'])->name('projects.filemanager');
-Route::post('/projects/{project}/filemanager/create-folder', [FileManagerController::class, 'createFolder'])->name('projects.filemanager.create-folder');
-Route::post('/projects/{project}/filemanager/upload', [FileManagerController::class, 'upload'])->name('projects.filemanager.upload');
-Route::get('/projects/{project}/filemanager/download/{id}', [FileManagerController::class, 'download'])->name('projects.filemanager.download');
-Route::post('/projects/{project}/filemanager/bulk-download', [FileManagerController::class, 'bulkDownload'])->name('projects.filemanager.bulk-download');
-Route::put('/projects/{project}/filemanager/{id}/rename', [FileManagerController::class, 'rename'])->name('projects.filemanager.rename');
-Route::post('/projects/{project}/filemanager/move', [FileManagerController::class, 'move'])->name('projects.filemanager.move');
-Route::delete('/projects/{project}/filemanager/delete', [FileManagerController::class, 'delete'])->name('projects.filemanager.delete');
-Route::get('/projects/{project}/filemanager/{id}/details', [FileManagerController::class, 'details'])->name('projects.filemanager.details');
-Route::get('/projects/{project}/filemanager/search', [FileManagerController::class, 'search'])->name('projects.filemanager.search');
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\RequestTypeController;
-use App\Http\Controllers\VisitorController;
-use App\Http\Controllers\MeetingRequestController;
-use App\Http\Controllers\ReportController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -176,9 +148,9 @@ Route::get('/', function () {
 Route::get('/test', function() {
     $user = User::create([
         'name' => 'کاربر تست',
-        'username' => 'admin',
+        'username' => 'mosayeb',
         'email' => 'test@example.com',
-        'password' => Hash::make('admin123'),
+        'password' => Hash::make('123456'),
     ]);
 
     return "کاربر با موفقیت ایجاد شد: " . $user->name . " - نام کاربری: " . $user->username;
@@ -194,31 +166,25 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('aut
 
 // مسیرهای مدیریت ادارات
 Route::middleware('auth')->group(function () {
-    Route::resource('departments', DepartmentController::class);
 
-    // مسیرهای مدیریت انواع درخواست‌ها
-    Route::resource('request-types', RequestTypeController::class);
+    // File Manager routes
+    Route::get('/file-manager', [FileManagerController::class, 'index'])->name('file-manager.index');
+    Route::get('/file-manager/files', [FileManagerController::class, 'getFiles'])->name('file-manager.files');
+    Route::post('/file-manager/create-folder', [FileManagerController::class, 'createFolder'])->name('file-manager.create-folder');
+    Route::post('/file-manager/upload', [FileManagerController::class, 'upload'])->name('file-manager.upload');
+    Route::get('/file-manager/download/{id}', [FileManagerController::class, 'download'])->name('file-manager.download');
+    Route::get('/file-manager/thumbnail/{id}', [FileManagerController::class, 'thumbnail'])->name('file-manager.thumbnail');
+    Route::put('/file-manager/{id}/rename', [FileManagerController::class, 'rename'])->name('file-manager.rename');
+    Route::delete('/file-manager/delete', [FileManagerController::class, 'delete'])->name('file-manager.delete');
 
-    // مسیرهای مدیریت مراجعه‌کنندگان
-    Route::resource('visitors', VisitorController::class);
-
-    // مسیرهای مدیریت درخواست‌های ملاقات
-    Route::resource('meeting-requests', MeetingRequestController::class);
-    Route::post('meeting-requests/{meetingRequest}/change-status', [MeetingRequestController::class, 'changeStatus'])
-        ->name('meeting-requests.change-status');
-
-    // مسیرهای گزارش‌گیری
-    Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/', [ReportController::class, 'index'])->name('index');
-        Route::get('/by-status', [ReportController::class, 'byStatus'])->name('by-status');
-        Route::get('/by-type', [ReportController::class, 'byType'])->name('by-type');
-        Route::get('/by-department', [ReportController::class, 'byDepartment'])->name('by-department');
-        Route::get('/statistics', [ReportController::class, 'statistics'])->name('statistics');
-        Route::get('/advanced', [ReportController::class, 'advanced'])->name('advanced');
-
-        // مسیرهای خروجی گزارش
-        Route::post('/download-pdf', [ReportController::class, 'downloadPDF'])->name('download-pdf');
-        Route::post('/download-excel', [ReportController::class, 'downloadExcel'])->name('download-excel');
-    });
+    // Project File Manager routes
+    Route::get('/projects/{project}/filemanager', [FileManagerController::class, 'projectFiles'])->name('projects.filemanager');
+    Route::get('/projects/{project}/filemanager/files', [FileManagerController::class, 'getFiles'])->name('projects.filemanager.files');
+    Route::post('/projects/{project}/filemanager/create-folder', [FileManagerController::class, 'createFolder'])->name('projects.filemanager.create-folder');
+    Route::post('/projects/{project}/filemanager/upload', [FileManagerController::class, 'upload'])->name('projects.filemanager.upload');
+    Route::get('/projects/{project}/filemanager/download/{id}', [FileManagerController::class, 'download'])->name('projects.filemanager.download');
+    Route::get('/projects/{project}/filemanager/thumbnail/{id}', [FileManagerController::class, 'thumbnail'])->name('projects.filemanager.thumbnail');
+    Route::put('/projects/{project}/filemanager/{id}/rename', [FileManagerController::class, 'rename'])->name('projects.filemanager.rename');
+    Route::delete('/projects/{project}/filemanager/delete', [FileManagerController::class, 'delete'])->name('projects.filemanager.delete');
 });
 

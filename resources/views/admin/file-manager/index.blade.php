@@ -132,6 +132,23 @@
     color: #495057;
 }
 
+.file-icon.image-thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0 auto 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.file-icon.image-thumbnail img {
+    transition: transform 0.2s ease;
+}
+
+.file-item:hover .file-icon.image-thumbnail img {
+    transform: scale(1.05);
+}
+
 .folder-icon {
     color: #ffc107;
 }
@@ -737,7 +754,7 @@
                             فایل‌های عمومی
                         </a>
                         @if($project)
-                            <a href="{{ route('file-manager.index', $project->id) }}" class="list-group-item list-group-item-action active">
+                            <a href="{{ route('projects.filemanager', $project->id) }}" class="list-group-item list-group-item-action active">
                                 <i class="mdi mdi-folder-account me-2"></i>
                                 {{ $project->name }}
                             </a>
@@ -765,11 +782,24 @@
 
                             <!-- Files -->
                             @foreach($files as $file)
-                                <div class="file-item" data-id="{{ $file->id }}" data-type="file">
-                                    <div class="file-icon">
-                                        <i class="mdi {{ $file->icon }}"></i>
+                                <div class="file-item" data-id="{{ $file->id }}" data-type="file"
+                                     data-download-url="{{ $project ? route('projects.filemanager.download', [$project->id, $file->id]) : route('file-manager.download', $file->id) }}">
+                                    @if(str_starts_with($file->mime_type ?? '', 'image/'))
+                                        <div class="file-icon image-thumbnail">
+                                            <img src="{{ $project ? route('projects.filemanager.thumbnail', [$project->id, $file->id]) : route('file-manager.thumbnail', $file->id) }}"
+                                                 alt="{{ $file->name }}"
+                                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                            <i class="mdi {{ $file->icon }}" style="display: none;"></i>
+                                        </div>
+                                    @else
+                                        <div class="file-icon">
+                                            <i class="mdi {{ $file->icon }}"></i>
+                                        </div>
+                                    @endif
+                                    <div class="file-name" title="{{ $file->name }}">
+                                        {{ Str::length($file->name) > 20 ? Str::limit($file->name, 17) : $file->name }}
                                     </div>
-                                    <div class="file-name">{{ $file->name }}</div>
                                     <div class="file-size">{{ $file->formatted_size }}</div>
                                 </div>
                             @endforeach
@@ -800,8 +830,6 @@
     </div>
 </div>
 
-<!-- Upload Input -->
-<input type="file" id="fileInput" multiple style="display: none;">
 
 @include('admin.file-manager.modals')
 @endsection

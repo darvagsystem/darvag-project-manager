@@ -4,117 +4,100 @@ namespace App\Http\Controllers;
 
 use App\Models\FileManager;
 use App\Models\Project;
-use App\Models\ProjectTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use ZipArchive;
-use Response;
 
 class FileManagerController extends Controller
 {
     /**
-     * Display the file manager for general files
+     * نمایش فایل منیجر عمومی
      */
     public function index(Request $request)
     {
-        $project = null;
-        $currentFolder = null;
-        $folderId = $request->get('folder');
+        $currentFolder = $this->getCurrentFolder($request->get('folder'));
+        $breadcrumb = $this->getBreadcrumb($currentFolder);
+        $contents = $this->getFolderContents($currentFolder);
 
-        if ($folderId) {
-            $currentFolder = FileManager::findOrFail($folderId);
-        }
-
-        // Get current directory contents
-        $query = FileManager::with(['uploader', 'project'])
-            ->whereNull('project_id');
-
-        if ($currentFolder) {
-            $query->where('parent_id', $currentFolder->id);
-            $breadcrumb = $currentFolder->getBreadcrumb();
-        } else {
-            $query->whereNull('parent_id');
-            $breadcrumb = collect();
-        }
-
-        $folders = $query->where('is_folder', true)->get();
-        $files = $query->where('is_folder', false)->get();
-
-        return view('admin.file-manager.index', compact('project', 'folders', 'files', 'currentFolder', 'breadcrumb'));
+        return view('admin.file-manager.index', [
+            'project' => null,
+            'currentFolder' => $currentFolder,
+            'folders' => $contents['folders'],
+            'files' => $contents['files'],
+            'breadcrumb' => $breadcrumb
+        ]);
     }
 
     /**
-     * Display the file manager for a specific project
+     * نمایش فایل منیجر پروژه
      */
     public function projectFiles(Request $request, Project $project)
     {
-        $currentFolder = null;
-        $folderId = $request->get('folder');
+        $currentFolder = $this->getCurrentFolder($request->get('folder'), $project);
+        $breadcrumb = $this->getBreadcrumb($currentFolder);
+        $contents = $this->getFolderContents($currentFolder, $project);
 
-        if ($folderId) {
-            $currentFolder = FileManager::where('project_id', $project->id)
-                ->findOrFail($folderId);
-        }
-
-        // Get current directory contents
-        $query = FileManager::with(['uploader', 'project'])
-            ->where('project_id', $project->id);
-
-        if ($currentFolder) {
-            $query->where('parent_id', $currentFolder->id);
-            $breadcrumb = $currentFolder->getBreadcrumb();
-        } else {
-            $query->whereNull('parent_id');
-            $breadcrumb = collect();
-        }
-
-        $folders = $query->where('is_folder', true)->get();
-        $files = $query->where('is_folder', false)->get();
-
-        return view('admin.file-manager.index', compact('project', 'folders', 'files', 'currentFolder', 'breadcrumb'));
+        return view('admin.file-manager.index', [
+            'project' => $project,
+            'currentFolder' => $currentFolder,
+            'folders' => $contents['folders'],
+            'files' => $contents['files'],
+            'breadcrumb' => $breadcrumb
+        ]);
     }
 
     /**
-     * Create a new folder
+     * ایجاد پوشه جدید
      */
     public function createFolder(Request $request)
     {
-        $project = $this->resolveProject($request);
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'folder_color' => 'nullable|string',
-            'parent_id' => 'nullable|exists:file_managers,id'
+            'parent_id' => 'nullable|exists:file_manager,id',
+            'project_id' => 'nullable|exists:projects,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها',
+                'message' => 'داده‌های ورودی نامعتبر است',
                 'errors' => $validator->errors()
             ], 422);
         }
 
         try {
+            // بررسی تکراری نبودن نام در همان پوشه
+            $exists = FileManager::where('name', $request->name)
+                ->where('parent_id', $request->parent_id)
+                ->where('project_id', $request->project_id)
+                ->where('is_folder', true)
+                ->exists();
+
+            if ($exists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'پوشه‌ای با این نام در این مکان وجود دارد'
+                ], 422);
+            }
+
             $folder = FileManager::create([
                 'name' => $request->name,
                 'type' => 'folder',
                 'is_folder' => true,
-                'is_template' => false,
                 'parent_id' => $request->parent_id,
-                'project_id' => $project?->id,
+                'project_id' => $request->project_id,
                 'description' => $request->description,
-                'folder_color' => $request->folder_color,
+                'folder_color' => $request->folder_color ?: '#ffc107',
                 'uploaded_by' => auth()->id()
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'پوشه با موفقیت ایجاد شد',
-                'folder' => $folder
+                'folder' => $folder->load('uploader')
             ]);
 
         } catch (\Exception $e) {
@@ -126,23 +109,22 @@ class FileManagerController extends Controller
     }
 
     /**
-     * Upload files
+     * آپلود فایل‌ها
      */
     public function upload(Request $request)
     {
-        $project = $this->resolveProject($request);
-
         $validator = Validator::make($request->all(), [
             'files' => 'required|array',
-            'files.*' => 'file|max:10240', // 10MB max per file
+            'files.*' => 'file|max:20480', // 20MB
             'description' => 'nullable|string',
-            'parent_id' => 'nullable|exists:file_managers,id'
+            'parent_id' => 'nullable|exists:file_manager,id',
+            'project_id' => 'nullable|exists:projects,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها',
+                'message' => 'داده‌های ورودی نامعتبر است',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -151,28 +133,31 @@ class FileManagerController extends Controller
             $uploadedFiles = [];
 
             foreach ($request->file('files') as $file) {
+                // ذخیره فایل
                 $path = $file->store('file-manager', 'public');
 
-                $uploadedFile = FileManager::create([
-                    'name' => $file->getClientOriginalName(),
+                // ایجاد رکورد در دیتابیس
+                $originalName = $file->getClientOriginalName();
+                $fileRecord = FileManager::create([
+                    'name' => $originalName,
+                    'original_name' => $originalName,
                     'path' => $path,
                     'size' => $file->getSize(),
                     'mime_type' => $file->getMimeType(),
                     'type' => 'file',
                     'is_folder' => false,
-                    'is_template' => false,
                     'parent_id' => $request->parent_id,
-                    'project_id' => $project?->id,
+                    'project_id' => $request->project_id,
                     'description' => $request->description,
                     'uploaded_by' => auth()->id()
                 ]);
 
-                $uploadedFiles[] = $uploadedFile;
+                $uploadedFiles[] = $fileRecord->load('uploader');
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'فایل‌ها با موفقیت آپلود شدند',
+                'message' => count($uploadedFiles) . ' فایل با موفقیت آپلود شد',
                 'files' => $uploadedFiles
             ]);
 
@@ -185,108 +170,10 @@ class FileManagerController extends Controller
     }
 
     /**
-     * Download a file
-     */
-    public function download($id)
-    {
-        $file = FileManager::findOrFail($id);
-
-        if ($file->is_folder) {
-            return response()->json([
-                'success' => false,
-                'message' => 'نمی‌توان پوشه را دانلود کرد'
-            ], 400);
-        }
-
-        $filePath = storage_path('app/public/' . $file->path);
-
-        if (!file_exists($filePath)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'فایل یافت نشد'
-            ], 404);
-        }
-
-        return response()->download($filePath, $file->name);
-    }
-
-    /**
-     * Bulk download files
-     */
-    public function bulkDownload(Request $request)
-    {
-        $project = $this->resolveProject($request);
-
-        $validator = Validator::make($request->all(), [
-            'ids' => 'required|array',
-            'ids.*' => 'exists:file_managers,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها'
-            ], 422);
-        }
-
-        try {
-            $files = FileManager::whereIn('id', $request->ids)
-                ->where('is_folder', false)
-                ->when($project, function ($query) use ($project) {
-                    $query->where('project_id', $project->id);
-                }, function ($query) {
-                    $query->whereNull('project_id');
-                })
-                ->get();
-
-            if ($files->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'فایلی برای دانلود یافت نشد'
-                ], 404);
-            }
-
-            $zip = new ZipArchive();
-            $zipName = 'files_' . time() . '.zip';
-            $zipPath = storage_path('app/temp/' . $zipName);
-
-            if (!file_exists(storage_path('app/temp'))) {
-                mkdir(storage_path('app/temp'), 0755, true);
-            }
-
-            if ($zip->open($zipPath, ZipArchive::CREATE) !== TRUE) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'خطا در ایجاد فایل ZIP'
-                ], 500);
-            }
-
-            foreach ($files as $file) {
-                $filePath = storage_path('app/public/' . $file->path);
-                if (file_exists($filePath)) {
-                    $zip->addFile($filePath, $file->name);
-                }
-            }
-
-            $zip->close();
-
-            return response()->download($zipPath, $zipName)->deleteFileAfterSend(true);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'خطا در ایجاد فایل ZIP: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Rename a file or folder
+     * تغییر نام فایل یا پوشه
      */
     public function rename(Request $request, $id)
     {
-        $project = $this->resolveProject($request);
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255'
         ]);
@@ -294,254 +181,325 @@ class FileManagerController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها',
-                'errors' => $validator->errors()
+                'message' => 'نام وارد شده نامعتبر است'
             ], 422);
         }
 
         try {
-            // ابتدا بررسی کنیم که آیتم وجود دارد
-            $query = FileManager::where('id', $id);
+            $item = FileManager::findOrFail($id);
 
-            if ($project) {
-                $query->where('project_id', $project->id);
-            } else {
-                $query->whereNull('project_id');
-            }
+            // بررسی تکراری نبودن نام
+            $exists = FileManager::where('name', $request->name)
+                ->where('parent_id', $item->parent_id)
+                ->where('project_id', $item->project_id)
+                ->where('is_folder', $item->is_folder)
+                ->where('id', '!=', $id)
+                ->exists();
 
-            // استفاده از first() به جای firstOrFail() برای مدیریت بهتر خطا
-            $file = $query->first();
-            
-            if (!$file) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'آیتم مورد نظر یافت نشد'
-                ], 404);
-            }
-
-            // بررسی اینکه آیا نام جدید با نام قدیم یکی نیست
-            if ($file->name === $request->name) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'نام بدون تغییر باقی ماند'
-                ]);
-            }
-
-            // بررسی اینکه نام جدید تکراری نباشد در همان پوشه
-            $duplicate = FileManager::where('name', $request->name)
-                ->where('parent_id', $file->parent_id)
-                ->where('is_folder', $file->is_folder)
-                ->where('id', '!=', $id);
-                
-            if ($project) {
-                $duplicate->where('project_id', $project->id);
-            } else {
-                $duplicate->whereNull('project_id');
-            }
-            
-            if ($duplicate->exists()) {
+            if ($exists) {
                 return response()->json([
                     'success' => false,
                     'message' => 'نام انتخاب شده تکراری است'
                 ], 422);
             }
 
-            // تغییر نام
-            $file->update(['name' => $request->name]);
+            $item->update(['name' => $request->name]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'نام با موفقیت تغییر کرد',
-                'file' => $file
+                'item' => $item->fresh()->load('uploader')
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error in rename: ' . $e->getMessage());
-            
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در تغییر نام',
-                'error' => $e->getMessage()
+                'message' => 'خطا در تغییر نام: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Move files or folders
-     */
-    public function move(Request $request)
-    {
-        $project = $this->resolveProject($request);
-
-        $validator = Validator::make($request->all(), [
-            'ids' => 'required|array',
-            'ids.*' => 'exists:file_managers,id',
-            'destination_folder_id' => 'nullable|exists:file_managers,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        try {
-            $query = FileManager::whereIn('id', $request->ids);
-
-            if ($project) {
-                $query->where('project_id', $project->id);
-            } else {
-                $query->whereNull('project_id');
-            }
-
-            $items = $query->get();
-
-            if ($items->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'آیتم‌های انتخاب شده یافت نشدند'
-                ], 404);
-            }
-
-            foreach ($items as $item) {
-                $item->update(['parent_id' => $request->destination_folder_id]);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'آیتم‌ها با موفقیت منتقل شدند'
-            ]);
-
-        } catch (\Exception $e) {
-            \Log::error('Error in move: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'خطا در انتقال آیتم‌ها',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Delete files or folders
+     * حذف فایل‌ها یا پوشه‌ها
      */
     public function delete(Request $request)
     {
-        $project = $this->resolveProject($request);
-
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array',
-            'ids.*' => 'exists:file_managers,id'
+            'ids.*' => 'exists:file_manager,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در اعتبارسنجی داده‌ها',
-                'errors' => $validator->errors()
+                'message' => 'آیتم‌های انتخاب شده نامعتبر است'
             ], 422);
         }
 
         try {
-            $query = FileManager::whereIn('id', $request->ids);
-
-            if ($project) {
-                $query->where('project_id', $project->id);
-            } else {
-                $query->whereNull('project_id');
-            }
-
-            $items = $query->get();
-
-            if ($items->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'آیتم‌های انتخاب شده یافت نشدند'
-                ], 404);
-            }
+            $items = FileManager::whereIn('id', $request->ids)->get();
 
             foreach ($items as $item) {
-                if (!$item->is_folder) {
-                    // Delete physical file
-                    $filePath = storage_path('app/public/' . $item->path);
-                    if (file_exists($filePath)) {
-                        unlink($filePath);
+                if ($item->is_folder) {
+                    // حذف پوشه و تمام محتویات آن
+                    $this->deleteFolderRecursively($item);
+                } else {
+                    // حذف فایل فیزیکی
+                    if ($item->path && Storage::disk('public')->exists($item->path)) {
+                        Storage::disk('public')->delete($item->path);
                     }
+                    $item->delete();
                 }
-
-                // Delete from database
-                $item->delete();
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'آیتم‌ها با موفقیت حذف شدند'
+                'message' => count($items) . ' آیتم با موفقیت حذف شد'
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error in delete: ' . $e->getMessage());
-            
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در حذف آیتم‌ها',
-                'error' => $e->getMessage()
+                'message' => 'خطا در حذف آیتم‌ها: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Get file details
+     * دانلود فایل
      */
-    public function details($id)
+    public function download($id)
     {
-        $file = FileManager::with(['uploader', 'project'])->findOrFail($id);
+        try {
+            $file = FileManager::where('is_folder', false)->findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'file' => $file
-        ]);
+            if (!$file->path || !Storage::disk('public')->exists($file->path)) {
+                abort(404, 'فایل یافت نشد');
+            }
+
+            // به‌روزرسانی تعداد دانلود
+            $file->increment('download_count');
+            $file->update(['last_accessed_at' => now()]);
+
+            $filePath = Storage::disk('public')->path($file->path);
+
+            // استفاده از نام اصلی فایل اگر موجود است، در غیر این صورت از نام ذخیره شده
+            $fileName = $file->original_name ?: $file->name;
+
+            // اگر نام فایل پسوند ندارد، آن را از mime type استخراج کنیم
+            if (!pathinfo($fileName, PATHINFO_EXTENSION) && $file->mime_type) {
+                $extension = $this->getExtensionFromMimeType($file->mime_type);
+                if ($extension) {
+                    $fileName .= '.' . $extension;
+                }
+            }
+
+            // تمیز کردن نام فایل از کاراکترهای غیرمجاز
+            $fileName = $this->sanitizeFileName($fileName);
+
+            return response()->download($filePath, $fileName, [
+                'Content-Type' => $file->mime_type ?: 'application/octet-stream',
+            ]);
+
+        } catch (\Exception $e) {
+            abort(500, 'خطا در دانلود فایل');
+        }
     }
 
     /**
-     * Search files and folders
+     * استخراج پسوند از mime type
      */
-    public function search(Request $request)
+    private function getExtensionFromMimeType($mimeType)
     {
-        $query = $request->get('q');
+        $mimeToExt = [
+            'image/jpeg' => 'jpg',
+            'image/jpg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+            'image/svg+xml' => 'svg',
+            'application/pdf' => 'pdf',
+            'application/msword' => 'doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+            'application/vnd.ms-excel' => 'xls',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+            'application/vnd.ms-powerpoint' => 'ppt',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+            'text/plain' => 'txt',
+            'text/csv' => 'csv',
+            'application/zip' => 'zip',
+            'application/x-rar-compressed' => 'rar',
+            'application/x-7z-compressed' => '7z',
+            'video/mp4' => 'mp4',
+            'video/avi' => 'avi',
+            'video/quicktime' => 'mov',
+            'audio/mpeg' => 'mp3',
+            'audio/wav' => 'wav',
+            'application/json' => 'json',
+            'text/html' => 'html',
+            'text/css' => 'css',
+            'application/javascript' => 'js',
+        ];
 
-        if (empty($query)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'عبارت جستجو الزامی است'
-            ], 400);
-        }
-
-        $results = FileManager::with(['uploader', 'project'])
-            ->where('name', 'like', '%' . $query . '%')
-            ->orWhere('description', 'like', '%' . $query . '%')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $results
-        ]);
+        return $mimeToExt[$mimeType] ?? null;
     }
 
-    private function resolveProject(Request $request): ?Project
+    /**
+     * تمیز کردن نام فایل
+     */
+    private function sanitizeFileName($fileName)
     {
-        $projectParam = $request->route('project');
+        // حذف کاراکترهای غیرمجاز
+        $fileName = preg_replace('/[^\w\s\-\._\(\)\[\]]/u', '', $fileName);
 
-        if ($projectParam instanceof Project) {
-            return $projectParam;
+        // حذف فضاهای اضافی
+        $fileName = preg_replace('/\s+/', ' ', $fileName);
+        $fileName = trim($fileName);
+
+        // اگر نام فایل خالی شد، نام پیش‌فرض بدهیم
+        if (empty($fileName)) {
+            $fileName = 'file_' . time();
         }
 
-        if (is_numeric($projectParam)) {
-            return Project::findOrFail($projectParam);
+        return $fileName;
+    }
+
+    /**
+     * نمایش تصویر کوچک
+     */
+    public function thumbnail($id)
+    {
+        try {
+            $file = FileManager::where('is_folder', false)->findOrFail($id);
+
+            if (!$file->path || !Storage::disk('public')->exists($file->path)) {
+                abort(404);
+            }
+
+            // بررسی اینکه فایل تصویر است
+            if (!str_starts_with($file->mime_type, 'image/')) {
+                abort(404);
+            }
+
+            $filePath = Storage::disk('public')->path($file->path);
+
+            return response()->file($filePath, [
+                'Content-Type' => $file->mime_type,
+                'Cache-Control' => 'public, max-age=3600'
+            ]);
+
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * دریافت محتویات پوشه برای AJAX
+     */
+    public function getFiles(Request $request, Project $project = null)
+    {
+        try {
+            $currentFolder = $this->getCurrentFolder($request->get('folder'), $project);
+            $breadcrumb = $this->getBreadcrumb($currentFolder);
+            $contents = $this->getFolderContents($currentFolder, $project);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'folders' => $contents['folders'],
+                    'files' => $contents['files'],
+                    'breadcrumb' => $breadcrumb,
+                    'currentFolder' => $currentFolder
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در دریافت فایل‌ها: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * دریافت پوشه فعلی
+     */
+    private function getCurrentFolder($folderId, Project $project = null)
+    {
+        if (!$folderId) {
+            return null;
         }
 
-        return null;
+        $query = FileManager::where('is_folder', true);
+
+        if ($project) {
+            $query->where('project_id', $project->id);
+        } else {
+            $query->whereNull('project_id');
+        }
+
+        return $query->find($folderId);
+    }
+
+    /**
+     * دریافت محتویات پوشه
+     */
+    private function getFolderContents($currentFolder, Project $project = null)
+    {
+        $query = FileManager::with(['uploader']);
+
+        if ($project) {
+            $query->where('project_id', $project->id);
+        } else {
+            $query->whereNull('project_id');
+        }
+
+        if ($currentFolder) {
+            $query->where('parent_id', $currentFolder->id);
+        } else {
+            $query->whereNull('parent_id');
+        }
+
+        $folders = $query->clone()->where('is_folder', true)->orderBy('name')->get();
+        $files = $query->clone()->where('is_folder', false)->orderBy('name')->get();
+
+        return [
+            'folders' => $folders,
+            'files' => $files
+        ];
+    }
+
+    /**
+     * دریافت مسیر breadcrumb
+     */
+    private function getBreadcrumb($currentFolder)
+    {
+        if (!$currentFolder) {
+            return collect();
+        }
+
+        return $currentFolder->getBreadcrumb();
+    }
+
+    /**
+     * حذف پوشه به صورت بازگشتی
+     */
+    private function deleteFolderRecursively($folder)
+    {
+        $children = FileManager::where('parent_id', $folder->id)->get();
+
+        foreach ($children as $child) {
+            if ($child->is_folder) {
+                $this->deleteFolderRecursively($child);
+            } else {
+                // حذف فایل فیزیکی
+                if ($child->path && Storage::disk('public')->exists($child->path)) {
+                    Storage::disk('public')->delete($child->path);
+                }
+                $child->delete();
+            }
+        }
+
+        $folder->delete();
     }
 }
