@@ -5,219 +5,587 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'کاخ‌سازان داروگ - داستان ساخت و ساز')</title>
     <meta name="description" content="@yield('description', 'کاخ‌سازان داروگ با بیش از دو دهه تجربه در زمینه‌های سلر‌سازی، محوطه‌سازی، جاده‌سازی و تسهیل تأسیسات سرچاهی')">
+    <meta name="keywords" content="پیمانکاری, ساخت و ساز, داروگ, سلر سازی, محوطه سازی, جاده سازی">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="@yield('title', 'کاخ‌سازان داروگ - داستان ساخت و ساز')">
+    <meta property="og:description" content="@yield('description', 'کاخ‌سازان داروگ با بیش از دو دهه تجربه در زمینه‌های سلر‌سازی، محوطه‌سازی، جاده‌سازی و تسهیل تأسیسات سرچاهی')">
+    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom Styles -->
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    
+    <!-- Fancybox CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+    
+    <!-- Custom CSS -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Vazirmatn', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #fff;
         }
-
-        .hero-gradient {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+        
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1rem 0;
+            position: relative;
+            overflow: hidden;
         }
-
-        .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.1;
         }
-
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
         }
-
-        .navbar-scroll {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-
-        .darvag-blue {
-            background-color: #1e3a8a;
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
         }
-
-        .darvag-light-blue {
-            background-color: #3b82f6;
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
         }
-
-        .darvag-text {
-            color: #1e3a8a;
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
         }
-
-        .darvag-text-light {
-            color: #3b82f6;
+        
+        .nav-menu a:hover {
+            color: var(--accent-color);
+            transform: translateY(-2px);
         }
-
+        
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+        
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-info a:hover {
+            color: var(--accent-color);
+            transform: scale(1.05);
+        }
+        
+        .badge-new {
+            background: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            margin-right: 0.5rem;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--primary-color);
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 200px);
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer h5 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .footer a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--accent-color);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .contact-info {
+                display: none;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .logo i {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Utility Classes */
         .text-gradient {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+            color: white;
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .section-padding {
+            padding: 4rem 0;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 0.6s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 0.6s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
     </style>
-
+    
     @stack('styles')
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-300 bg-white shadow-sm" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content d-flex justify-content-between align-items-center">
                 <!-- Logo -->
-                <div class="flex-shrink-0">
-                    <a href="{{ route('home') }}" class="flex items-center">
-                        <div class="w-10 h-10 darvag-blue rounded-lg flex items-center justify-center">
-                            <i class="fas fa-building text-white text-xl"></i>
-                        </div>
-                        <span class="mr-3 text-xl font-bold darvag-text">داروگ</span>
+                <a href="{{ route('home') }}" class="logo">
+                    <i class="fas fa-building"></i>
+                    <span>کاخ‌سازان داروگ</span>
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <nav class="d-none d-lg-block">
+                    <ul class="nav-menu">
+                        <li><a href="{{ route('home') }}">خانه</a></li>
+                        <li><a href="{{ route('about') }}">درباره ما</a></li>
+                        <li><a href="{{ route('services') }}">خدمات</a></li>
+                        <li><a href="{{ route('projects') }}">پروژه‌ها</a></li>
+                        <li><a href="{{ route('blog') }}">وبلاگ</a></li>
+                        <li><a href="{{ route('charity') }}">پویش نیکی <span class="badge-new">جدید</span></a></li>
+                        <li><a href="{{ route('contact') }}">تماس با ما</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- Contact Info -->
+                <div class="contact-info d-none d-lg-flex">
+                    <a href="tel:09350801600">
+                        <i class="fas fa-phone"></i>
+                        <span>09350801600</span>
+                    </a>
+                    <a href="mailto:info@darvagco.ir">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@darvagco.ir</span>
                     </a>
                 </div>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4 space-x-reverse">
-                        <a href="{{ route('home') }}" class="darvag-text hover:darvag-text-light px-3 py-2 rounded-md text-sm font-medium transition-colors">خانه</a>
-                        <a href="{{ route('about') }}" class="text-gray-600 hover:darvag-text-light px-3 py-2 rounded-md text-sm font-medium transition-colors">درباره ما</a>
-                        <a href="{{ route('services') }}" class="text-gray-600 hover:darvag-text-light px-3 py-2 rounded-md text-sm font-medium transition-colors">خدمات</a>
-                        <a href="{{ route('projects') }}" class="text-gray-600 hover:darvag-text-light px-3 py-2 rounded-md text-sm font-medium transition-colors">پروژه‌های ما</a>
-                        <a href="{{ route('news') }}" class="text-gray-600 hover:darvag-text-light px-3 py-2 rounded-md text-sm font-medium transition-colors">وبلاگ</a>
-                        <a href="#" class="text-gray-600 hover:darvag-text-light px-3 py-2 rounded-md text-sm font-medium transition-colors">پویش نیکی <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-1">جدید</span></a>
-                        <a href="{{ route('contact') }}" class="text-gray-600 hover:darvag-text-light px-3 py-2 rounded-md text-sm font-medium transition-colors">تماس با ما</a>
-                    </div>
-                </div>
-
-                <!-- Phone Number -->
-                <div class="hidden md:block">
-                    <a href="tel:09350801600" class="darvag-text font-semibold text-sm">
-                        <i class="fas fa-phone ml-1"></i>
-                        09350801600
-                    </a>
-                </div>
-
-                <!-- Mobile menu button -->
-                <div class="md:hidden">
-                    <button type="button" class="darvag-blue inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" id="mobile-menu-button">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn d-lg-none" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-        </div>
-
-        <!-- Mobile menu -->
-        <div class="md:hidden hidden" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-lg">
-                <a href="{{ route('home') }}" class="darvag-text block px-3 py-2 rounded-md text-base font-medium">خانه</a>
-                <a href="{{ route('about') }}" class="text-gray-600 hover:darvag-text-light block px-3 py-2 rounded-md text-base font-medium">درباره ما</a>
-                <a href="{{ route('services') }}" class="text-gray-600 hover:darvag-text-light block px-3 py-2 rounded-md text-base font-medium">خدمات</a>
-                <a href="{{ route('projects') }}" class="text-gray-600 hover:darvag-text-light block px-3 py-2 rounded-md text-base font-medium">پروژه‌های ما</a>
-                <a href="{{ route('news') }}" class="text-gray-600 hover:darvag-text-light block px-3 py-2 rounded-md text-base font-medium">وبلاگ</a>
-                <a href="#" class="text-gray-600 hover:darvag-text-light block px-3 py-2 rounded-md text-base font-medium">پویش نیکی <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full mr-1">جدید</span></a>
-                <a href="{{ route('contact') }}" class="text-gray-600 hover:darvag-text-light block px-3 py-2 rounded-md text-base font-medium">تماس با ما</a>
-                <a href="tel:09350801600" class="darvag-text font-semibold block px-3 py-2 rounded-md text-base">
-                    <i class="fas fa-phone ml-1"></i>
+            
+            <!-- Mobile Menu -->
+            <div class="mobile-menu d-lg-none" id="mobileMenu">
+                <a href="{{ route('home') }}">خانه</a>
+                <a href="{{ route('about') }}">درباره ما</a>
+                <a href="{{ route('services') }}">خدمات</a>
+                <a href="{{ route('projects') }}">پروژه‌ها</a>
+                <a href="{{ route('blog') }}">وبلاگ</a>
+                <a href="{{ route('charity') }}">پویش نیکی <span class="badge-new">جدید</span></a>
+                <a href="{{ route('contact') }}">تماس با ما</a>
+                <a href="tel:09350801600">
+                    <i class="fas fa-phone"></i>
                     09350801600
+                </a>
+                <a href="mailto:info@darvagco.ir">
+                    <i class="fas fa-envelope"></i>
+                    info@darvagco.ir
                 </a>
             </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main>
+    <main class="main-content">
         @yield('content')
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
                 <!-- Company Info -->
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 darvag-light-blue rounded-lg flex items-center justify-center">
-                            <i class="fas fa-building text-white text-xl"></i>
-                        </div>
-                        <span class="mr-3 text-2xl font-bold">گروه صنعتی داروگ</span>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-building text-warning me-2" style="font-size: 2rem;"></i>
+                        <h4 class="mb-0">گروه صنعتی داروگ</h4>
                     </div>
-                    <p class="text-gray-300 mb-4">
+                    <p class="text-light mb-3">
                         کاخ‌سازان داروگ با بیش از دو دهه تجربه در زمینه‌های سلر‌سازی، محوطه‌سازی، جاده‌سازی و تسهیل تأسیسات سرچاهی، با بهره‌گیری از تجهیزات پیشرفته و تیم متخصص، پروژه‌های بزرگ و پیچیده را با کیفیت و سرعت بالا اجرا می‌کند.
                     </p>
-                    <div class="flex space-x-4 space-x-reverse">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-instagram text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-linkedin text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-telegram text-xl"></i>
-                        </a>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-light"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-telegram fa-lg"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-whatsapp fa-lg"></i></a>
                     </div>
                 </div>
-
+                
                 <!-- Quick Links -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">لینک‌های سریع</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">رتبه بندی شرکت ها</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">سامانه جامع قرارداد ها</a></li>
-                        <li><a href="{{ route('about') }}" class="text-gray-300 hover:text-white transition-colors">درباره ما</a></li>
-                        <li><a href="{{ route('projects') }}" class="text-gray-300 hover:text-white transition-colors">پروژه‌ها</a></li>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>لینک‌های سریع</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ route('about') }}">درباره ما</a></li>
+                        <li class="mb-2"><a href="{{ route('services') }}">خدمات</a></li>
+                        <li class="mb-2"><a href="{{ route('projects') }}">پروژه‌ها</a></li>
+                        <li class="mb-2"><a href="{{ route('blog') }}">وبلاگ</a></li>
+                        <li class="mb-2"><a href="{{ route('contact') }}">تماس با ما</a></li>
                     </ul>
                 </div>
-
+                
+                <!-- Services -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>خدمات ما</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">سلر‌سازی</a></li>
+                        <li class="mb-2"><a href="#">محوطه‌سازی</a></li>
+                        <li class="mb-2"><a href="#">جاده‌سازی</a></li>
+                        <li class="mb-2"><a href="#">تسهیل تأسیسات سرچاهی</a></li>
+                        <li class="mb-2"><a href="#">پروژه‌های عمرانی</a></li>
+                    </ul>
+                </div>
+                
                 <!-- Contact Info -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">اطلاعات تماس</h3>
-                    <div class="space-y-2 text-gray-300">
-                        <p><i class="fas fa-phone ml-2"></i> 09350801600</p>
-                        <p><i class="fas fa-envelope ml-2"></i> info@darvagco.ir</p>
-                        <p><i class="fas fa-map-marker-alt ml-2"></i> خراسان رضوی - شهرستان سرخس - دهستان خانگیران</p>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>اطلاعات تماس</h5>
+                    <div class="text-light">
+                        <p class="mb-2">
+                            <i class="fas fa-phone text-warning me-2"></i>
+                            09350801600
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-envelope text-warning me-2"></i>
+                            info@darvagco.ir
+                        </p>
+                        <p class="mb-3">
+                            <i class="fas fa-map-marker-alt text-warning me-2"></i>
+                            خراسان رضوی - شهرستان سرخس - دهستان خانگیران
+                        </p>
                     </div>
-                    <div class="mt-4">
-                        <h4 class="text-sm font-semibold mb-2">دسترسی سریع</h4>
-                        <p class="text-xs text-gray-400">اسکن کنید و به وب‌سایت ما دسترسی داشته باشید</p>
-                        <div class="w-16 h-16 bg-white rounded mt-2 flex items-center justify-center">
-                            <i class="fas fa-qrcode text-gray-600 text-2xl"></i>
+                    
+                    <!-- QR Code -->
+                    <div class="mt-3">
+                        <h6 class="text-warning mb-2">دسترسی سریع</h6>
+                        <div class="bg-white p-2 rounded d-inline-block">
+                            <i class="fas fa-qrcode text-dark" style="font-size: 2rem;"></i>
                         </div>
+                        <p class="small text-muted mt-1">اسکن کنید و به وب‌سایت ما دسترسی داشته باشید</p>
                     </div>
                 </div>
             </div>
-
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; ۱۴۰۴ تمامی حقوق برای شرکت کاخ‌سازان داروگ محفوظ است.</p>
-                <div class="mt-2 text-sm">
-                    <a href="#" class="hover:text-white transition-colors ml-4">حریم خصوصی</a>
-                    <a href="#" class="hover:text-white transition-colors">شرایط استفاده</a>
+            
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p class="mb-2">&copy; ۱۴۰۴ تمامی حقوق برای شرکت کاخ‌سازان داروگ محفوظ است.</p>
+                <div class="small">
+                    <a href="#" class="me-3">حریم خصوصی</a>
+                    <a href="#">شرایط استفاده</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- Scripts -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <!-- Fancybox JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom JS -->
     <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
+        // Mobile Menu Toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
         });
-
-        // Navbar scroll effect
+        
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Header Scroll Effect
         window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scroll', 'shadow-lg');
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(30, 58, 138, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
             } else {
-                navbar.classList.remove('navbar-scroll', 'shadow-lg');
+                header.style.background = 'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)';
+                header.style.backdropFilter = 'none';
             }
         });
+        
+        // Animation on Scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements for animation
+        document.querySelectorAll('.card-hover, .section-padding').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Initialize Fancybox
+        Fancybox.bind("[data-fancybox]", {
+            // Options
+        });
+        
+        // Initialize Swiper
+        if (document.querySelector('.swiper')) {
+            new Swiper('.swiper', {
+                loop: true,
+                autoplay: {
+                    delay: 3000,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        }
     </script>
-
+    
     @stack('scripts')
 </body>
 </html>
