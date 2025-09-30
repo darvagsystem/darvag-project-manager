@@ -21,10 +21,8 @@ use App\Http\Controllers\{
 use App\Models\{User, Project};
 use Illuminate\Support\Facades\Hash;
 
-// Redirect root to panel
-Route::get('/', function () {
-    return redirect('/panel');
-});
+// Include Website Routes
+require __DIR__.'/website.php';
 
 // Authentication Routes (Public)
 Route::middleware('guest')->group(function () {
