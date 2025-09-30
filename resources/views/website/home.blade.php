@@ -490,6 +490,87 @@
     </div>
 </div>
 
+<!-- Projects Distribution Map Section -->
+<div class="container mt-128">
+    <div class="section-title">نقشه پراکندگی پروژه‌های داروگ</div>
+    <div class="divider"></div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="map-container">
+                <div class="map-wrapper">
+                    <img src="https://darvag-1.s3.ir-thr-at1.arvanstorage.ir/settings/iran_map_67b8447c7a1bc_341419.png" alt="نقشه ایران" class="map-image">
+                    
+                    <!-- Project markers -->
+                    <div class="project-marker" style="top: 25%; left: 45%;" data-project="تهران">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">تهران</div>
+                    </div>
+                    
+                    <div class="project-marker" style="top: 30%; left: 40%;" data-project="اصفهان">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">اصفهان</div>
+                    </div>
+                    
+                    <div class="project-marker" style="top: 35%; left: 35%;" data-project="شیراز">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">شیراز</div>
+                    </div>
+                    
+                    <div class="project-marker" style="top: 40%; left: 50%;" data-project="مشهد">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">مشهد</div>
+                    </div>
+                    
+                    <div class="project-marker" style="top: 45%; left: 25%;" data-project="بوشهر">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">بوشهر</div>
+                    </div>
+                    
+                    <div class="project-marker" style="top: 50%; left: 30%;" data-project="اهواز">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">اهواز</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="map-stats">
+                <h4>آمار پروژه‌ها</h4>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">70+</div>
+                        <div class="stat-label">پروژه انجام شده</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">استان</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">شهر</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">رضایت مشتری</div>
+                    </div>
+                </div>
+                
+                <div class="project-list">
+                    <h5>پروژه‌های شاخص</h5>
+                    <ul>
+                        <li>پروژه پتروشیمی بوشهر</li>
+                        <li>کمپ اقامتی پردیس آذر</li>
+                        <li>پروژه مسکونی تابناک</li>
+                        <li>مرکز نوآوری هُما</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- FAQ Section -->
 <div class="faq-section mt-128">
     <div class="container">
@@ -613,6 +694,170 @@
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+/* Projects Distribution Map Styles */
+.map-container {
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.map-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(20%);
+}
+
+.project-marker {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.project-marker:hover {
+    transform: scale(1.1);
+}
+
+.marker-dot {
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #ff6b00, #ff8c00);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(255, 107, 0, 0.4);
+    animation: pulse 2s infinite;
+}
+
+.marker-label {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.project-marker:hover .marker-label {
+    opacity: 1;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 107, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 0, 0);
+    }
+}
+
+.map-stats {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    height: fit-content;
+}
+
+.map-stats h4 {
+    color: white;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.project-list h5 {
+    color: white;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.project-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.project-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    padding-right: 20px;
+}
+
+.project-list li:before {
+    content: "📍";
+    position: absolute;
+    right: 0;
+    top: 8px;
+}
+
+.project-list li:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .map-wrapper {
+        height: 300px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}
+</style>
 @endpush
 
 @push('scripts')
@@ -651,6 +896,28 @@
                 }
             });
         }
+
+        // Map markers functionality
+        document.querySelectorAll('.project-marker').forEach(marker => {
+            marker.addEventListener('click', function() {
+                const projectName = this.getAttribute('data-project');
+                
+                // Create a simple modal or alert for project details
+                const projectDetails = {
+                    'تهران': 'پروژه‌های متعدد در پایتخت شامل مراکز تجاری و مسکونی',
+                    'اصفهان': 'پروژه‌های صنعتی و مسکونی در شهر تاریخی اصفهان',
+                    'شیراز': 'پروژه‌های عمرانی و کمپ‌های اقامتی در شیراز',
+                    'مشهد': 'پروژه‌های مذهبی و مسکونی در مشهد مقدس',
+                    'بوشهر': 'پروژه‌های پتروشیمی و صنعتی در بوشهر',
+                    'اهواز': 'پروژه‌های نفتی و صنعتی در اهواز'
+                };
+                
+                const details = projectDetails[projectName] || 'اطلاعات پروژه در دسترس نیست';
+                
+                // You can replace this with a proper modal
+                alert(`${projectName}:\n${details}`);
+            });
+        });
     });
 </script>
 @endpush
