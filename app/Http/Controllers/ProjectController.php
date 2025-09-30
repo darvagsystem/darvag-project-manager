@@ -56,14 +56,27 @@ class ProjectController extends Controller
                 'currency' => 'nullable|in:IRR,USD,EUR',
                 'description' => 'nullable|string',
                 'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'cropped_image' => 'nullable|string',
                 'featured_image_alt' => 'nullable|string|max:255',
                 'notes' => 'nullable|string'
             ]);
 
             $data = $request->all();
 
-            // Handle featured image upload
-            if ($request->hasFile('featured_image')) {
+            // Handle featured image upload (cropped or original)
+            if ($request->filled('cropped_image')) {
+                // Handle cropped image (base64)
+                $croppedImage = $request->input('cropped_image');
+                $imageName = time() . '_' . uniqid() . '.jpg';
+                
+                // Decode base64 image
+                $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $croppedImage));
+                
+                // Save cropped image
+                file_put_contents(storage_path('app/public/projects/featured/' . $imageName), $imageData);
+                $data['featured_image'] = 'projects/featured/' . $imageName;
+            } elseif ($request->hasFile('featured_image')) {
+                // Handle original file upload
                 $image = $request->file('featured_image');
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
                 $image->storeAs('public/projects/featured', $imageName);

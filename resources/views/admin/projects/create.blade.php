@@ -85,8 +85,20 @@
 
                 <div class="form-group">
                     <label for="featured_image" class="form-label">تصویر شاخص پروژه</label>
-                    <input type="file" id="featured_image" name="featured_image" class="form-input @error('featured_image') is-invalid @enderror" accept="image/*">
-                    <small class="form-help">تصویری که در وب‌سایت نمایش داده می‌شود (JPG, PNG, WebP)</small>
+                    <div class="image-upload-container">
+                        <input type="file" id="featured_image" name="featured_image" class="form-input @error('featured_image') is-invalid @enderror" accept="image/*" style="display: none;">
+                        <input type="hidden" id="cropped_image" name="cropped_image">
+                        <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
+                            <img id="imagePreview" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                            <button type="button" id="removeImage" class="btn btn-sm btn-danger" style="margin-top: 10px;">
+                                <i class="mdi mdi-delete"></i> حذف تصویر
+                            </button>
+                        </div>
+                        <button type="button" id="selectImageBtn" class="btn btn-outline-primary">
+                            <i class="mdi mdi-image"></i> انتخاب تصویر
+                        </button>
+                    </div>
+                    <small class="form-help">تصویری که در وب‌سایت نمایش داده می‌شود (JPG, PNG, WebP) - می‌توانید تصویر را کراپ کنید</small>
                     @error('featured_image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -322,9 +334,32 @@
         </a>
     </div>
 </form>
+
+<!-- Image Cropper Modal -->
+<div class="modal fade" id="imageCropperModal" tabindex="-1" aria-labelledby="imageCropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageCropperModalLabel">کراپ تصویر</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="cropper-container">
+                    <img id="cropperImage" src="" alt="Image to crop" style="max-width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                <button type="button" class="btn btn-primary" id="cropImageBtn">کراپ و ذخیره</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('styles')
+<!-- Cropper.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 <style>
 .alert {
     padding: 15px;
@@ -530,6 +565,39 @@
     transform: translateY(-2px);
 }
 
+/* Image Upload Styles */
+.image-upload-container {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: border-color 0.3s ease;
+}
+
+.image-upload-container:hover {
+    border-color: #3b82f6;
+}
+
+.image-preview-container {
+    margin-bottom: 15px;
+}
+
+.cropper-container {
+    max-height: 400px;
+    overflow: hidden;
+}
+
+.btn-outline-primary {
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #3b82f6;
+    color: white;
+}
+
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;
@@ -543,8 +611,95 @@
 @endpush
 
 @push('scripts')
+<!-- Cropper.js JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Image Cropper Variables
+    let cropper = null;
+    const imageInput = document.getElementById('featured_image');
+    const selectImageBtn = document.getElementById('selectImageBtn');
+    const imagePreview = document.getElementById('imagePreview');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const removeImageBtn = document.getElementById('removeImage');
+    const cropperImage = document.getElementById('cropperImage');
+    const croppedImageInput = document.getElementById('cropped_image');
+    const imageCropperModal = new bootstrap.Modal(document.getElementById('imageCropperModal'));
+
+    // Image Upload and Cropping
+    selectImageBtn.addEventListener('click', function() {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cropperImage.src = e.target.result;
+                imageCropperModal.show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Initialize Cropper when modal is shown
+    document.getElementById('imageCropperModal').addEventListener('shown.bs.modal', function() {
+        if (cropper) {
+            cropper.destroy();
+        }
+        cropper = new Cropper(cropperImage, {
+            aspectRatio: 16 / 9, // نسبت تصویر
+            viewMode: 1,
+            dragMode: 'move',
+            autoCropArea: 0.8,
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+        });
+    });
+
+    // Crop and save image
+    document.getElementById('cropImageBtn').addEventListener('click', function() {
+        if (cropper) {
+            const canvas = cropper.getCroppedCanvas({
+                width: 800,
+                height: 450,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+
+            canvas.toBlob(function(blob) {
+                // Convert blob to base64
+                const reader = new FileReader();
+                reader.onload = function() {
+                    croppedImageInput.value = reader.result;
+                    
+                    // Show preview
+                    imagePreview.src = reader.result;
+                    imagePreviewContainer.style.display = 'block';
+                    selectImageBtn.style.display = 'none';
+                    
+                    // Close modal
+                    imageCropperModal.hide();
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg', 0.9);
+        }
+    });
+
+    // Remove image
+    removeImageBtn.addEventListener('click', function() {
+        imagePreviewContainer.style.display = 'none';
+        selectImageBtn.style.display = 'inline-block';
+        imageInput.value = '';
+        croppedImageInput.value = '';
+    });
+
     // Progress bar update
     const progressInput = document.getElementById('progress');
     const progressFill = document.querySelector('.progress-fill');
