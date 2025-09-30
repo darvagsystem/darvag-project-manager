@@ -298,7 +298,7 @@
             </svg>
             ذخیره تغییرات
         </button>
-        <a href="{{ route('projects.index') }}" class="btn btn-secondary">
+        <a href="{{ route('panel.projects.index') }}" class="btn btn-secondary">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
             </svg>
@@ -725,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!hasError) {
             alert('تغییرات پروژه با موفقیت ذخیره شد!');
-            window.location.href = '{{ route("projects.index") }}';
+            window.location.href = '{{ route("panel.projects.index") }}';
         }
     });
 });
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function deleteProject() {
     if (confirm('آیا از حذف این پروژه اطمینان دارید؟\n\nتوجه: تمام اطلاعات مربوط به این پروژه حذف خواهد شد.')) {
         alert('پروژه با موفقیت حذف شد!');
-        window.location.href = '{{ route("projects.index") }}';
+        window.location.href = '{{ route("panel.projects.index") }}';
     }
 }
 </script>
