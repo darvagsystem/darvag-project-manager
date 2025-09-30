@@ -777,7 +777,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">داشبورد</a></li>
                         @if($project)
-                            <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">پروژه‌ها</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('panel.projects.index') }}">پروژه‌ها</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('projects.show', $project->id) }}">{{ $project->name }}</a></li>
                         @endif
                         <li class="breadcrumb-item active">مدیریت فایل‌ها</li>

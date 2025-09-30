@@ -9,7 +9,7 @@
     <div class="hero-gradient-line"></div>
     <div class="hero-decorative-circle hero-orange-glow"></div>
     <div class="hero-decorative-circle hero-blue-glow"></div>
-    
+
     <div class="container">
         <div class="hero-content">
             <h1 class="hero-title">
@@ -756,30 +756,30 @@
     .hero-title-main {
         font-size: 2rem;
     }
-    
+
     .hero-title-sub {
         font-size: 1.2rem;
     }
-    
+
     .projects-grid {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .filter-buttons {
         gap: 10px;
     }
-    
+
     .filter-btn {
         padding: 10px 20px;
         font-size: 14px;
     }
-    
+
     .cta-buttons {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .stat-number {
         font-size: 2rem;
     }
@@ -793,19 +793,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Filter functionality
     const filterButtons = document.querySelectorAll('.filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
-    
+
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
             const filter = this.getAttribute('data-filter');
-            
+
             // Update active button
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-            
+
             // Filter projects
             projectCards.forEach(card => {
                 const category = card.getAttribute('data-category');
-                
+
                 if (filter === 'all' || category === filter) {
                     card.classList.remove('hidden');
                 } else {
@@ -814,14 +814,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-    
+
     // Load more functionality
     const loadMoreBtn = document.getElementById('loadMoreBtn');
     if (loadMoreBtn) {
         loadMoreBtn.addEventListener('click', function() {
             // Simulate loading more projects
             this.innerHTML = '<span>در حال بارگذاری...</span><i class="bi bi-arrow-clockwise"></i>';
-            
+
             setTimeout(() => {
                 this.innerHTML = '<span>مشاهده پروژه‌های بیشتر</span><i class="bi bi-arrow-left"></i>';
                 alert('پروژه‌های بیشتری در آینده اضافه خواهد شد');

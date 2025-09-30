@@ -55,10 +55,20 @@ class ProjectController extends Controller
                 'category' => 'nullable|in:construction,industrial,infrastructure,energy,petrochemical,other',
                 'currency' => 'nullable|in:IRR,USD,EUR',
                 'description' => 'nullable|string',
+                'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'featured_image_alt' => 'nullable|string|max:255',
                 'notes' => 'nullable|string'
             ]);
 
             $data = $request->all();
+
+            // Handle featured image upload
+            if ($request->hasFile('featured_image')) {
+                $image = $request->file('featured_image');
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/projects/featured', $imageName);
+                $data['featured_image'] = 'projects/featured/' . $imageName;
+            }
 
             // Set default values
             $data['priority'] = $data['priority'] ?: 'normal';
@@ -71,7 +81,7 @@ class ProjectController extends Controller
 
             if ($project) {
                 \Log::info('Project created successfully with ID: ' . $project->id);
-                return redirect()->route('projects.index')->with('success', 'پروژه با موفقیت اضافه شد');
+                return redirect()->route('panel.projects.index')->with('success', 'پروژه با موفقیت اضافه شد');
             } else {
                 \Log::error('Project creation failed');
                 return redirect()->back()->with('error', 'خطا در ثبت اطلاعات')->withInput();

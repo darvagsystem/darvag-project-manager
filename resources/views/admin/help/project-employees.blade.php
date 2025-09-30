@@ -347,7 +347,7 @@
                                 <i class="mdi mdi-arrow-right me-1"></i>
                                 بازگشت به راهنما
                             </a>
-                            <a href="{{ route('projects.index') }}" class="btn btn-primary">
+                            <a href="{{ route('panel.projects.index') }}" class="btn btn-primary">
                                 <i class="mdi mdi-account-multiple-plus me-1"></i>
                                 مدیریت تخصیص کارمندان
                             </a>

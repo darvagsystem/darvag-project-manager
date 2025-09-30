@@ -26,7 +26,7 @@
 </div>
 @endif
 
-<form class="project-form" method="POST" action="{{ route('panel.projects.store') }}">
+<form class="project-form" method="POST" action="{{ route('panel.projects.store') }}" enctype="multipart/form-data">
     @csrf
 
     <div class="form-sections">
@@ -79,6 +79,23 @@
                     <label for="description" class="form-label">توضیحات پروژه</label>
                     <textarea id="description" name="description" class="form-textarea @error('description') is-invalid @enderror" rows="4" placeholder="توضیحات کامل درباره پروژه...">{{ old('description') }}</textarea>
                     @error('description')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="featured_image" class="form-label">تصویر شاخص پروژه</label>
+                    <input type="file" id="featured_image" name="featured_image" class="form-input @error('featured_image') is-invalid @enderror" accept="image/*">
+                    <small class="form-help">تصویری که در وب‌سایت نمایش داده می‌شود (JPG, PNG, WebP)</small>
+                    @error('featured_image')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="featured_image_alt" class="form-label">متن جایگزین تصویر</label>
+                    <input type="text" id="featured_image_alt" name="featured_image_alt" class="form-input @error('featured_image_alt') is-invalid @enderror" value="{{ old('featured_image_alt') }}" placeholder="توضیح کوتاه تصویر برای SEO">
+                    @error('featured_image_alt')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

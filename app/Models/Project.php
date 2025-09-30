@@ -29,6 +29,8 @@ class Project extends Model
         'category',
         'currency',
         'description',
+        'featured_image',
+        'featured_image_alt',
         'notes'
     ];
 
