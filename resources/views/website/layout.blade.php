@@ -51,12 +51,14 @@
         :root {
             --dnav-primary-color: #0077ff;
             --dnav-primary-dark: #0055cc;
-            --dnav-primary-light: rgba(0, 119, 255, 0.1);
-            --dnav-accent-color: #ff6b00;
-            --dnav-accent-dark: #e05a00;
-            --dnav-text-dark: #202124;
-            --dnav-text-light: #5f6368;
+            --dnav-primary-light: rgba(0, 119, 255, 0.12);
+            --dnav-accent-color: #0077ff;
+            --dnav-accent-dark: #0055cc;
+            --dnav-accent-light: rgba(0, 119, 255, 0.08);
+            --dnav-text-dark: #2c2c2c;
+            --dnav-text-light: #666666;
             --dnav-bg-light: #f8f9fa;
+            --dnav-bg-gradient: linear-gradient(135deg, rgba(0, 119, 255, 0.05), rgba(0, 119, 255, 0.02));
             --dnav-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
@@ -66,21 +68,23 @@
             top: 0;
             right: 0;
             left: 0;
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 2px 28px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 4px 32px rgba(0, 119, 255, 0.08), 0 2px 16px rgba(0, 0, 0, 0.06);
             z-index: 1000;
             transition: var(--dnav-transition);
             font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
             direction: rtl;
+            border-bottom: 1px solid rgba(0, 119, 255, 0.1);
         }
 
         .dnav-top-line {
             height: 3px;
-            background: linear-gradient(to left, var(--dnav-primary-color), var(--dnav-accent-color));
+            background: linear-gradient(90deg, var(--dnav-primary-color), #00a0ff);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 119, 255, 0.2);
         }
 
         .dnav-top-line::after {
@@ -205,10 +209,11 @@
         }
 
         .dnav-links li a.active {
-            background-color: var(--dnav-primary-light);
+            background: var(--dnav-primary-light);
             color: var(--dnav-primary-color);
             font-weight: 600;
             box-shadow: 0 4px 15px rgba(0, 119, 255, 0.15);
+            border: 1px solid rgba(0, 119, 255, 0.2);
         }
 
         .dnav-links li a.active img {
@@ -216,7 +221,7 @@
         }
 
         .dnav-special {
-            color: var(--dnav-accent-color) !important;
+            color: #ff6b00 !important;
             position: relative;
         }
 
@@ -225,14 +230,14 @@
         }
 
         .dnav-special:hover {
-            color: var(--dnav-accent-color) !important;
+            color: #ff6b00 !important;
         }
 
         .dnav-badge {
             position: absolute;
             top: -6px;
             right: -6px;
-            background: linear-gradient(135deg, var(--dnav-accent-color), var(--dnav-accent-dark));
+            background: linear-gradient(135deg, #ff6b00, #e05a00);
             color: white;
             font-size: 10px;
             padding: 3px 6px;
@@ -259,18 +264,19 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: linear-gradient(135deg, var(--dnav-primary-color), var(--dnav-primary-dark));
+            background: linear-gradient(135deg, var(--dnav-primary-color), #00a0ff, var(--dnav-primary-dark));
             color: white;
-            padding: 8px 20px 8px 8px;
+            padding: 10px 22px 10px 10px;
             border-radius: 50px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
             margin-right: 20px;
             transition: var(--dnav-transition);
-            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.25);
+            box-shadow: 0 6px 20px rgba(0, 119, 255, 0.25), 0 2px 8px rgba(0, 119, 255, 0.15);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .dnav-phone-button::before {
@@ -290,19 +296,21 @@
         }
 
         .dnav-phone-icon {
-            width: 36px;
-            height: 36px;
-            background-color: rgba(255, 255, 255, 0.2);
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: var(--dnav-transition);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .dnav-phone-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 119, 255, 0.35), 0 4px 12px rgba(0, 119, 255, 0.25);
         }
 
         .dnav-phone-button:hover .dnav-phone-icon {
@@ -312,39 +320,43 @@
         /* Mobile Menu Button */
         .dnav-menu-button {
             display: none;
-            width: 44px;
-            height: 44px;
-            background-color: var(--dnav-bg-light);
-            border-radius: 12px;
-            border: none;
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, var(--dnav-bg-light), rgba(0, 119, 255, 0.05));
+            border-radius: 14px;
+            border: 1px solid rgba(0, 119, 255, 0.1);
             cursor: pointer;
             align-items: center;
             justify-content: center;
             flex-direction: column;
             gap: 5px;
             transition: var(--dnav-transition);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .dnav-menu-button:hover {
-            background-color: var(--dnav-primary-light);
+            background: linear-gradient(135deg, var(--dnav-primary-light), rgba(0, 119, 255, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 119, 255, 0.15), 0 3px 10px rgba(0, 119, 255, 0.08);
         }
 
         .dnav-menu-button span {
             display: block;
-            width: 20px;
-            height: 2px;
-            background-color: var(--dnav-text-dark);
+            width: 22px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dnav-primary-color), #00a0ff);
             transition: var(--dnav-transition);
-            border-radius: 1px;
+            border-radius: 2px;
         }
 
         .dnav-menu-button.active {
-            background-color: var(--dnav-primary-light);
+            background: linear-gradient(135deg, var(--dnav-primary-light), rgba(0, 119, 255, 0.15));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 119, 255, 0.2), 0 3px 10px rgba(0, 119, 255, 0.12);
         }
 
         .dnav-menu-button.active span {
-            background-color: var(--dnav-primary-color);
+            background: linear-gradient(90deg, var(--dnav-primary-color), #00a0ff);
         }
 
         .dnav-menu-button.active span:nth-child(1) {
@@ -366,19 +378,21 @@
             top: 80px;
             right: 20px;
             left: 20px;
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+            padding: 25px;
+            box-shadow: 0 20px 50px rgba(0, 119, 255, 0.12), 0 10px 30px rgba(0, 0, 0, 0.08);
             transform: translateY(-10px);
             opacity: 0;
             visibility: hidden;
             transition: var(--dnav-transition);
             z-index: 999;
-            border-radius: 16px;
+            border-radius: 20px;
             max-height: calc(100vh - 100px);
             overflow-y: auto;
             font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
             direction: rtl;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 119, 255, 0.1);
         }
 
         .dnav-mobile-menu.active {
@@ -417,10 +431,11 @@
         }
 
         .dnav-mobile-links li a.active {
-            background-color: var(--dnav-primary-light);
+            background: var(--dnav-primary-light);
             color: var(--dnav-primary-color);
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.15);
+            border: 1px solid rgba(0, 119, 255, 0.2);
         }
 
         .dnav-mobile-links li a:hover {
@@ -433,11 +448,11 @@
         }
 
         .dnav-mobile-special {
-            color: var(--dnav-accent-color) !important;
+            color: #ff6b00 !important;
         }
 
         .dnav-mobile-badge {
-            background-color: var(--dnav-accent-color);
+            background-color: #ff6b00;
             color: white;
             font-size: 10px;
             padding: 2px 6px;
@@ -446,22 +461,23 @@
         }
 
         .dnav-mobile-phone {
-            margin-top: 20px;
+            margin-top: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            background: linear-gradient(135deg, var(--dnav-primary-color), var(--dnav-primary-dark));
+            gap: 12px;
+            background: linear-gradient(135deg, var(--dnav-primary-color), #00a0ff, var(--dnav-primary-dark));
             color: white;
-            padding: 15px;
-            border-radius: 14px;
+            padding: 18px 20px;
+            border-radius: 16px;
             text-decoration: none;
             font-size: 16px;
             font-weight: 600;
             transition: var(--dnav-transition);
-            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.25);
+            box-shadow: 0 6px 20px rgba(0, 119, 255, 0.25), 0 2px 8px rgba(0, 119, 255, 0.15);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .dnav-mobile-phone::before {
@@ -480,14 +496,15 @@
         }
 
         .dnav-mobile-phone:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 119, 255, 0.35), 0 4px 12px rgba(0, 119, 255, 0.25);
         }
 
         /* Scroll Effect */
         .dnav-container.scrolled {
             height: 70px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 35px rgba(0, 119, 255, 0.12), 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
         }
 
         .dnav-container.scrolled .dnav-content {
