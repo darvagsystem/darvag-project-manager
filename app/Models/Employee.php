@@ -93,13 +93,6 @@ class Employee extends Model
         return $this->hasMany(ProjectEmployee::class);
     }
 
-    /**
-     * Get the attendances for this employee.
-     */
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class);
-    }
 
     /**
      * Scope a query to only include active employees.

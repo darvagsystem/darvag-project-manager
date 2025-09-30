@@ -101,12 +101,6 @@
                                 کارمندان پروژه
                             </button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">
-                                <i class="mdi mdi-clock-check me-1"></i>
-                                حضور و غیاب
-                            </button>
-                        </li>
                     </ul>
                 </div>
                 <div class="card-body">
@@ -290,21 +284,6 @@
                             @endif
                         </div>
 
-                        <!-- Attendance Tab -->
-                        <div class="tab-pane fade" id="attendance" role="tabpanel">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">حضور و غیاب</h6>
-                                <a href="{{ route('admin.projects.attendance', $project) }}" class="btn btn-sm btn-primary">
-                                    <i class="mdi mdi-clock-plus me-1"></i>
-                                    مدیریت حضور و غیاب
-                                </a>
-                            </div>
-                            <div class="text-center py-4">
-                                <i class="mdi mdi-clock-check" style="font-size: 48px; color: #6c757d;"></i>
-                                <h6 class="mt-2">حضور و غیاب پروژه</h6>
-                                <p class="text-muted">برای مدیریت حضور و غیاب روی دکمه بالا کلیک کنید</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

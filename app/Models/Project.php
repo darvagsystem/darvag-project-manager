@@ -97,13 +97,6 @@ class Project extends Model
         return $this->hasMany(ProjectEmployee::class);
     }
 
-    /**
-     * Get the attendances for this project.
-     */
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class);
-    }
 
     /**
      * Get the formatted status.

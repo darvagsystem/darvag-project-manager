@@ -47,68 +47,6 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">{{ $attendanceStats->total_days ?? 0 }}</h4>
-                            <p class="mb-0">کل روزها</p>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="mdi mdi-calendar-clock display-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">{{ $attendanceStats->present_days ?? 0 }}</h4>
-                            <p class="mb-0">روزهای حضور</p>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="mdi mdi-check-circle display-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-danger text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">{{ $attendanceStats->absent_days ?? 0 }}</h4>
-                            <p class="mb-0">روزهای غیبت</p>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="mdi mdi-close-circle display-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">{{ $attendanceStats->late_days ?? 0 }}</h4>
-                            <p class="mb-0">روزهای تأخیر</p>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="mdi mdi-clock-alert display-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Content Tabs -->
     <div class="row">
@@ -121,13 +59,6 @@
                                     data-bs-target="#info" type="button" role="tab">
                                 <i class="mdi mdi-information me-1"></i>
                                 اطلاعات شخصی
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="attendance-tab" data-bs-toggle="tab"
-                                    data-bs-target="#attendance" type="button" role="tab">
-                                <i class="mdi mdi-calendar-clock me-1"></i>
-                                حضور و غیاب
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -223,58 +154,6 @@
                             </div>
                         </div>
 
-                        <!-- حضور و غیاب -->
-                        <div class="tab-pane fade" id="attendance" role="tabpanel">
-                            <h5>آخرین حضور و غیاب‌ها</h5>
-                            @if($recentAttendances->count() > 0)
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>تاریخ</th>
-                                                <th>پروژه</th>
-                                                <th>وضعیت</th>
-                                                <th>ورود</th>
-                                                <th>خروج</th>
-                                                <th>یادداشت</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($recentAttendances as $attendance)
-                                                <tr>
-                                                    <td>{{ \Carbon\Carbon::parse($attendance->attendance_date)->format('Y/m/d') }}</td>
-                                                    <td>{{ $attendance->project_name }}</td>
-                                                    <td>
-                                                        @switch($attendance->status)
-                                                            @case('present')
-                                                                <span class="badge bg-success">حضور</span>
-                                                                @break
-                                                            @case('absent')
-                                                                <span class="badge bg-danger">غیبت</span>
-                                                                @break
-                                                            @case('late')
-                                                                <span class="badge bg-warning">تأخیر</span>
-                                                                @break
-                                                            @case('half_day')
-                                                                <span class="badge bg-info">نیمه روز</span>
-                                                                @break
-                                                        @endswitch
-                                                    </td>
-                                                    <td>{{ $attendance->check_in_time ?? '-' }}</td>
-                                                    <td>{{ $attendance->check_out_time ?? '-' }}</td>
-                                                    <td>{{ $attendance->notes ?? '-' }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @else
-                                <div class="alert alert-info">
-                                    <i class="mdi mdi-information me-2"></i>
-                                    هیچ رکورد حضور و غیابی یافت نشد.
-                                </div>
-                            @endif
-                        </div>
 
                         <!-- پروژه‌ها -->
                         <div class="tab-pane fade" id="projects" role="tabpanel">

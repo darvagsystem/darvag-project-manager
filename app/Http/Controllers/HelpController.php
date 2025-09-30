@@ -38,13 +38,6 @@ class HelpController extends Controller
         return view('admin.help.clients');
     }
 
-    /**
-     * Display help for attendance module
-     */
-    public function attendance()
-    {
-        return view('admin.help.attendance');
-    }
 
     /**
      * Display help for settings module

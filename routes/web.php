@@ -10,7 +10,6 @@ use App\Http\Controllers\{
     EmployeeBankAccountController,
     ProjectController,
     ProjectEmployeeController,
-    AttendanceController,
     ClientController,
     ClientContactController,
     HelpController,
@@ -76,12 +75,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('employees', ProjectEmployeeController::class)->except(['show']);
         Route::post('/employees/{projectEmployee}/toggle-status', [ProjectEmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
 
-        // Attendance
-        Route::resource('attendance', AttendanceController::class)->except(['edit']);
-        Route::get('/attendance/{date}', [AttendanceController::class, 'show'])->name('attendance.show');
-        Route::get('/attendance', function(\App\Models\Project $project) {
-            return view('admin.attendance.project', compact('project'));
-        })->name('attendance');
 
         // File Manager
         Route::prefix('filemanager')->name('filemanager.')->group(function () {
@@ -137,10 +130,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-tasks', [\App\Http\Controllers\TaskController::class, 'myTasks'])->name('tasks.my-tasks');
     Route::post('/tasks/{task}/update-status', [\App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.update-status');
 
-    // Attendance Management
-    Route::get('/attendance', function() {
-        return view('admin.attendance.index');
-    })->name('attendance.index');
 
     // Livewire File Manager
     Route::get('/livewire-file-manager', function() {
@@ -156,7 +145,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/employees', [HelpController::class, 'employees'])->name('employees');
         Route::get('/projects', [HelpController::class, 'projects'])->name('projects');
         Route::get('/clients', [HelpController::class, 'clients'])->name('clients');
-        Route::get('/attendance', [HelpController::class, 'attendance'])->name('attendance');
         Route::get('/settings', [HelpController::class, 'settings'])->name('settings');
         Route::get('/bank-accounts', [HelpController::class, 'bankAccounts'])->name('bank-accounts');
         Route::get('/project-employees', [HelpController::class, 'projectEmployees'])->name('project-employees');

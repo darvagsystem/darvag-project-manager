@@ -40,11 +40,6 @@ class ProjectEmployee extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class, 'employee_id', 'employee_id')
-                    ->where('project_id', $this->project_id);
-    }
 
     public function getFormattedSalaryAttribute()
     {
