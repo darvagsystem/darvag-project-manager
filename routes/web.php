@@ -14,14 +14,16 @@ use App\Http\Controllers\{
     ClientContactController,
     HelpController,
     FileManagerController,
-    ProjectTemplateController
+    ProjectTemplateController,
+    TagController,
+    TaskController
 };
 use App\Models\{User, Project};
 use Illuminate\Support\Facades\Hash;
 
-// Redirect root to login
+// Redirect root to panel
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect('/panel');
 });
 
 // Authentication Routes (Public)
@@ -33,13 +35,14 @@ Route::middleware('guest')->group(function () {
 // Logout (Authenticated)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Protected Routes
-Route::middleware('auth')->group(function () {
+// Panel Routes (All authenticated routes under panel prefix)
+Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.alt');
 
-    // Employee Routes
+    // Employees
     Route::resource('employees', EmployeeController::class);
     Route::prefix('employees/{employee}')->name('employees.')->group(function () {
         Route::get('/bank-accounts', [EmployeeBankAccountController::class, 'index'])->name('bank-accounts');
@@ -48,7 +51,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/default-account', [EmployeeBankAccountController::class, 'getDefaultAccount'])->name('default-account');
     });
 
-    // Employee Bank Account Routes
+    // Employee Bank Accounts
     Route::prefix('employee-bank-accounts')->name('employee-bank-accounts.')->group(function () {
         Route::get('/{account}', [EmployeeBankAccountController::class, 'show'])->name('show');
         Route::put('/{account}', [EmployeeBankAccountController::class, 'update'])->name('update');
@@ -61,22 +64,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/validate-iban', [EmployeeBankAccountController::class, 'validateIban'])->name('validate-iban');
     Route::post('/validate-card-number', [EmployeeBankAccountController::class, 'validateCardNumber'])->name('validate-card-number');
 
-    // Client Routes
+    // Clients
     Route::resource('clients', ClientController::class);
     Route::resource('clients.contacts', ClientContactController::class)->except(['index']);
     Route::get('/clients/{client}/contacts', [ClientContactController::class, 'index'])->name('clients.contacts.index');
 
-    // Project Routes
+    // Projects
     Route::resource('projects', ProjectController::class);
-
-    // Project Related Routes
     Route::prefix('projects/{project}')->name('projects.')->group(function () {
         // Project Employees
         Route::resource('employees', ProjectEmployeeController::class)->except(['show']);
         Route::post('/employees/{projectEmployee}/toggle-status', [ProjectEmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
 
-
-        // File Manager
+        // Project File Manager
         Route::prefix('filemanager')->name('filemanager.')->group(function () {
             Route::get('/', function(Project $project) {
                 return view('admin.file-manager.project-livewire', compact('project'));
@@ -118,37 +118,17 @@ Route::middleware('auth')->group(function () {
     });
 
     // Tags Management
-    Route::resource('tags', \App\Http\Controllers\TagController::class);
-    Route::get('/tags-api', [\App\Http\Controllers\TagController::class, 'getTags'])->name('tags.api');
-    Route::get('/tags/{tag}/files', [\App\Http\Controllers\TagController::class, 'files'])->name('tags.files');
-    Route::post('/tags/{tag}/bulk-download', [\App\Http\Controllers\TagController::class, 'bulkDownload'])->name('tags.bulk-download');
-    Route::post('/tags/{tag}/merge-pdf', [\App\Http\Controllers\TagController::class, 'mergePdf'])->name('tags.merge-pdf');
+    Route::resource('tags', TagController::class);
+    Route::get('/tags-api', [TagController::class, 'getTags'])->name('tags.api');
+    Route::get('/tags/{tag}/files', [TagController::class, 'files'])->name('tags.files');
+    Route::post('/tags/{tag}/bulk-download', [TagController::class, 'bulkDownload'])->name('tags.bulk-download');
+    Route::post('/tags/{tag}/merge-pdf', [TagController::class, 'mergePdf'])->name('tags.merge-pdf');
 
     // Tasks Management
-    Route::resource('tasks', \App\Http\Controllers\TaskController::class);
-    Route::get('/tasks-dashboard', [\App\Http\Controllers\TaskController::class, 'dashboard'])->name('tasks.dashboard');
-    Route::get('/my-tasks', [\App\Http\Controllers\TaskController::class, 'myTasks'])->name('tasks.my-tasks');
-    Route::post('/tasks/{task}/update-status', [\App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.update-status');
-
-
-    // Livewire File Manager
-    Route::get('/livewire-file-manager', function() {
-        return view('admin.file-manager.livewire');
-    })->name('livewire-file-manager');
-
-    // Help
-    Route::get('/help', [HelpController::class, 'index'])->name('help');
-    Route::prefix('help')->name('help.')->group(function () {
-        Route::get('/', [HelpController::class, 'index'])->name('index');
-        Route::get('/getting-started', [HelpController::class, 'gettingStarted'])->name('getting-started');
-        Route::get('/dashboard', [HelpController::class, 'dashboard'])->name('dashboard');
-        Route::get('/employees', [HelpController::class, 'employees'])->name('employees');
-        Route::get('/projects', [HelpController::class, 'projects'])->name('projects');
-        Route::get('/clients', [HelpController::class, 'clients'])->name('clients');
-        Route::get('/settings', [HelpController::class, 'settings'])->name('settings');
-        Route::get('/bank-accounts', [HelpController::class, 'bankAccounts'])->name('bank-accounts');
-        Route::get('/project-employees', [HelpController::class, 'projectEmployees'])->name('project-employees');
-    });
+    Route::resource('tasks', TaskController::class);
+    Route::get('/tasks-dashboard', [TaskController::class, 'dashboard'])->name('tasks.dashboard');
+    Route::get('/my-tasks', [TaskController::class, 'myTasks'])->name('tasks.my-tasks');
+    Route::post('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
 
     // Settings
     Route::prefix('settings')->name('settings.')->group(function () {
@@ -175,6 +155,24 @@ Route::middleware('auth')->group(function () {
     // Gallery
     Route::get('/gallery', [AdminController::class, 'gallery'])->name('gallery');
 
+    // Help
+    Route::get('/help', [HelpController::class, 'index'])->name('help');
+    Route::prefix('help')->name('help.')->group(function () {
+        Route::get('/', [HelpController::class, 'index'])->name('index');
+        Route::get('/getting-started', [HelpController::class, 'gettingStarted'])->name('getting-started');
+        Route::get('/dashboard', [HelpController::class, 'dashboard'])->name('dashboard');
+        Route::get('/employees', [HelpController::class, 'employees'])->name('employees');
+        Route::get('/projects', [HelpController::class, 'projects'])->name('projects');
+        Route::get('/clients', [HelpController::class, 'clients'])->name('clients');
+        Route::get('/settings', [HelpController::class, 'settings'])->name('settings');
+        Route::get('/bank-accounts', [HelpController::class, 'bankAccounts'])->name('bank-accounts');
+        Route::get('/project-employees', [HelpController::class, 'projectEmployees'])->name('project-employees');
+    });
+
+    // System
+    Route::get('/backup', [AdminController::class, 'backup'])->name('backup');
+    Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
+
     // API Routes
     Route::prefix('api')->name('api.')->group(function () {
         Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
@@ -183,11 +181,6 @@ Route::middleware('auth')->group(function () {
             return response()->json(['projects' => Project::select('id', 'name')->get()]);
         })->name('projects');
     });
-
-    // System
-    Route::get('/backup', [AdminController::class, 'backup'])->name('backup');
-    Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
-
 });
 
 // Route Model Binding

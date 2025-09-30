@@ -29,7 +29,7 @@ return new class extends Migration
             $table->enum('status', ['present', 'absent', 'late', 'half_day'])->default('present');
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['employee_id', 'project_id', 'attendance_date']);
         });
     }

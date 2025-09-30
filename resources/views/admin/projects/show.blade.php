@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load projects for copy structure
     function loadProjects() {
-        fetch('{{ route("admin.api.projects") }}')
+        fetch('{{ route("panel.api.projects") }}')
             .then(response => response.json())
             .then(data => {
                 const select = document.getElementById('sourceProject');
