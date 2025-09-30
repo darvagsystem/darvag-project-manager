@@ -10,13 +10,13 @@
             <p class="page-subtitle">{{ $project->contract_number }} - {{ $project->department }}</p>
             </div>
         <div style="display: flex; gap: 1rem;">
-            <a href="{{ route('projects.index') }}" class="btn btn-secondary">
+            <a href="{{ route('panel.projects.index') }}" class="btn btn-secondary">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 بازگشت
             </a>
-            <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-primary">
+            <a href="{{ route('panel.projects.edit', $project->id) }}" class="btn btn-primary">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
@@ -208,7 +208,7 @@
                                         <i class="mdi mdi-content-copy me-1"></i>
                                         کپی ساختار از پروژه دیگر
                                     </button>
-                                    <a href="{{ route('projects.filemanager.index', $project->id) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('panel.projects.filemanager.index', $project) }}" class="btn btn-sm btn-primary">
                                         <i class="mdi mdi-folder-open me-1"></i>
                                         باز کردن فایل منیجر
                                     </a>
@@ -228,11 +228,11 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h6 class="mb-0">کارمندان پروژه</h6>
                                 <div>
-                                    <a href="{{ route('projects.employees.create', $project) }}" class="btn btn-sm btn-primary me-2">
+                                    <a href="{{ route('panel.projects.employees.create', $project) }}" class="btn btn-sm btn-primary me-2">
                                         <i class="mdi mdi-account-plus me-1"></i>
                                         افزودن کارمند
                                     </a>
-                                    <a href="{{ route('projects.employees.index', $project) }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ route('panel.projects.employees.index', $project) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="mdi mdi-account-group me-1"></i>
                                         مشاهده همه
                                     </a>
@@ -261,7 +261,7 @@
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <a href="{{ route('projects.employees.edit', [$project, $projectEmployee]) }}" class="btn btn-sm btn-outline-primary">
+                                                        <a href="{{ route('panel.projects.employees.edit', [$project, $projectEmployee]) }}" class="btn btn-sm btn-outline-primary">
                                                             <i class="mdi mdi-pencil"></i>
                                                         </a>
                                                     </div>
@@ -276,7 +276,7 @@
                                     <i class="mdi mdi-account-group" style="font-size: 48px; color: #6c757d;"></i>
                                     <h6 class="mt-2">هنوز کارمندی به این پروژه اختصاص داده نشده</h6>
                                     <p class="text-muted">برای شروع، اولین کارمند را به پروژه اضافه کنید</p>
-                                    <a href="{{ route('projects.employees.create', $project) }}" class="btn btn-primary">
+                                    <a href="{{ route('panel.projects.employees.create', $project) }}" class="btn btn-primary">
                                         <i class="mdi mdi-account-plus me-1"></i>
                                         افزودن اولین کارمند
                                     </a>
