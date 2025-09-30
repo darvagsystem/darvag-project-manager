@@ -41,7 +41,526 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    
+
+    <!-- Modern Navbar CSS -->
+    <style>
+        /* Modern Navbar CSS */
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+
+        /* Variables */
+        :root {
+            --dnav-primary-color: #0077ff;
+            --dnav-primary-dark: #0055cc;
+            --dnav-primary-light: rgba(0, 119, 255, 0.1);
+            --dnav-accent-color: #ff6b00;
+            --dnav-accent-dark: #e05a00;
+            --dnav-text-dark: #202124;
+            --dnav-text-light: #5f6368;
+            --dnav-bg-light: #f8f9fa;
+            --dnav-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Main Navbar Styles */
+        .dnav-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 2px 28px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            transition: var(--dnav-transition);
+            font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+            direction: rtl;
+        }
+
+        .dnav-top-line {
+            height: 3px;
+            background: linear-gradient(to left, var(--dnav-primary-color), var(--dnav-accent-color));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dnav-top-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: dnav-shine 4s infinite;
+        }
+
+        @keyframes dnav-shine {
+            to {
+                left: 100%;
+            }
+        }
+
+        .dnav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 76px;
+        }
+
+        /* Logo */
+        .dnav-logo {
+            position: relative;
+            transition: var(--dnav-transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .dnav-logo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to left, var(--dnav-primary-color), var(--dnav-accent-color));
+            transition: var(--dnav-transition);
+            opacity: 0;
+        }
+
+        .dnav-logo:hover::after {
+            width: 100%;
+            opacity: 1;
+        }
+
+        .dnav-logo img {
+            height: 42px;
+            display: block;
+            transition: var(--dnav-transition);
+        }
+
+        .dnav-logo:hover img {
+            transform: translateY(-2px);
+        }
+
+        /* Navigation Links */
+        .dnav-links {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dnav-links li a {
+            display: flex;
+            align-items: center;
+            color: var(--dnav-text-dark);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--dnav-transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .dnav-links li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, var(--dnav-primary-light), transparent);
+            transform: translateX(-100%);
+            transition: var(--dnav-transition);
+            z-index: -1;
+        }
+
+        .dnav-links li a:hover::before {
+            transform: translateX(0);
+        }
+
+        .dnav-links li a img {
+            margin-left: 8px;
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+            transition: var(--dnav-transition);
+        }
+
+        .dnav-links li a:hover {
+            color: var(--dnav-primary-color);
+            transform: translateY(-2px);
+        }
+
+        .dnav-links li a:hover img {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .dnav-links li a.active {
+            background-color: var(--dnav-primary-light);
+            color: var(--dnav-primary-color);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.15);
+        }
+
+        .dnav-links li a.active img {
+            opacity: 1;
+        }
+
+        .dnav-special {
+            color: var(--dnav-accent-color) !important;
+            position: relative;
+        }
+
+        .dnav-special::before {
+            background: linear-gradient(120deg, transparent, rgba(255, 107, 0, 0.1), transparent) !important;
+        }
+
+        .dnav-special:hover {
+            color: var(--dnav-accent-color) !important;
+        }
+
+        .dnav-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: linear-gradient(135deg, var(--dnav-accent-color), var(--dnav-accent-dark));
+            color: white;
+            font-size: 10px;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 3px 8px rgba(255, 107, 0, 0.3);
+            animation: dnav-pulse 2s infinite;
+        }
+
+        @keyframes dnav-pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Phone Button */
+        .dnav-phone-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--dnav-primary-color), var(--dnav-primary-dark));
+            color: white;
+            padding: 8px 20px 8px 8px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 20px;
+            transition: var(--dnav-transition);
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dnav-phone-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--dnav-transition);
+        }
+
+        .dnav-phone-button:hover::before {
+            left: 100%;
+            transition: 0.5s;
+        }
+
+        .dnav-phone-icon {
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--dnav-transition);
+        }
+
+        .dnav-phone-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.4);
+        }
+
+        .dnav-phone-button:hover .dnav-phone-icon {
+            transform: rotate(15deg);
+        }
+
+        /* Mobile Menu Button */
+        .dnav-menu-button {
+            display: none;
+            width: 44px;
+            height: 44px;
+            background-color: var(--dnav-bg-light);
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 5px;
+            transition: var(--dnav-transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .dnav-menu-button:hover {
+            background-color: var(--dnav-primary-light);
+        }
+
+        .dnav-menu-button span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background-color: var(--dnav-text-dark);
+            transition: var(--dnav-transition);
+            border-radius: 1px;
+        }
+
+        .dnav-menu-button.active {
+            background-color: var(--dnav-primary-light);
+        }
+
+        .dnav-menu-button.active span {
+            background-color: var(--dnav-primary-color);
+        }
+
+        .dnav-menu-button.active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .dnav-menu-button.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        .dnav-menu-button.active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* Mobile Menu */
+        .dnav-mobile-menu {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            left: 20px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            transform: translateY(-10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--dnav-transition);
+            z-index: 999;
+            border-radius: 16px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+            direction: rtl;
+        }
+
+        .dnav-mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dnav-mobile-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dnav-mobile-links li {
+            margin-bottom: 10px;
+        }
+
+        .dnav-mobile-links li a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            color: var(--dnav-text-dark);
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: var(--dnav-transition);
+            font-weight: 500;
+        }
+
+        .dnav-mobile-links li a img {
+            margin-left: 12px;
+            width: 22px;
+            height: 22px;
+            transition: var(--dnav-transition);
+        }
+
+        .dnav-mobile-links li a.active {
+            background-color: var(--dnav-primary-light);
+            color: var(--dnav-primary-color);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.1);
+        }
+
+        .dnav-mobile-links li a:hover {
+            background-color: var(--dnav-bg-light);
+            transform: translateX(-5px);
+        }
+
+        .dnav-mobile-links li a:hover img {
+            transform: scale(1.1);
+        }
+
+        .dnav-mobile-special {
+            color: var(--dnav-accent-color) !important;
+        }
+
+        .dnav-mobile-badge {
+            background-color: var(--dnav-accent-color);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-right: 5px;
+        }
+
+        .dnav-mobile-phone {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--dnav-primary-color), var(--dnav-primary-dark));
+            color: white;
+            padding: 15px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--dnav-transition);
+            box-shadow: 0 4px 15px rgba(0, 119, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dnav-mobile-phone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .dnav-mobile-phone:hover::before {
+            left: 100%;
+        }
+
+        .dnav-mobile-phone:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 119, 255, 0.4);
+        }
+
+        /* Scroll Effect */
+        .dnav-container.scrolled {
+            height: 70px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dnav-container.scrolled .dnav-content {
+            height: 66px;
+        }
+
+        .dnav-container.scrolled .dnav-logo img {
+            height: 38px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1050px) {
+            .dnav-links li a {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            .dnav-phone-button {
+                padding: 6px 15px 6px 6px;
+                margin-right: 10px;
+                font-size: 13px;
+            }
+            
+            .dnav-phone-icon {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .dnav-links li a img {
+                margin-left: 5px;
+            }
+            
+            .dnav-phone-text {
+                display: none;
+            }
+            
+            .dnav-phone-button {
+                padding: 8px;
+                border-radius: 50%;
+                margin-right: 8px;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .dnav-links, 
+            .dnav-phone-button {
+                display: none;
+            }
+            
+            .dnav-menu-button {
+                display: flex;
+            }
+            
+            .dnav-container.scrolled {
+                height: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dnav-content {
+                padding: 0 15px;
+            }
+            
+            .dnav-mobile-menu {
+                right: 10px;
+                left: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+
     <!-- Footer CSS -->
     <style>
         .mf-container {
@@ -50,7 +569,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .mf-gradient-line {
             position: absolute;
             top: 0;
@@ -59,7 +578,7 @@
             height: 3px;
             background: linear-gradient(90deg, #ff6b00, #0077ff, #ff6b00);
         }
-        
+
         .mf-decorative-circle {
             position: absolute;
             width: 100px;
@@ -67,43 +586,43 @@
             border-radius: 50%;
             opacity: 0.1;
         }
-        
+
         .mf-orange-glow {
             background: radial-gradient(circle, #ff6b00, transparent);
             top: 20px;
             right: 10%;
         }
-        
+
         .mf-blue-glow {
             background: radial-gradient(circle, #0077ff, transparent);
             bottom: 20px;
             left: 10%;
         }
-        
+
         .mf-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
-        
+
         .mf-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr;
             gap: 40px;
             margin-bottom: 30px;
         }
-        
+
         .mf-about {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
-        
+
         .mf-logo img {
             max-width: 150px;
             height: auto;
         }
-        
+
         .mf-heading {
             font-size: 1.2rem;
             font-weight: bold;
@@ -111,15 +630,15 @@
             position: relative;
             display: inline-block;
         }
-        
+
         .mf-orange-accent {
             color: #ff6b00;
         }
-        
+
         .mf-blue-accent {
             color: #0077ff;
         }
-        
+
         .mf-underline {
             position: absolute;
             bottom: -5px;
@@ -128,18 +647,18 @@
             height: 2px;
             background: linear-gradient(90deg, #ff6b00, #0077ff);
         }
-        
+
         .mf-description {
             color: #666;
             line-height: 1.6;
             text-align: justify;
         }
-        
+
         .mf-social-links {
             display: flex;
             gap: 10px;
         }
-        
+
         .mf-social-btn {
             display: flex;
             align-items: center;
@@ -150,21 +669,21 @@
             border-radius: 50%;
             transition: transform 0.3s ease;
         }
-        
+
         .mf-social-btn:hover {
             transform: translateY(-2px);
         }
-        
+
         .mf-links-list, .mf-contact-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        
+
         .mf-link-item, .mf-contact-item {
             margin-bottom: 10px;
         }
-        
+
         .mf-link, .mf-contact-link {
             display: flex;
             align-items: center;
@@ -173,18 +692,18 @@
             text-decoration: none;
             transition: color 0.3s ease;
         }
-        
+
         .mf-link:hover, .mf-contact-link:hover {
             color: #ff6b00;
         }
-        
+
         .mf-link-dot {
             width: 6px;
             height: 6px;
             background: #ff6b00;
             border-radius: 50%;
         }
-        
+
         .mf-contact-icon {
             display: flex;
             align-items: center;
@@ -194,29 +713,29 @@
             background: linear-gradient(135deg, #0077ff, #00a0ff);
             border-radius: 50%;
         }
-        
+
         .mf-contact-wrapper {
             display: flex;
             align-items: flex-start;
             gap: 10px;
             color: #666;
         }
-        
+
         .mf-qr-container {
             text-align: center;
         }
-        
+
         .mf-qr-text {
             color: #666;
             margin-bottom: 15px;
             font-size: 0.9rem;
         }
-        
+
         .mf-qr-code img {
             max-width: 120px;
             height: auto;
         }
-        
+
         .mf-copyright {
             display: flex;
             justify-content: space-between;
@@ -225,99 +744,145 @@
             border-top: 1px solid #ddd;
             margin-top: 20px;
         }
-        
+
         .mf-copyright-text {
             color: #666;
             margin: 0;
         }
-        
+
         .mf-legal-links {
             display: flex;
             gap: 20px;
         }
-        
+
         .mf-legal-link {
             color: #666;
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.3s ease;
         }
-        
+
         .mf-legal-link:hover {
             color: #ff6b00;
         }
-        
+
         @media (max-width: 768px) {
             .mf-grid {
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
-            
+
             .mf-copyright {
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
             }
-            
+
             .mf-legal-links {
                 justify-content: center;
             }
         }
     </style>
-    
+
     @stack('styles')
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top py-0">
-        <div class="container shadow-sm">
-            <button
-                class="navbar-toggler me-auto"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav"
-                aria-controls="navbarNav"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <a class="navbar-brand ms-auto" href="{{ route('home') }}">
-                <img src="{{ asset('assets/images/files/logo.png') }}" width="110px" alt="داروگ" />
+    <!-- Modern Navbar HTML Structure -->
+    <nav class="dnav-container">
+        <div class="dnav-top-line"></div>
+        <div class="dnav-content">
+            <a href="{{ route('home') }}" class="dnav-logo">
+                <img src="https://darvag-1.s3.ir-thr-at1.arvanstorage.ir/settings/logo_67b7a8bcf09cf_594984.png" alt="داروگ">
             </a>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">خانه</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">درباره ما</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('services') ? 'active' : '' }}" href="{{ route('services') }}">خدمات</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">تماس با ما</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('projects') ? 'active' : '' }}" href="{{ route('projects') }}">پروژه های ما</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('charity') ? 'active' : '' }}" href="{{ route('charity') }}">پویش نیکی</a>
-                    </li>
-                </ul>
+            <!-- Desktop Menu -->
+            <ul class="dnav-links">
+                <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">
+                    <img src="https://api.iconify.design/solar:home-bold-duotone.svg?color=%230077ff" alt="خانه">
+                    خانه
+                </a></li>
+                <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">
+                    <img src="https://api.iconify.design/solar:info-circle-bold-duotone.svg" alt="درباره ما">
+                    درباره ما
+                </a></li>
+                <li><a href="{{ route('services') }}" class="{{ request()->routeIs('services') ? 'active' : '' }}">
+                    <img src="https://api.iconify.design/solar:widget-bold-duotone.svg" alt="خدمات">
+                    خدمات
+                </a></li>
+                <li><a href="{{ route('projects') }}" class="{{ request()->routeIs('projects') ? 'active' : '' }}">
+                    <img src="https://api.iconify.design/solar:case-minimalistic-bold-duotone.svg" alt="پروژه‌ها">
+                    پروژه‌های ما
+                </a></li>
+                <li><a href="{{ route('blog') }}" class="{{ request()->routeIs('blog') ? 'active' : '' }}">
+                    <img src="https://api.iconify.design/solar:document-bold-duotone.svg" alt="وبلاگ">
+                    وبلاگ
+                </a></li>
+                <li><a href="{{ route('charity') }}" class="dnav-special {{ request()->routeIs('charity') ? 'active' : '' }}">
+                    <img src="https://api.iconify.design/solar:heart-bold-duotone.svg?color=%23ff6b00" alt="پویش نیکی">
+                    پویش نیکی
+                    <span class="dnav-badge">جدید</span>
+                </a></li>
+                <li><a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
+                    <img src="https://api.iconify.design/solar:chat-round-dots-bold-duotone.svg" alt="تماس با ما">
+                    تماس با ما
+                </a></li>
+            </ul>
 
-                <div class="navbar-phone d-lg-only">
-                    <a href="tel:09350801600" class="nav-phone">
-                        <span>09350801600</span>
-                        <i class="bi bi-telephone"></i>
-                    </a>
+            <!-- Phone Button -->
+            <a href="tel:09350801600" class="dnav-phone-button">
+                <div class="dnav-phone-icon">
+                    <img src="https://api.iconify.design/solar:phone-calling-rounded-bold.svg?color=white" width="18" height="18" alt="تلفن">
                 </div>
-            </div>
+                <span class="dnav-phone-text">۰۹۳۵۰۸۰۱۶۰۰</span>
+            </a>
+
+            <!-- Mobile Menu Button -->
+            <button class="dnav-menu-button" id="dnav-toggle-button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </nav>
+
+    <!-- Mobile Menu (Outside the navbar) -->
+    <div class="dnav-mobile-menu">
+        <ul class="dnav-mobile-links">
+            <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">
+                <img src="https://api.iconify.design/solar:home-bold-duotone.svg?color=%230077ff" alt="خانه">
+                خانه
+            </a></li>
+            <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">
+                <img src="https://api.iconify.design/solar:info-circle-bold-duotone.svg" alt="درباره ما">
+                درباره ما
+            </a></li>
+            <li><a href="{{ route('services') }}" class="{{ request()->routeIs('services') ? 'active' : '' }}">
+                <img src="https://api.iconify.design/solar:widget-bold-duotone.svg" alt="خدمات">
+                خدمات
+            </a></li>
+            <li><a href="{{ route('projects') }}" class="{{ request()->routeIs('projects') ? 'active' : '' }}">
+                <img src="https://api.iconify.design/solar:case-minimalistic-bold-duotone.svg" alt="پروژه‌ها">
+                پروژه‌های ما
+            </a></li>
+            <li><a href="{{ route('blog') }}" class="{{ request()->routeIs('blog') ? 'active' : '' }}">
+                <img src="https://api.iconify.design/solar:document-bold-duotone.svg" alt="وبلاگ">
+                وبلاگ
+            </a></li>
+            <li><a href="{{ route('charity') }}" class="dnav-mobile-special {{ request()->routeIs('charity') ? 'active' : '' }}">
+                <img src="https://api.iconify.design/solar:heart-bold-duotone.svg?color=%23ff6b00" alt="پویش نیکی">
+                پویش نیکی <span class="dnav-mobile-badge">جدید</span>
+            </a></li>
+            <li><a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
+                <img src="https://api.iconify.design/solar:chat-round-dots-bold-duotone.svg" alt="تماس با ما">
+                تماس با ما
+            </a></li>
+        </ul>
+
+        <a href="tel:09350801600" class="dnav-mobile-phone animate__animated animate__fadeInUp">
+            <img src="https://api.iconify.design/solar:phone-calling-rounded-bold.svg?color=white" width="20" height="20" alt="تلفن">
+            تماس: ۰۹۳۵۰۸۰۱۶۰۰
+        </a>
+    </div>
 
     <!-- Main Content -->
     <main>
@@ -481,6 +1046,108 @@
     <script src="{{ asset('assets/js/swiper-bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <script src="{{ asset('assets/js/lordicon.js') }}"></script>
+
+    <!-- Modern Navbar JavaScript -->
+    <script>
+        /**
+         * Darvag Modern Navbar JavaScript
+         * Controls navbar functionality and animations
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const navbarContainer = document.querySelector('.dnav-container');
+            const menuButton = document.getElementById('dnav-toggle-button');
+            const mobileMenu = document.querySelector('.dnav-mobile-menu');
+            const desktopLinks = document.querySelectorAll('.dnav-links a');
+            const mobileLinks = document.querySelectorAll('.dnav-mobile-links a');
+            
+            // Toggle Mobile Menu
+            function toggleMenu() {
+                menuButton.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+            }
+            
+            // Setup menu button click handler
+            if (menuButton) {
+                menuButton.addEventListener('click', toggleMenu);
+            }
+            
+            // Active Link Based on Current URL
+            function setActiveLinks() {
+                const currentLocation = window.location.href;
+                
+                function setActive(links) {
+                    links.forEach(link => {
+                        if (link.href === currentLocation) {
+                            link.classList.add('active');
+                        } else if (link.classList.contains('active') && link.href !== currentLocation) {
+                            link.classList.remove('active');
+                        }
+                    });
+                }
+                
+                setActive(desktopLinks);
+                setActive(mobileLinks);
+            }
+            
+            // Run once on page load
+            setActiveLinks();
+            
+            // Scroll Effect
+            function handleScroll() {
+                if (window.scrollY > 50) {
+                    navbarContainer.classList.add('scrolled');
+                } else {
+                    navbarContainer.classList.remove('scrolled');
+                }
+            }
+            
+            // Add scroll event listener
+            window.addEventListener('scroll', handleScroll);
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (mobileMenu && 
+                    mobileMenu.classList.contains('active') && 
+                    !mobileMenu.contains(event.target) && 
+                    !menuButton.contains(event.target)) {
+                    mobileMenu.classList.remove('active');
+                    menuButton.classList.remove('active');
+                }
+            });
+            
+            // Optional: Close mobile menu when clicking on a mobile link
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.remove('active');
+                    menuButton.classList.remove('active');
+                });
+            });
+            
+            // Optional: Add smooth scrolling for hash links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(event) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId !== '#') {
+                        event.preventDefault();
+                        
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                            
+                            // Optional: Close mobile menu after clicking
+                            if (mobileMenu && mobileMenu.classList.contains('active')) {
+                                mobileMenu.classList.remove('active');
+                                menuButton.classList.remove('active');
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 
     @stack('scripts')
 </body>
