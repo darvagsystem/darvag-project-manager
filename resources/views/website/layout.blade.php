@@ -504,13 +504,13 @@
                 padding: 8px 12px;
                 font-size: 14px;
             }
-            
+
             .dnav-phone-button {
                 padding: 6px 15px 6px 6px;
                 margin-right: 10px;
                 font-size: 13px;
             }
-            
+
             .dnav-phone-icon {
                 width: 32px;
                 height: 32px;
@@ -521,11 +521,11 @@
             .dnav-links li a img {
                 margin-left: 5px;
             }
-            
+
             .dnav-phone-text {
                 display: none;
             }
-            
+
             .dnav-phone-button {
                 padding: 8px;
                 border-radius: 50%;
@@ -534,15 +534,15 @@
         }
 
         @media (max-width: 850px) {
-            .dnav-links, 
+            .dnav-links,
             .dnav-phone-button {
                 display: none;
             }
-            
+
             .dnav-menu-button {
                 display: flex;
             }
-            
+
             .dnav-container.scrolled {
                 height: auto;
             }
@@ -552,7 +552,7 @@
             .dnav-content {
                 padding: 0 15px;
             }
-            
+
             .dnav-mobile-menu {
                 right: 10px;
                 left: 10px;
@@ -1060,22 +1060,22 @@
             const mobileMenu = document.querySelector('.dnav-mobile-menu');
             const desktopLinks = document.querySelectorAll('.dnav-links a');
             const mobileLinks = document.querySelectorAll('.dnav-mobile-links a');
-            
+
             // Toggle Mobile Menu
             function toggleMenu() {
                 menuButton.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             }
-            
+
             // Setup menu button click handler
             if (menuButton) {
                 menuButton.addEventListener('click', toggleMenu);
             }
-            
+
             // Active Link Based on Current URL
             function setActiveLinks() {
                 const currentLocation = window.location.href;
-                
+
                 function setActive(links) {
                     links.forEach(link => {
                         if (link.href === currentLocation) {
@@ -1085,14 +1085,14 @@
                         }
                     });
                 }
-                
+
                 setActive(desktopLinks);
                 setActive(mobileLinks);
             }
-            
+
             // Run once on page load
             setActiveLinks();
-            
+
             // Scroll Effect
             function handleScroll() {
                 if (window.scrollY > 50) {
@@ -1101,21 +1101,21 @@
                     navbarContainer.classList.remove('scrolled');
                 }
             }
-            
+
             // Add scroll event listener
             window.addEventListener('scroll', handleScroll);
-            
+
             // Close mobile menu when clicking outside
             document.addEventListener('click', function(event) {
-                if (mobileMenu && 
-                    mobileMenu.classList.contains('active') && 
-                    !mobileMenu.contains(event.target) && 
+                if (mobileMenu &&
+                    mobileMenu.classList.contains('active') &&
+                    !mobileMenu.contains(event.target) &&
                     !menuButton.contains(event.target)) {
                     mobileMenu.classList.remove('active');
                     menuButton.classList.remove('active');
                 }
             });
-            
+
             // Optional: Close mobile menu when clicking on a mobile link
             mobileLinks.forEach(link => {
                 link.addEventListener('click', function() {
@@ -1123,20 +1123,20 @@
                     menuButton.classList.remove('active');
                 });
             });
-            
+
             // Optional: Add smooth scrolling for hash links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(event) {
                     const targetId = this.getAttribute('href');
                     if (targetId !== '#') {
                         event.preventDefault();
-                        
+
                         const targetElement = document.querySelector(targetId);
                         if (targetElement) {
                             targetElement.scrollIntoView({
                                 behavior: 'smooth'
                             });
-                            
+
                             // Optional: Close mobile menu after clicking
                             if (mobileMenu && mobileMenu.classList.contains('active')) {
                                 mobileMenu.classList.remove('active');
