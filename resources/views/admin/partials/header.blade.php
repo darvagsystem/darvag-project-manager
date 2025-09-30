@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('admin.logout') }}" style="display: inline;">
+        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
             @csrf
             <button type="submit" class="header-logout" title="خروج از سیستم">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
