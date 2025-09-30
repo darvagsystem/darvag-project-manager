@@ -917,16 +917,16 @@
         margin: 10px;
         max-height: 95vh;
     }
-    
+
     .profile-header {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .profile-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .modal-footer {
         flex-direction: column;
     }
@@ -967,13 +967,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function showEmployeeProfile(employeeId) {
     const modal = document.getElementById('employeeProfileModal');
     const content = document.getElementById('profileContent');
-    
+
     // Show modal
     modal.style.display = 'flex';
-    
+
     // Show loading
     content.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
-    
+
     // Fetch employee data
     fetch(`/employees/${employeeId}`)
         .then(response => response.text())
@@ -981,7 +981,7 @@ function showEmployeeProfile(employeeId) {
             // Parse the response to extract the employee data
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-            
+
             // Find employee data from the current page
             const employeeRow = document.querySelector(`[data-employee-id="${employeeId}"]`);
             if (employeeRow) {
@@ -993,12 +993,12 @@ function showEmployeeProfile(employeeId) {
                 const maritalStatus = employeeRow.querySelector('.marital-status').textContent;
                 const education = employeeRow.querySelector('.education-level').textContent;
                 const avatar = employeeRow.querySelector('.employee-avatar img')?.src || '';
-                
+
                 // Build profile content
                 let profileHtml = `
                     <div class="profile-header">
                         <div class="profile-avatar">
-                            ${avatar ? 
+                            ${avatar ?
                                 `<img src="${avatar}" alt="${employeeName}">` :
                                 `<div class="no-avatar"><i class="fas fa-user"></i></div>`
                             }
@@ -1009,7 +1009,7 @@ function showEmployeeProfile(employeeId) {
                             <span class="employee-status ${getStatusClass(status)}">${status}</span>
                         </div>
                     </div>
-                    
+
                     <div class="profile-section">
                         <h4 style="margin-bottom: 16px; color: var(--text-dark);">اطلاعات شخصی</h4>
                         <div class="profile-grid">
@@ -1024,7 +1024,7 @@ function showEmployeeProfile(employeeId) {
                                     <div class="profile-item-value">${nationalCode}</div>
                                 </div>
                             </div>
-                            
+
                             <div class="profile-item">
                                 <div class="profile-item-icon">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1036,7 +1036,7 @@ function showEmployeeProfile(employeeId) {
                                     <div class="profile-item-value">${birthDate}</div>
                                 </div>
                             </div>
-                            
+
                             <div class="profile-item">
                                 <div class="profile-item-icon">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1048,7 +1048,7 @@ function showEmployeeProfile(employeeId) {
                                     <div class="profile-item-value">${maritalStatus}</div>
                                 </div>
                             </div>
-                            
+
                             <div class="profile-item">
                                 <div class="profile-item-icon">
                                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1063,7 +1063,7 @@ function showEmployeeProfile(employeeId) {
                         </div>
                     </div>
                 `;
-                
+
                 // Add contact info if available
                 const contactItems = employeeRow.querySelectorAll('.contact-item');
                 if (contactItems.length > 0) {
@@ -1072,17 +1072,17 @@ function showEmployeeProfile(employeeId) {
                             <h4 style="margin-bottom: 16px; color: var(--text-dark);">اطلاعات تماس</h4>
                             <div class="profile-grid">
                     `;
-                    
+
                     contactItems.forEach(item => {
                         const link = item.querySelector('a');
                         const text = link ? link.textContent : item.textContent;
                         const isPhone = item.querySelector('svg path[d*="3 5a2"]') !== null;
                         const isMobile = item.querySelector('svg path[d*="12 18h"]') !== null;
                         const isEmail = item.querySelector('svg path[d*="3 8l7.89"]') !== null;
-                        
+
                         let label = 'تماس';
                         let icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>';
-                        
+
                         if (isPhone) {
                             label = 'تلفن ثابت';
                         } else if (isMobile) {
@@ -1092,7 +1092,7 @@ function showEmployeeProfile(employeeId) {
                             label = 'ایمیل';
                             icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>';
                         }
-                        
+
                         profileHtml += `
                             <div class="profile-item">
                                 <div class="profile-item-icon">
@@ -1107,10 +1107,10 @@ function showEmployeeProfile(employeeId) {
                             </div>
                         `;
                     });
-                    
+
                     profileHtml += '</div></div>';
                 }
-                
+
                 content.innerHTML = profileHtml;
             } else {
                 content.innerHTML = '<p>خطا در بارگذاری اطلاعات کارمند</p>';
@@ -1153,7 +1153,7 @@ function deleteEmployee() {
 function getStatusClass(status) {
     const statusMap = {
         'فعال': 'status-active',
-        'مرخصی': 'status-vacation', 
+        'مرخصی': 'status-vacation',
         'غیرفعال': 'status-inactive',
         'خاتمه همکاری': 'status-terminated'
     };

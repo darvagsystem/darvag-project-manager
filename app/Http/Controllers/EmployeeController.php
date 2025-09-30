@@ -194,7 +194,45 @@ class EmployeeController extends Controller
     public function show($id)
     {
         $employee = Employee::findOrFail($id);
-        return view('admin.employees.show', compact('employee'));
+
+        // آمار حضور و غیاب
+        $attendanceStats = DB::table('attendances')
+            ->where('employee_id', $id)
+            ->selectRaw('
+                COUNT(*) as total_days,
+                SUM(CASE WHEN status = "present" THEN 1 ELSE 0 END) as present_days,
+                SUM(CASE WHEN status = "absent" THEN 1 ELSE 0 END) as absent_days,
+                SUM(CASE WHEN status = "late" THEN 1 ELSE 0 END) as late_days,
+                SUM(CASE WHEN status = "half_day" THEN 1 ELSE 0 END) as half_days
+            ')
+            ->first();
+
+        // پروژه‌های فعال
+        $activeProjects = $employee->projects()->where('status', 'active')->get();
+
+        // آخرین حضور و غیاب‌ها
+        $recentAttendances = DB::table('attendances')
+            ->join('projects', 'attendances.project_id', '=', 'projects.id')
+            ->where('attendances.employee_id', $id)
+            ->orderBy('attendances.attendance_date', 'desc')
+            ->limit(10)
+            ->select('attendances.*', 'projects.name as project_name')
+            ->get();
+
+        // حساب‌های بانکی
+        $bankAccounts = $employee->bankAccounts;
+
+        // مدارک
+        $documents = $employee->documents;
+
+        return view('admin.employees.show', compact(
+            'employee',
+            'attendanceStats',
+            'activeProjects',
+            'recentAttendances',
+            'bankAccounts',
+            'documents'
+        ));
     }
 
     /**

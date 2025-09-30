@@ -208,25 +208,23 @@
                         <!-- Files Tab -->
                         <div class="tab-pane fade" id="files" role="tabpanel">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">فایل‌های پروژه</h6>
+                                <h6 class="mb-0">ساختار پوشه‌های پروژه</h6>
                                 <div>
                                     <button type="button" class="btn btn-sm btn-outline-primary me-2" id="copyStructureBtn">
                                         <i class="mdi mdi-content-copy me-1"></i>
                                         کپی ساختار از پروژه دیگر
                                     </button>
-                                    <a href="{{ route('projects.filemanager', $project->id) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('projects.filemanager.index', $project->id) }}" class="btn btn-sm btn-primary">
                                         <i class="mdi mdi-folder-open me-1"></i>
                                         باز کردن فایل منیجر
                                     </a>
                                 </div>
                             </div>
 
-                            <!-- File Manager Preview -->
-                            <div id="fileManagerPreview">
-                                <div class="text-center py-4">
-                                    <i class="mdi mdi-folder-open" style="font-size: 48px; color: #6c757d;"></i>
-                                    <h6 class="mt-2">فایل منیجر پروژه</h6>
-                                    <p class="text-muted">برای مدیریت فایل‌های پروژه روی دکمه بالا کلیک کنید</p>
+                            <!-- Folder Structure -->
+                            <div class="row">
+                                <div class="col-12">
+                                    @livewire('project-folder-structure', ['projectId' => $project->id])
                                 </div>
                             </div>
                         </div>
@@ -296,7 +294,7 @@
                         <div class="tab-pane fade" id="attendance" role="tabpanel">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h6 class="mb-0">حضور و غیاب</h6>
-                                <a href="{{ route('projects.attendance.index', $project) }}" class="btn btn-sm btn-primary">
+                                <a href="{{ route('admin.projects.attendance', $project) }}" class="btn btn-sm btn-primary">
                                     <i class="mdi mdi-clock-plus me-1"></i>
                                     مدیریت حضور و غیاب
                                 </a>
@@ -352,7 +350,162 @@
 </div>
 @endsection
 
+@push('styles')
+@livewireStyles
+<style>
+.folder-structure-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.folder-tree {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.folder-item {
+    margin-bottom: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.folder-item:hover {
+    background: #f8f9fa;
+}
+
+.folder-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.folder-header:hover {
+    background: #e3f2fd;
+    border-color: #2196f3;
+    transform: translateX(4px);
+}
+
+.folder-header.expanded {
+    background: #e8f5e8;
+    border-color: #4caf50;
+}
+
+.folder-icon {
+    font-size: 20px;
+    margin-left: 12px;
+    color: #ff9800;
+    transition: transform 0.3s ease;
+}
+
+.folder-header.expanded .folder-icon {
+    transform: rotate(90deg);
+}
+
+.folder-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.folder-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.folder-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: #666;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-icon {
+    font-size: 14px;
+}
+
+.folder-children {
+    margin-right: 32px;
+    border-right: 2px solid #e0e0e0;
+    padding-right: 16px;
+    margin-top: 8px;
+}
+
+.folder-children .folder-item {
+    margin-bottom: 6px;
+}
+
+.empty-structure {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+}
+
+.empty-structure h6 {
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.empty-structure p {
+    margin-bottom: 20px;
+}
+
+.chevron-icon {
+    font-size: 16px;
+    color: #999;
+    transition: transform 0.3s ease;
+}
+
+.folder-header.expanded .chevron-icon {
+    transform: rotate(90deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .folder-structure-container {
+        padding: 15px;
+    }
+
+    .folder-header {
+        padding: 10px 12px;
+    }
+
+    .folder-name {
+        font-size: 14px;
+    }
+
+    .folder-stats {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .folder-children {
+        margin-right: 20px;
+        padding-right: 12px;
+    }
+}
+</style>
+@endpush
+
 @push('scripts')
+@livewireScripts
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Copy Structure Button

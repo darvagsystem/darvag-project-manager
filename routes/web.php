@@ -1,190 +1,208 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\BankController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\EmployeeBankAccountController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\ProjectEmployeeController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ClientContactController;
-use App\Http\Controllers\HelpController;
-use App\Http\Controllers\FileManagerController;
-use App\Http\Controllers\ProjectTemplateController;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// Admin routes
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
-    Route::get('/services', [AdminController::class, 'services'])->name('services');
-    Route::get('/blog', [AdminController::class, 'blog'])->name('blog');
-    Route::get('/gallery', [AdminController::class, 'gallery'])->name('gallery');
-
-    Route::get('/users', [AdminController::class, 'users'])->name('users');
-    Route::get('/roles', [AdminController::class, 'roles'])->name('roles');
-
-    // Settings routes
-    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
-    Route::get('/settings/company', [AdminController::class, 'companySettings'])->name('settings.company');
-    Route::post('/settings/company', [AdminController::class, 'settingsUpdate'])->name('settings.company.update');
-
-    // Banks management routes
-    Route::get('/settings/banks', [BankController::class, 'index'])->name('settings.banks');
-    Route::get('/settings/banks/create', [BankController::class, 'create'])->name('settings.banks.create');
-    Route::post('/settings/banks', [BankController::class, 'store'])->name('settings.banks.store');
-    Route::get('/settings/banks/{id}/edit', [BankController::class, 'edit'])->name('settings.banks.edit');
-    Route::put('/settings/banks/{id}', [BankController::class, 'update'])->name('settings.banks.update');
-    Route::delete('/settings/banks/{id}', [BankController::class, 'destroy'])->name('settings.banks.destroy');
-    Route::post('/settings/banks/seed', [BankController::class, 'seed'])->name('settings.banks.seed');
-
-    Route::get('/backup', [AdminController::class, 'backup'])->name('backup');
-    Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
-
-    // API routes for dashboard
-    Route::get('/api/stats', [AdminController::class, 'getStats'])->name('api.stats');
-
-    // Help routes
-    Route::get('/help', [HelpController::class, 'index'])->name('help');
-    Route::get('/help/getting-started', [HelpController::class, 'gettingStarted'])->name('help.getting-started');
-    Route::get('/help/dashboard', [HelpController::class, 'dashboard'])->name('help.dashboard');
-    Route::get('/help/employees', [HelpController::class, 'employees'])->name('help.employees');
-    Route::get('/help/projects', [HelpController::class, 'projects'])->name('help.projects');
-    Route::get('/help/clients', [HelpController::class, 'clients'])->name('help.clients');
-    Route::get('/help/attendance', [HelpController::class, 'attendance'])->name('help.attendance');
-    Route::get('/help/settings', [HelpController::class, 'settings'])->name('help.settings');
-    Route::get('/help/bank-accounts', [HelpController::class, 'bankAccounts'])->name('help.bank-accounts');
-    Route::get('/help/project-employees', [HelpController::class, 'projectEmployees'])->name('help.project-employees');
-
-    // Project Templates routes
-    Route::get('/project-templates', [ProjectTemplateController::class, 'index'])->name('project-templates.index');
-    Route::get('/project-templates/create', [ProjectTemplateController::class, 'create'])->name('project-templates.create');
-    Route::post('/project-templates', [ProjectTemplateController::class, 'store'])->name('project-templates.store');
-    Route::get('/project-templates/{id}', [ProjectTemplateController::class, 'show'])->name('project-templates.show');
-    Route::get('/project-templates/{id}/edit', [ProjectTemplateController::class, 'edit'])->name('project-templates.edit');
-    Route::put('/project-templates/{id}', [ProjectTemplateController::class, 'update'])->name('project-templates.update');
-    Route::delete('/project-templates/{id}', [ProjectTemplateController::class, 'destroy'])->name('project-templates.destroy');
-    Route::post('/project-templates/apply', [ProjectTemplateController::class, 'applyToProject'])->name('project-templates.apply');
-    Route::post('/project-templates/create-from-project', [ProjectTemplateController::class, 'createFromProject'])->name('project-templates.create-from-project');
-    Route::get('/api/project-templates', [ProjectTemplateController::class, 'getTemplatesForProject'])->name('api.project-templates');
-    Route::get('/api/projects', function() {
-        $projects = \App\Models\Project::select('id', 'name')->get();
-        return response()->json(['projects' => $projects]);
-    })->name('api.projects');
-
-    // Logout route
-    Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
-});
-
-// Employee routes (separate resource routes)
-Route::resource('employees', EmployeeController::class);
-Route::get('/employees/{id}/bank-accounts', [EmployeeBankAccountController::class, 'index'])->name('employees.bank-accounts');
-Route::get('/employees/{id}/documents', [EmployeeController::class, 'documents'])->name('employees.documents');
-Route::get('/employees-test', [EmployeeController::class, 'test'])->name('employees.test');
-Route::post('/employees-test-store', [EmployeeController::class, 'testStore'])->name('employees.test-store');
-Route::get('/employees-test-form', [EmployeeController::class, 'testForm'])->name('employees.test-form');
-
-// Employee Bank Account routes
-Route::get('/employees/{id}/bank-accounts', [EmployeeBankAccountController::class, 'index'])->name('employees.bank-accounts');
-Route::post('/employees/{id}/bank-accounts', [EmployeeBankAccountController::class, 'store'])->name('employees.bank-accounts.store');
-Route::get('/employee-bank-accounts/{id}', [EmployeeBankAccountController::class, 'show'])->name('employee-bank-accounts.show');
-Route::put('/employee-bank-accounts/{id}', [EmployeeBankAccountController::class, 'update'])->name('employee-bank-accounts.update');
-Route::delete('/employee-bank-accounts/{id}', [EmployeeBankAccountController::class, 'destroy'])->name('employee-bank-accounts.destroy');
-Route::post('/employee-bank-accounts/{id}/set-default', [EmployeeBankAccountController::class, 'setAsDefault'])->name('employee-bank-accounts.set-default');
-Route::post('/employee-bank-accounts/{id}/toggle-status', [EmployeeBankAccountController::class, 'toggleStatus'])->name('employee-bank-accounts.toggle-status');
-Route::get('/employees/{id}/default-account', [EmployeeBankAccountController::class, 'getDefaultAccount'])->name('employees.default-account');
-Route::post('/validate-iban', [EmployeeBankAccountController::class, 'validateIban'])->name('validate-iban');
-Route::post('/validate-card-number', [EmployeeBankAccountController::class, 'validateCardNumber'])->name('validate-card-number');
-
-// Project routes (separate resource routes)
-Route::resource('projects', ProjectController::class);
-
-// Project Employee routes
-Route::get('/projects/{project}/employees', [ProjectEmployeeController::class, 'index'])->name('projects.employees.index');
-Route::get('/projects/{project}/employees/create', [ProjectEmployeeController::class, 'create'])->name('projects.employees.create');
-Route::post('/projects/{project}/employees', [ProjectEmployeeController::class, 'store'])->name('projects.employees.store');
-Route::get('/projects/{project}/employees/{projectEmployee}/edit', [ProjectEmployeeController::class, 'edit'])->name('projects.employees.edit');
-Route::put('/projects/{project}/employees/{projectEmployee}', [ProjectEmployeeController::class, 'update'])->name('projects.employees.update');
-Route::delete('/projects/{project}/employees/{projectEmployee}', [ProjectEmployeeController::class, 'destroy'])->name('projects.employees.destroy');
-Route::post('/projects/{project}/employees/{projectEmployee}/toggle-status', [ProjectEmployeeController::class, 'toggleStatus'])->name('projects.employees.toggle-status');
-
-// Attendance routes
-Route::get('/projects/{project}/attendance', [AttendanceController::class, 'index'])->name('projects.attendance.index');
-Route::get('/projects/{project}/attendance/create', [AttendanceController::class, 'create'])->name('projects.attendance.create');
-Route::post('/projects/{project}/attendance', [AttendanceController::class, 'store'])->name('projects.attendance.store');
-Route::get('/projects/{project}/attendance/{date}', [AttendanceController::class, 'show'])->name('projects.attendance.show');
-Route::put('/projects/{project}/attendance/{attendance}', [AttendanceController::class, 'update'])->name('projects.attendance.update');
-Route::delete('/projects/{project}/attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('projects.attendance.destroy');
-
-// Client routes (separate resource routes)
-Route::resource('clients', ClientController::class);
-
-// Client Contact routes
-Route::get('/clients/{client}/contacts', [ClientContactController::class, 'index'])->name('clients.contacts.index');
-Route::get('/clients/{client}/contacts/create', [ClientContactController::class, 'create'])->name('clients.contacts.create');
-Route::post('/clients/{client}/contacts', [ClientContactController::class, 'store'])->name('clients.contacts.store');
-Route::get('/clients/{client}/contacts/{contact}/edit', [ClientContactController::class, 'edit'])->name('clients.contacts.edit');
-Route::put('/clients/{client}/contacts/{contact}', [ClientContactController::class, 'update'])->name('clients.contacts.update');
-Route::delete('/clients/{client}/contacts/{contact}', [ClientContactController::class, 'destroy'])->name('clients.contacts.destroy');
-
-
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Models\User;
+use App\Http\Controllers\{
+    AuthController,
+    DashboardController,
+    AdminController,
+    BankController,
+    EmployeeController,
+    EmployeeBankAccountController,
+    ProjectController,
+    ProjectEmployeeController,
+    AttendanceController,
+    ClientController,
+    ClientContactController,
+    HelpController,
+    FileManagerController,
+    ProjectTemplateController
+};
+use App\Models\{User, Project};
 use Illuminate\Support\Facades\Hash;
 
+// Redirect root to login
 Route::get('/', function () {
     return redirect('/login');
 });
 
-// مسیر تستی برای ایجاد کاربر
-Route::get('/test', function() {
-    $user = User::create([
-        'name' => 'کاربر تست',
-        'username' => 'mosayeb',
-        'email' => 'test@example.com',
-        'password' => Hash::make('123456'),
-    ]);
-
-    return "کاربر با موفقیت ایجاد شد: " . $user->name . " - نام کاربری: " . $user->username;
+// Authentication Routes (Public)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
-// مسیرهای احراز هویت
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Logout (Authenticated)
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// مسیرهای داشبورد
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
-
-// مسیرهای مدیریت ادارات
+// Protected Routes
 Route::middleware('auth')->group(function () {
 
-    // File Manager routes
-    Route::get('/file-manager', [FileManagerController::class, 'index'])->name('file-manager.index');
-    Route::get('/file-manager/files', [FileManagerController::class, 'getFiles'])->name('file-manager.files');
-    Route::post('/file-manager/create-folder', [FileManagerController::class, 'createFolder'])->name('file-manager.create-folder');
-    Route::post('/file-manager/upload', [FileManagerController::class, 'upload'])->name('file-manager.upload');
-    Route::get('/file-manager/download/{id}', [FileManagerController::class, 'download'])->name('file-manager.download');
-    Route::get('/file-manager/thumbnail/{id}', [FileManagerController::class, 'thumbnail'])->name('file-manager.thumbnail');
-    Route::put('/file-manager/{id}/rename', [FileManagerController::class, 'rename'])->name('file-manager.rename');
-    Route::delete('/file-manager/delete', [FileManagerController::class, 'delete'])->name('file-manager.delete');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Project File Manager routes
-    Route::get('/projects/{project}/filemanager', [FileManagerController::class, 'projectFiles'])->name('projects.filemanager');
-    Route::get('/projects/{project}/filemanager/files', [FileManagerController::class, 'getFiles'])->name('projects.filemanager.files');
-    Route::post('/projects/{project}/filemanager/create-folder', [FileManagerController::class, 'createFolder'])->name('projects.filemanager.create-folder');
-    Route::post('/projects/{project}/filemanager/upload', [FileManagerController::class, 'upload'])->name('projects.filemanager.upload');
-    Route::get('/projects/{project}/filemanager/download/{id}', [FileManagerController::class, 'download'])->name('projects.filemanager.download');
-    Route::get('/projects/{project}/filemanager/thumbnail/{id}', [FileManagerController::class, 'thumbnail'])->name('projects.filemanager.thumbnail');
-    Route::put('/projects/{project}/filemanager/{id}/rename', [FileManagerController::class, 'rename'])->name('projects.filemanager.rename');
-    Route::delete('/projects/{project}/filemanager/delete', [FileManagerController::class, 'delete'])->name('projects.filemanager.delete');
+    // Employee Routes
+    Route::resource('employees', EmployeeController::class);
+    Route::prefix('employees/{employee}')->name('employees.')->group(function () {
+        Route::get('/bank-accounts', [EmployeeBankAccountController::class, 'index'])->name('bank-accounts');
+        Route::post('/bank-accounts', [EmployeeBankAccountController::class, 'store'])->name('bank-accounts.store');
+        Route::get('/documents', [EmployeeController::class, 'documents'])->name('documents');
+        Route::get('/default-account', [EmployeeBankAccountController::class, 'getDefaultAccount'])->name('default-account');
+    });
+
+    // Employee Bank Account Routes
+    Route::prefix('employee-bank-accounts')->name('employee-bank-accounts.')->group(function () {
+        Route::get('/{account}', [EmployeeBankAccountController::class, 'show'])->name('show');
+        Route::put('/{account}', [EmployeeBankAccountController::class, 'update'])->name('update');
+        Route::delete('/{account}', [EmployeeBankAccountController::class, 'destroy'])->name('destroy');
+        Route::post('/{account}/set-default', [EmployeeBankAccountController::class, 'setAsDefault'])->name('set-default');
+        Route::post('/{account}/toggle-status', [EmployeeBankAccountController::class, 'toggleStatus'])->name('toggle-status');
+    });
+
+    // Validation Routes
+    Route::post('/validate-iban', [EmployeeBankAccountController::class, 'validateIban'])->name('validate-iban');
+    Route::post('/validate-card-number', [EmployeeBankAccountController::class, 'validateCardNumber'])->name('validate-card-number');
+
+    // Client Routes
+    Route::resource('clients', ClientController::class);
+    Route::resource('clients.contacts', ClientContactController::class)->except(['index']);
+    Route::get('/clients/{client}/contacts', [ClientContactController::class, 'index'])->name('clients.contacts.index');
+
+    // Project Routes
+    Route::resource('projects', ProjectController::class);
+
+    // Project Related Routes
+    Route::prefix('projects/{project}')->name('projects.')->group(function () {
+        // Project Employees
+        Route::resource('employees', ProjectEmployeeController::class)->except(['show']);
+        Route::post('/employees/{projectEmployee}/toggle-status', [ProjectEmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
+
+        // Attendance
+        Route::resource('attendance', AttendanceController::class)->except(['edit']);
+        Route::get('/attendance/{date}', [AttendanceController::class, 'show'])->name('attendance.show');
+        Route::get('/attendance', function(\App\Models\Project $project) {
+            return view('admin.attendance.project', compact('project'));
+        })->name('attendance');
+
+        // File Manager
+        Route::prefix('filemanager')->name('filemanager.')->group(function () {
+            Route::get('/', function(Project $project) {
+                return view('admin.file-manager.project-livewire', compact('project'));
+            })->name('index');
+            Route::get('/files', [FileManagerController::class, 'getFiles'])->name('files');
+            Route::post('/create-folder', [FileManagerController::class, 'createFolder'])->name('create-folder');
+            Route::post('/upload', [FileManagerController::class, 'upload'])->name('upload');
+            Route::get('/thumbnail/{file}', [FileManagerController::class, 'thumbnail'])->name('thumbnail');
+            Route::get('/download/{file}', [FileManagerController::class, 'download'])->name('download');
+            Route::put('/{file}/rename', [FileManagerController::class, 'rename'])->name('rename');
+            Route::delete('/delete', [FileManagerController::class, 'delete'])->name('delete');
+
+            // Tag routes
+            Route::get('/tags', [FileManagerController::class, 'getTags'])->name('tags');
+            Route::post('/{file}/tags', [FileManagerController::class, 'addTag'])->name('add-tag');
+            Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
+            Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
+        });
+    });
+
+    // General File Manager
+    Route::prefix('file-manager')->name('file-manager.')->group(function () {
+        Route::get('/', function() {
+            return view('admin.file-manager.livewire');
+        })->name('index');
+        Route::get('/files', [FileManagerController::class, 'getFiles'])->name('files');
+        Route::post('/create-folder', [FileManagerController::class, 'createFolder'])->name('create-folder');
+        Route::post('/upload', [FileManagerController::class, 'upload'])->name('upload');
+        Route::get('/thumbnail/{file}', [FileManagerController::class, 'thumbnail'])->name('thumbnail');
+        Route::get('/download/{file}', [FileManagerController::class, 'download'])->name('download');
+        Route::put('/{file}/rename', [FileManagerController::class, 'rename'])->name('rename');
+        Route::delete('/delete', [FileManagerController::class, 'delete'])->name('delete');
+
+        // Tag routes
+        Route::get('/tags', [FileManagerController::class, 'getTags'])->name('tags');
+        Route::post('/{file}/tags', [FileManagerController::class, 'addTag'])->name('add-tag');
+        Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
+        Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
+    });
+
+    // Tags Management
+    Route::resource('tags', \App\Http\Controllers\TagController::class);
+    Route::get('/tags-api', [\App\Http\Controllers\TagController::class, 'getTags'])->name('tags.api');
+    Route::get('/tags/{tag}/files', [\App\Http\Controllers\TagController::class, 'files'])->name('tags.files');
+    Route::post('/tags/{tag}/bulk-download', [\App\Http\Controllers\TagController::class, 'bulkDownload'])->name('tags.bulk-download');
+    Route::post('/tags/{tag}/merge-pdf', [\App\Http\Controllers\TagController::class, 'mergePdf'])->name('tags.merge-pdf');
+
+    // Tasks Management
+    Route::resource('tasks', \App\Http\Controllers\TaskController::class);
+    Route::get('/tasks-dashboard', [\App\Http\Controllers\TaskController::class, 'dashboard'])->name('tasks.dashboard');
+    Route::get('/my-tasks', [\App\Http\Controllers\TaskController::class, 'myTasks'])->name('tasks.my-tasks');
+    Route::post('/tasks/{task}/update-status', [\App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.update-status');
+
+    // Attendance Management
+    Route::get('/attendance', function() {
+        return view('admin.attendance.index');
+    })->name('attendance.index');
+
+    // Livewire File Manager
+    Route::get('/livewire-file-manager', function() {
+        return view('admin.file-manager.livewire');
+    })->name('livewire-file-manager');
+
+    // Help
+    Route::get('/help', [HelpController::class, 'index'])->name('help');
+    Route::prefix('help')->name('help.')->group(function () {
+        Route::get('/', [HelpController::class, 'index'])->name('index');
+        Route::get('/getting-started', [HelpController::class, 'gettingStarted'])->name('getting-started');
+        Route::get('/dashboard', [HelpController::class, 'dashboard'])->name('dashboard');
+        Route::get('/employees', [HelpController::class, 'employees'])->name('employees');
+        Route::get('/projects', [HelpController::class, 'projects'])->name('projects');
+        Route::get('/clients', [HelpController::class, 'clients'])->name('clients');
+        Route::get('/attendance', [HelpController::class, 'attendance'])->name('attendance');
+        Route::get('/settings', [HelpController::class, 'settings'])->name('settings');
+        Route::get('/bank-accounts', [HelpController::class, 'bankAccounts'])->name('bank-accounts');
+        Route::get('/project-employees', [HelpController::class, 'projectEmployees'])->name('project-employees');
+    });
+
+    // Settings
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [AdminController::class, 'settings'])->name('index');
+        Route::get('/company', [AdminController::class, 'companySettings'])->name('company');
+        Route::post('/company', [AdminController::class, 'settingsUpdate'])->name('company.update');
+
+        // Banks
+        Route::resource('banks', BankController::class);
+        Route::post('/banks/seed', [BankController::class, 'seed'])->name('banks.seed');
+    });
+
+    // Project Templates
+    Route::resource('project-templates', ProjectTemplateController::class);
+    Route::post('/project-templates/apply', [ProjectTemplateController::class, 'applyToProject'])->name('project-templates.apply');
+    Route::post('/project-templates/create-from-project', [ProjectTemplateController::class, 'createFromProject'])->name('project-templates.create-from-project');
+
+    // Services
+    Route::get('/services', [AdminController::class, 'services'])->name('services');
+
+    // Blog
+    Route::get('/blog', [AdminController::class, 'blog'])->name('blog');
+
+    // Gallery
+    Route::get('/gallery', [AdminController::class, 'gallery'])->name('gallery');
+
+    // API Routes
+    Route::prefix('api')->name('api.')->group(function () {
+        Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
+        Route::get('/project-templates', [ProjectTemplateController::class, 'getTemplatesForProject'])->name('project-templates');
+        Route::get('/projects', function() {
+            return response()->json(['projects' => Project::select('id', 'name')->get()]);
+        })->name('projects');
+    });
+
+    // System
+    Route::get('/backup', [AdminController::class, 'backup'])->name('backup');
+    Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
+
 });
 
+// Route Model Binding
+Route::model('employee', \App\Models\Employee::class);
+Route::model('client', \App\Models\Client::class);
+Route::model('file', \App\Models\FileManager::class);

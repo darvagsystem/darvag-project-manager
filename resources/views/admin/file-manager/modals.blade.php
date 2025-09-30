@@ -29,6 +29,19 @@
                             <option value="#20c997">فیروزه‌ای</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">تگ‌ها (اختیاری)</label>
+                        <div id="folderTags" class="tag-selection">
+                            @foreach(\App\Models\Tag::all() as $tag)
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $tag->id }}" id="folder_tag_{{ $tag->id }}">
+                                    <label class="form-check-label" for="folder_tag_{{ $tag->id }}" style="color: {{ $tag->color }}">
+                                        {{ $tag->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
@@ -57,6 +70,19 @@
                     <div class="mb-3">
                         <label for="fileDescription" class="form-label">توضیحات (اختیاری)</label>
                         <textarea class="form-control" id="fileDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">تگ‌ها (اختیاری)</label>
+                        <div id="fileTags" class="tag-selection">
+                            @foreach(\App\Models\Tag::all() as $tag)
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $tag->id }}" id="file_tag_{{ $tag->id }}">
+                                    <label class="form-check-label" for="file_tag_{{ $tag->id }}" style="color: {{ $tag->color }}">
+                                        {{ $tag->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                     <div id="filePreview" class="mb-3" style="display: none;">
                         <h6>فایل‌های انتخاب شده:</h6>

@@ -143,10 +143,47 @@
 
 .file-icon.image-thumbnail img {
     transition: transform 0.2s ease;
+    cursor: default; /* تصاویر thumbnail قابل کلیک نیستند */
 }
 
 .file-item:hover .file-icon.image-thumbnail img {
     transform: scale(1.05);
+}
+
+/* استایل لینک دانلود */
+.file-download-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.file-download-link:hover {
+    color: inherit;
+    text-decoration: none;
+    background: rgba(0, 123, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.file-download-link:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* حذف استایل‌های قبلی که دیگر لازم نیست */
+.file-item {
+    position: relative;
+}
+
+.file-item .file-name,
+.file-item .file-size {
+    pointer-events: none; /* جلوگیری از تداخل با لینک */
 }
 
 .folder-icon {
@@ -165,6 +202,66 @@
     font-size: 10px;
     color: #6c757d;
     margin-top: 2px;
+}
+
+/* Tags */
+.file-tags {
+    margin-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.tag {
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.file-item:hover .file-actions {
+    opacity: 1;
+}
+
+.file-actions .btn {
+    padding: 2px 6px;
+    font-size: 10px;
+}
+
+/* Tag Selection */
+.tag-selection {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 10px;
+    background: #f8f9fa;
+}
+
+.tag-selection .form-check {
+    margin-bottom: 8px;
+}
+
+.tag-selection .form-check-label {
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.tag-selection .form-check-input {
+    margin-right: 8px;
 }
 
 .empty-folder {
@@ -722,6 +819,25 @@
                         <i class="mdi mdi-magnify"></i>
                     </button>
                 </div>
+
+                <!-- Tag Filter -->
+                <div class="toolbar-group">
+                    <select class="form-select form-select-sm" id="tagFilter">
+                        <option value="">همه تگ‌ها</option>
+                        @foreach(\App\Models\Tag::all() as $tag)
+                            <option value="{{ $tag->id }}" {{ (isset($selectedTag) && $selectedTag == $tag->id) ? 'selected' : '' }}>
+                                {{ $tag->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Tag Management -->
+                <div class="toolbar-group">
+                    <button type="button" class="btn btn-sm btn-outline-info" id="manageTagsBtn" disabled>
+                        <i class="mdi mdi-tag-multiple"></i> مدیریت تگ‌ها
+                    </button>
+                </div>
             </div>
 
             <!-- Breadcrumb Navigation -->
@@ -754,7 +870,7 @@
                             فایل‌های عمومی
                         </a>
                         @if($project)
-                            <a href="{{ route('projects.filemanager', $project->id) }}" class="list-group-item list-group-item-action active">
+                            <a href="{{ route('projects.filemanager.index', $project->id) }}" class="list-group-item list-group-item-action active">
                                 <i class="mdi mdi-folder-account me-2"></i>
                                 {{ $project->name }}
                             </a>
@@ -782,35 +898,77 @@
 
                             <!-- Files -->
                             @foreach($files as $file)
-                                <div class="file-item" data-id="{{ $file->id }}" data-type="file"
-                                     data-download-url="{{ $project ? route('projects.filemanager.download', [$project->id, $file->id]) : route('file-manager.download', $file->id) }}">
-                                    @if(str_starts_with($file->mime_type ?? '', 'image/'))
-                                        <div class="file-icon image-thumbnail">
-                                            <img src="{{ $project ? route('projects.filemanager.thumbnail', [$project->id, $file->id]) : route('file-manager.thumbnail', $file->id) }}"
-                                                 alt="{{ $file->name }}"
-                                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
-                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                            <i class="mdi {{ $file->icon }}" style="display: none;"></i>
+                                <div class="file-item" data-id="{{ $file->id }}" data-type="file">
+                                    <!-- لینک دانلود مستقیم -->
+                                    <a href="{{ $project ? route('projects.filemanager.download', [$project->id, $file->id]) : route('file-manager.download', $file->id) }}"
+                                       class="file-download-link"
+                                       title="کلیک کنید برای دانلود {{ $file->name }}">
+
+                                        @if(str_starts_with($file->mime_type ?? '', 'image/'))
+                                            <div class="file-icon image-thumbnail">
+                                                <img src="{{ $project ? route('projects.filemanager.thumbnail', [$project->id, $file->id]) : route('file-manager.thumbnail', $file->id) }}"
+                                                     alt="{{ $file->name }}"
+                                                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                <i class="mdi {{ $file->icon }}" style="display: none;"></i>
+                                            </div>
+                                        @else
+                                            <div class="file-icon">
+                                                <i class="mdi {{ $file->icon }}"></i>
+                                            </div>
+                                        @endif
+
+                                        <div class="file-name" title="{{ $file->name }}">
+                                            {{ Str::length($file->name) > 20 ? Str::limit($file->name, 17) : $file->name }}
                                         </div>
-                                    @else
-                                        <div class="file-icon">
-                                            <i class="mdi {{ $file->icon }}"></i>
-                                        </div>
-                                    @endif
-                                    <div class="file-name" title="{{ $file->name }}">
-                                        {{ Str::length($file->name) > 20 ? Str::limit($file->name, 17) : $file->name }}
+                                        <div class="file-size">{{ $file->formatted_size }}</div>
+                                        
+                                        <!-- Tags -->
+                                        @if($file->tags && $file->tags->count() > 0)
+                                            <div class="file-tags">
+                                                @foreach($file->tags as $tag)
+                                                    <span class="tag" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}; border: 1px solid {{ $tag->color }}40;">
+                                                        {{ $tag->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </a>
+                                    
+                                    <!-- File Actions -->
+                                    <div class="file-actions">
+                                        <button type="button" class="btn btn-sm btn-outline-info" onclick="manageFileTags({{ $file->id }})" title="مدیریت تگ‌ها">
+                                            <i class="mdi mdi-tag-plus"></i>
+                                        </button>
                                     </div>
-                                    <div class="file-size">{{ $file->formatted_size }}</div>
                                 </div>
                             @endforeach
                         @else
                             <div class="empty-folder col-12">
-                                <i class="mdi mdi-folder-open-outline"></i>
-                                <h5>این پوشه خالی است</h5>
-                                <p class="text-muted">فایل یا پوشه‌ای در اینجا وجود ندارد</p>
-                                <button type="button" class="btn btn-primary" id="uploadEmptyBtn">
-                                    <i class="mdi mdi-upload"></i> آپلود اولین فایل
-                                </button>
+                                @if(isset($selectedTag))
+                                    <div class="text-center py-5">
+                                        <div class="mb-4">
+                                            <i class="mdi mdi-tag-outline" style="font-size: 80px; color: #6c757d; opacity: 0.6;"></i>
+                                        </div>
+                                        <h4 class="mb-3" style="color: #495057; font-weight: 600;">هیچ فایلی با این تگ یافت نشد</h4>
+                                        <p class="text-muted mb-4" style="font-size: 16px;">فایل‌هایی با تگ انتخاب شده در این پوشه وجود ندارد</p>
+                                        <div class="d-flex gap-2 justify-content-center">
+                                            <a href="{{ route('projects.filemanager.index', $project->id) }}" class="btn btn-outline-primary">
+                                                <i class="mdi mdi-arrow-right"></i> مشاهده همه فایل‌ها
+                                            </a>
+                                            <button type="button" class="btn btn-primary" onclick="document.getElementById('tagFilter').value = ''; window.location.reload();">
+                                                <i class="mdi mdi-close"></i> حذف فیلتر
+                                            </button>
+                                        </div>
+                                    </div>
+                                @else
+                                    <i class="mdi mdi-folder-open-outline"></i>
+                                    <h5>این پوشه خالی است</h5>
+                                    <p class="text-muted">فایل یا پوشه‌ای در اینجا وجود ندارد</p>
+                                    <button type="button" class="btn btn-primary" id="uploadEmptyBtn">
+                                        <i class="mdi mdi-upload"></i> آپلود اولین فایل
+                                    </button>
+                                @endif
                             </div>
                         @endif
                     </div>

@@ -14,6 +14,7 @@ class FileManager extends Model
 
     protected $fillable = [
         'name',
+        'display_name',
         'original_name',
         'type',
         'path',
@@ -80,6 +81,14 @@ class FileManager extends Model
     }
 
     /**
+     * تگ‌های مرتبط با این فایل
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'file_manager_tag');
+    }
+
+    /**
      * Get the project this file belongs to
      */
     public function project()
@@ -96,6 +105,24 @@ class FileManager extends Model
     }
 
     /**
+     * Get the display name or fallback to name
+     */
+    public function getDisplayNameAttribute()
+    {
+        return $this->attributes['display_name'] ?? $this->name;
+    }
+
+    /**
+     * Check if display name exists and is different from name
+     */
+    public function hasDisplayName()
+    {
+        return isset($this->attributes['display_name']) &&
+               $this->attributes['display_name'] &&
+               $this->attributes['display_name'] !== $this->name;
+    }
+
+    /**
      * Get the full path including parent folders
      */
     public function getFullPathAttribute()
@@ -104,11 +131,13 @@ class FileManager extends Model
         $current = $this;
 
         while ($current && $current->parent_id) {
-            $path->prepend($current->parent->name);
+            $parentDisplayName = $current->parent->attributes['display_name'] ?? $current->parent->name;
+            $path->prepend($parentDisplayName);
             $current = $current->parent;
         }
 
-        return $path->implode('/') . ($path->isNotEmpty() ? '/' : '') . $this->name;
+        $currentDisplayName = $this->attributes['display_name'] ?? $this->name;
+        return $path->implode('/') . ($path->isNotEmpty() ? '/' : '') . $currentDisplayName;
     }
 
     /**

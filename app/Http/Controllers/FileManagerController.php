@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FileManager;
 use App\Models\Project;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -24,7 +25,7 @@ class FileManagerController extends Controller
             'project' => null,
             'currentFolder' => $currentFolder,
             'folders' => $contents['folders'],
-            'files' => $contents['files'],
+            'files' => $contents['files']->load('tags'),
             'breadcrumb' => $breadcrumb
         ]);
     }
@@ -42,7 +43,7 @@ class FileManagerController extends Controller
             'project' => $project,
             'currentFolder' => $currentFolder,
             'folders' => $contents['folders'],
-            'files' => $contents['files'],
+            'files' => $contents['files']->load('tags'),
             'breadcrumb' => $breadcrumb
         ]);
     }
@@ -57,7 +58,9 @@ class FileManagerController extends Controller
             'description' => 'nullable|string',
             'folder_color' => 'nullable|string',
             'parent_id' => 'nullable|exists:file_manager,id',
-            'project_id' => 'nullable|exists:projects,id'
+            'project_id' => 'nullable|exists:projects,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id'
         ]);
 
         if ($validator->fails()) {
@@ -94,10 +97,15 @@ class FileManagerController extends Controller
                 'uploaded_by' => auth()->id()
             ]);
 
+            // اضافه کردن تگ‌ها
+            if ($request->has('tags') && is_array($request->tags)) {
+                $folder->tags()->attach($request->tags);
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'پوشه با موفقیت ایجاد شد',
-                'folder' => $folder->load('uploader')
+                'folder' => $folder->load(['uploader', 'tags'])
             ]);
 
         } catch (\Exception $e) {
@@ -118,7 +126,9 @@ class FileManagerController extends Controller
             'files.*' => 'file|max:20480', // 20MB
             'description' => 'nullable|string',
             'parent_id' => 'nullable|exists:file_manager,id',
-            'project_id' => 'nullable|exists:projects,id'
+            'project_id' => 'nullable|exists:projects,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id'
         ]);
 
         if ($validator->fails()) {
@@ -152,7 +162,12 @@ class FileManagerController extends Controller
                     'uploaded_by' => auth()->id()
                 ]);
 
-                $uploadedFiles[] = $fileRecord->load('uploader');
+                // اضافه کردن تگ‌ها
+                if ($request->has('tags') && is_array($request->tags)) {
+                    $fileRecord->tags()->attach($request->tags);
+                }
+
+                $uploadedFiles[] = $fileRecord->load(['uploader', 'tags']);
             }
 
             return response()->json([
@@ -172,7 +187,7 @@ class FileManagerController extends Controller
     /**
      * تغییر نام فایل یا پوشه
      */
-    public function rename(Request $request, $id)
+    public function rename(Request $request, $fileId)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255'
@@ -186,14 +201,14 @@ class FileManagerController extends Controller
         }
 
         try {
-            $item = FileManager::findOrFail($id);
+            $item = FileManager::findOrFail($fileId);
 
             // بررسی تکراری نبودن نام
             $exists = FileManager::where('name', $request->name)
                 ->where('parent_id', $item->parent_id)
                 ->where('project_id', $item->project_id)
                 ->where('is_folder', $item->is_folder)
-                ->where('id', '!=', $id)
+                ->where('id', '!=', $fileId)
                 ->exists();
 
             if ($exists) {
@@ -268,25 +283,43 @@ class FileManagerController extends Controller
     /**
      * دانلود فایل
      */
-    public function download($id)
+    public function download(Request $request, $file)
     {
         try {
-            $file = FileManager::where('is_folder', false)->findOrFail($id);
+            // بررسی اینکه آیا در context پروژه هستیم یا نه
+            $project = $request->route('project');
 
-            if (!$file->path || !Storage::disk('public')->exists($file->path)) {
-                abort(404, 'فایل یافت نشد');
+            // بررسی اینکه فایل در context صحیح است
+            if ($project && $file->project_id != $project->id) {
+                abort(404, 'فایل متعلق به این پروژه نیست');
             }
 
-            // به‌روزرسانی تعداد دانلود
-            $file->increment('download_count');
-            $file->update(['last_accessed_at' => now()]);
+            if (!$project && $file->project_id !== null) {
+                abort(404, 'فایل متعلق به پروژه است');
+            }
 
-            $filePath = Storage::disk('public')->path($file->path);
+            // بررسی وجود فایل فیزیکی
+            if (!$file->path) {
+                abort(404, 'مسیر فایل مشخص نیست');
+            }
 
-            // استفاده از نام اصلی فایل اگر موجود است، در غیر این صورت از نام ذخیره شده
+            // بررسی وجود فایل در storage
+            if (!Storage::disk('public')->exists($file->path)) {
+                abort(404, 'فایل فیزیکی یافت نشد');
+            }
+
+            // به‌روزرسانی آمار دانلود
+            try {
+                $file->increment('download_count');
+                $file->update(['last_accessed_at' => now()]);
+            } catch (\Exception $e) {
+                // در صورت خطا در به‌روزرسانی آمار، دانلود را ادامه بده
+            }
+
+            // تعیین نام فایل برای دانلود
             $fileName = $file->original_name ?: $file->name;
 
-            // اگر نام فایل پسوند ندارد، آن را از mime type استخراج کنیم
+            // اضافه کردن پسوند اگر وجود ندارد
             if (!pathinfo($fileName, PATHINFO_EXTENSION) && $file->mime_type) {
                 $extension = $this->getExtensionFromMimeType($file->mime_type);
                 if ($extension) {
@@ -294,15 +327,16 @@ class FileManagerController extends Controller
                 }
             }
 
-            // تمیز کردن نام فایل از کاراکترهای غیرمجاز
+            // تمیز کردن نام فایل
             $fileName = $this->sanitizeFileName($fileName);
 
-            return response()->download($filePath, $fileName, [
+            // دانلود مستقیم فایل
+            return Storage::disk('public')->download($file->path, $fileName, [
                 'Content-Type' => $file->mime_type ?: 'application/octet-stream',
             ]);
 
         } catch (\Exception $e) {
-            abort(500, 'خطا در دانلود فایل');
+            abort(500, 'خطا در دانلود فایل: ' . $e->getMessage());
         }
     }
 
@@ -365,25 +399,93 @@ class FileManagerController extends Controller
     }
 
     /**
-     * نمایش تصویر کوچک
+     * دانلود ساده فایل - بدون پیچیدگی
      */
-    public function thumbnail($id)
+    public function simpleDownload($id)
     {
         try {
-            $file = FileManager::where('is_folder', false)->findOrFail($id);
+            $file = FileManager::where('is_folder', false)->find($id);
 
-            if (!$file->path || !Storage::disk('public')->exists($file->path)) {
+            if (!$file) {
+                abort(404, 'فایل یافت نشد');
+            }
+
+            if (!$file->path) {
+                abort(404, 'مسیر فایل مشخص نیست');
+            }
+
+            $fullPath = Storage::disk('public')->path($file->path);
+
+            if (!file_exists($fullPath)) {
+                abort(404, 'فایل فیزیکی یافت نشد');
+            }
+
+            // به‌روزرسانی آمار دانلود
+            try {
+                $file->increment('download_count');
+                $file->update(['last_accessed_at' => now()]);
+            } catch (\Exception $e) {
+                // در صورت خطا در به‌روزرسانی آمار، دانلود را ادامه بده
+            }
+
+            // تعیین نام فایل برای دانلود
+            $fileName = $file->original_name ?: $file->name;
+
+            // اضافه کردن پسوند اگر وجود ندارد
+            if (!pathinfo($fileName, PATHINFO_EXTENSION) && $file->mime_type) {
+                $extension = $this->getExtensionFromMimeType($file->mime_type);
+                if ($extension) {
+                    $fileName .= '.' . $extension;
+                }
+            }
+
+            // تمیز کردن نام فایل
+            $fileName = $this->sanitizeFileName($fileName);
+
+            return response()->download($fullPath, $fileName, [
+                'Content-Type' => $file->mime_type ?: 'application/octet-stream',
+            ]);
+
+        } catch (\Exception $e) {
+            abort(500, 'خطا در دانلود فایل: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * نمایش تصویر کوچک
+     */
+    public function thumbnail(Request $request, $fileId)
+    {
+        try {
+            // بررسی اینکه آیا در context پروژه هستیم یا نه
+            $project = $request->route('project');
+
+            $query = FileManager::where('is_folder', false)->where('id', $fileId);
+
+            if ($project) {
+                $query->where('project_id', $project->id);
+            } else {
+                $query->whereNull('project_id');
+            }
+
+            $file = $query->first();
+
+            if (!$file || !$file->path) {
                 abort(404);
             }
 
             // بررسی اینکه فایل تصویر است
-            if (!str_starts_with($file->mime_type, 'image/')) {
+            if (!$file->mime_type || !str_starts_with($file->mime_type, 'image/')) {
                 abort(404);
             }
 
-            $filePath = Storage::disk('public')->path($file->path);
+            $fullPath = Storage::disk('public')->path($file->path);
 
-            return response()->file($filePath, [
+            if (!file_exists($fullPath)) {
+                abort(404);
+            }
+
+            return response()->file($fullPath, [
                 'Content-Type' => $file->mime_type,
                 'Cache-Control' => 'public, max-age=3600'
             ]);
@@ -424,7 +526,7 @@ class FileManagerController extends Controller
     /**
      * دریافت پوشه فعلی
      */
-    private function getCurrentFolder($folderId, Project $project = null)
+    private function getCurrentFolder($folderId, $project = null)
     {
         if (!$folderId) {
             return null;
@@ -433,7 +535,9 @@ class FileManagerController extends Controller
         $query = FileManager::where('is_folder', true);
 
         if ($project) {
-            $query->where('project_id', $project->id);
+            // اگر $project یک string است، آن را به عنوان ID استفاده کن
+            $projectId = is_object($project) ? $project->id : $project;
+            $query->where('project_id', $projectId);
         } else {
             $query->whereNull('project_id');
         }
@@ -444,12 +548,14 @@ class FileManagerController extends Controller
     /**
      * دریافت محتویات پوشه
      */
-    private function getFolderContents($currentFolder, Project $project = null)
+    private function getFolderContents($currentFolder, $project = null)
     {
         $query = FileManager::with(['uploader']);
 
         if ($project) {
-            $query->where('project_id', $project->id);
+            // اگر $project یک string است، آن را به عنوان ID استفاده کن
+            $projectId = is_object($project) ? $project->id : $project;
+            $query->where('project_id', $projectId);
         } else {
             $query->whereNull('project_id');
         }
@@ -501,5 +607,104 @@ class FileManagerController extends Controller
         }
 
         $folder->delete();
+    }
+
+    /**
+     * دریافت تمام تگ‌ها
+     */
+    public function getTags()
+    {
+        $tags = Tag::orderBy('name')->get();
+        return response()->json($tags);
+    }
+
+    /**
+     * اضافه کردن تگ به فایل
+     */
+    public function addTag(Request $request, $fileId)
+    {
+        $request->validate([
+            'tag_id' => 'required|exists:tags,id'
+        ]);
+
+        $file = FileManager::findOrFail($fileId);
+        $tag = Tag::findOrFail($request->tag_id);
+
+        // بررسی اینکه تگ قبلاً اضافه نشده باشد
+        if (!$file->tags()->where('tag_id', $tag->id)->exists()) {
+            $file->tags()->attach($tag->id);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تگ با موفقیت اضافه شد'
+        ]);
+    }
+
+    /**
+     * حذف تگ از فایل
+     */
+    public function removeTag(Request $request, $fileId, $tagId)
+    {
+        $file = FileManager::findOrFail($fileId);
+        $file->tags()->detach($tagId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تگ با موفقیت حذف شد'
+        ]);
+    }
+
+    /**
+     * فیلتر فایل‌ها بر اساس تگ
+     */
+    public function filterByTag(Request $request, $tagId = null)
+    {
+        $project = $request->route('project');
+        // اگر $project یک string است، آن را به Project model تبدیل کن
+        if ($project && !is_object($project)) {
+            $project = \App\Models\Project::find($project);
+        }
+        $currentFolder = $this->getCurrentFolder($request->get('folder'), $project);
+
+        // دریافت محتویات پوشه
+        $contents = $this->getFolderContents($currentFolder, $project);
+
+        // فیلتر فایل‌ها بر اساس تگ
+        if ($tagId) {
+            // ابتدا تگ‌ها را load کن
+            $contents['files'] = $contents['files']->load('tags');
+
+            // Debug: نمایش تعداد فایل‌ها قبل از فیلتر
+            \Log::info('Files before filter: ' . $contents['files']->count());
+            \Log::info('Tag ID: ' . $tagId);
+
+            // سپس فیلتر کن
+            $contents['files'] = $contents['files']->filter(function($file) use ($tagId) {
+                $hasTag = $file->tags->contains('id', $tagId);
+                \Log::info('File: ' . $file->name . ' - Has tag: ' . ($hasTag ? 'Yes' : 'No'));
+                return $hasTag;
+            });
+
+            // Debug: نمایش تعداد فایل‌ها بعد از فیلتر
+            \Log::info('Files after filter: ' . $contents['files']->count());
+
+            // در حالت فیلتر، پوشه‌ها را نمایش نده
+            $contents['folders'] = collect([]);
+        } else {
+            $contents['files'] = $contents['files']->load('tags');
+        }
+
+        $files = $contents['files'];
+        $folders = $contents['folders'];
+
+        return view('admin.file-manager.index', [
+            'project' => $project,
+            'currentFolder' => $currentFolder,
+            'folders' => $folders,
+            'files' => $files,
+            'breadcrumb' => $this->getBreadcrumb($currentFolder),
+            'selectedTag' => $tagId
+        ]);
     }
 }

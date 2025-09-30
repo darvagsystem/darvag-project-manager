@@ -77,14 +77,27 @@ class FileManager {
             item.parentNode.replaceChild(newItem, item);
         });
 
-        // اضافه کردن event listener های جدید
-        document.querySelectorAll('.file-item, .folder-item').forEach(item => {
+        // اضافه کردن event listener فقط برای پوشه‌ها
+        document.querySelectorAll('.folder-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 this.handleItemClick(item, e);
             });
 
             item.addEventListener('dblclick', (e) => {
                 this.handleItemDoubleClick(item, e);
+            });
+        });
+
+        // برای فایل‌ها فقط برای انتخاب (بدون دانلود خودکار)
+        document.querySelectorAll('.file-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                // اگر روی لینک دانلود کلیک شد، اجازه دانلود بده
+                if (e.target.closest('.file-download-link')) {
+                    return; // اجازه دانلود
+                }
+                // در غیر این صورت فقط انتخاب کن
+                e.preventDefault();
+                this.handleItemClick(item, e);
             });
         });
     }
@@ -109,15 +122,13 @@ class FileManager {
 
     handleItemDoubleClick(item, event) {
         const isFolder = item.classList.contains('folder-item');
-        const itemId = item.dataset.id;
 
         if (isFolder) {
-            // ورود به پوشه
+            // فقط برای پوشه‌ها - ورود به پوشه
+            const itemId = item.dataset.id;
             this.navigateToFolder(itemId);
-        } else {
-            // دانلود فایل
-            this.downloadFile(item);
         }
+        // برای فایل‌ها کاری نمی‌کنیم چون لینک مستقیم دارند
     }
 
     navigateToFolder(folderId) {
@@ -228,6 +239,13 @@ class FileManager {
         const form = document.getElementById('createFolderForm');
         const formData = new FormData(form);
 
+        // اضافه کردن تگ‌های انتخاب شده
+        const selectedTags = Array.from(document.querySelectorAll('#folderTags input:checked'))
+            .map(input => input.value);
+        selectedTags.forEach(tagId => {
+            formData.append('tags[]', tagId);
+        });
+
         // اضافه کردن پارامترهای اضافی
         const currentFolderId = this.getCurrentFolderId();
         if (currentFolderId) {
@@ -282,6 +300,13 @@ class FileManager {
         if (description) {
             formData.append('description', description);
         }
+
+        // اضافه کردن تگ‌های انتخاب شده
+        const selectedTags = Array.from(document.querySelectorAll('#fileTags input:checked'))
+            .map(input => input.value);
+        selectedTags.forEach(tagId => {
+            formData.append('tags[]', tagId);
+        });
 
         const currentFolderId = this.getCurrentFolderId();
         if (currentFolderId) {
@@ -386,18 +411,6 @@ class FileManager {
         }
     }
 
-    downloadFile(fileElement) {
-        const downloadUrl = fileElement.dataset.downloadUrl;
-
-        if (!downloadUrl) {
-            this.showError('لینک دانلود یافت نشد');
-            return;
-        }
-
-        // دانلود مستقیم از طریق لینک PHP
-        window.location.href = downloadUrl;
-    }
-
     downloadSelected() {
         if (this.selectedItems.length === 0) return;
 
@@ -410,11 +423,12 @@ class FileManager {
         }
 
         if (files.length === 1) {
-            // دانلود تکی
-            this.downloadFile(files[0]);
+            // دانلود تکی - استفاده از route ساده
+            const fileId = files[0].dataset.id;
+            const downloadUrl = `/download/${fileId}`;
+            window.open(downloadUrl, '_blank');
         } else {
-            // دانلود گروهی (اگر پیاده‌سازی شده باشد)
-            this.showError('دانلود گروهی هنوز پیاده‌سازی نشده است');
+            this.showError('لطفاً یک فایل انتخاب کنید. دانلود چندتایی پشتیبانی نمی‌شود.');
         }
     }
 
@@ -477,12 +491,23 @@ class FileManager {
         div.dataset.id = folder.id;
         div.dataset.type = 'folder';
 
+        // ایجاد HTML برای تگ‌ها
+        let tagsHtml = '';
+        if (folder.tags && folder.tags.length > 0) {
+            tagsHtml = '<div class="file-tags">';
+            folder.tags.forEach(tag => {
+                tagsHtml += `<span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border: 1px solid ${tag.color}40;">${tag.name}</span>`;
+            });
+            tagsHtml += '</div>';
+        }
+
         div.innerHTML = `
             <div class="folder-icon" style="color: ${folder.folder_color || '#ffc107'}">
                 <i class="mdi mdi-folder"></i>
             </div>
             <div class="file-name">${folder.name}</div>
             <div class="file-size">پوشه</div>
+            ${tagsHtml}
         `;
 
         return div;
@@ -494,32 +519,45 @@ class FileManager {
         div.dataset.id = file.id;
         div.dataset.type = 'file';
 
-        // ایجاد URL دانلود
-        const downloadUrl = this.getApiUrl(`download/${file.id}`);
-        div.dataset.downloadUrl = downloadUrl;
-
         const icon = this.getFileIcon(file.mime_type);
         const size = this.formatFileSize(file.size);
         const isImage = file.mime_type && file.mime_type.startsWith('image/');
+        const downloadUrl = `/download/${file.id}`;
+
+        // ایجاد HTML برای تگ‌ها
+        let tagsHtml = '';
+        if (file.tags && file.tags.length > 0) {
+            tagsHtml = '<div class="file-tags">';
+            file.tags.forEach(tag => {
+                tagsHtml += `<span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border: 1px solid ${tag.color}40;">${tag.name}</span>`;
+            });
+            tagsHtml += '</div>';
+        }
 
         if (isImage) {
             const thumbnailUrl = this.getApiUrl(`thumbnail/${file.id}`);
             div.innerHTML = `
-                <div class="file-icon image-thumbnail">
-                    <img src="${thumbnailUrl}" alt="${file.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <i class="mdi ${icon}" style="display: none;"></i>
-                </div>
-                <div class="file-name" title="${file.name}">${this.truncateFileName(file.name)}</div>
-                <div class="file-size">${size}</div>
+                <a href="${downloadUrl}" class="file-download-link" title="کلیک کنید برای دانلود ${file.name}">
+                    <div class="file-icon image-thumbnail">
+                        <img src="${thumbnailUrl}" alt="${file.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="mdi ${icon}" style="display: none;"></i>
+                    </div>
+                    <div class="file-name" title="${file.name}">${this.truncateFileName(file.name)}</div>
+                    <div class="file-size">${size}</div>
+                    ${tagsHtml}
+                </a>
             `;
         } else {
             div.innerHTML = `
-                <div class="file-icon">
-                    <i class="mdi ${icon}"></i>
-                </div>
-                <div class="file-name" title="${file.name}">${this.truncateFileName(file.name)}</div>
-                <div class="file-size">${size}</div>
+                <a href="${downloadUrl}" class="file-download-link" title="کلیک کنید برای دانلود ${file.name}">
+                    <div class="file-icon">
+                        <i class="mdi ${icon}"></i>
+                    </div>
+                    <div class="file-name" title="${file.name}">${this.truncateFileName(file.name)}</div>
+                    <div class="file-size">${size}</div>
+                    ${tagsHtml}
+                </a>
             `;
         }
 
@@ -635,6 +673,111 @@ class FileManager {
         alert(message);
     }
 }
+
+// مدیریت تگ‌ها
+function manageFileTags(fileId) {
+    // دریافت تگ‌های موجود
+    fetch(`{{ $project ? route('projects.filemanager.tags', $project->id) : route('file-manager.tags') }}`)
+        .then(response => response.json())
+        .then(tags => {
+            // دریافت تگ‌های فایل
+            fetch(`{{ $project ? route('projects.filemanager.tags', $project->id) : route('file-manager.tags') }}`)
+                .then(response => response.json())
+                .then(allTags => {
+                    showTagModal(fileId, allTags);
+                });
+        });
+}
+
+function showTagModal(fileId, tags) {
+    // ایجاد modal برای مدیریت تگ‌ها
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">مدیریت تگ‌ها</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">تگ‌های موجود:</label>
+                        <div class="tag-list" id="availableTags">
+                            ${tags.map(tag => `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="${tag.id}" id="tag_${tag.id}">
+                                    <label class="form-check-label" for="tag_${tag.id}" style="color: ${tag.color}">
+                                        ${tag.name}
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-primary" onclick="saveFileTags(${fileId})">ذخیره</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+
+    // حذف modal بعد از بسته شدن
+    modal.addEventListener('hidden.bs.modal', () => {
+        document.body.removeChild(modal);
+    });
+}
+
+function saveFileTags(fileId) {
+    const selectedTags = Array.from(document.querySelectorAll('#availableTags input:checked'))
+        .map(input => input.value);
+
+    // حذف تمام تگ‌های قبلی
+    fetch(`{{ $project ? route('projects.filemanager.remove-tag', [$project->id, 'FILE_ID', 'TAG_ID']) : route('file-manager.remove-tag', ['FILE_ID', 'TAG_ID']) }}`.replace('FILE_ID', fileId).replace('TAG_ID', 'all'), {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    }).then(() => {
+        // اضافه کردن تگ‌های جدید
+        const promises = selectedTags.map(tagId =>
+            fetch(`{{ $project ? route('projects.filemanager.add-tag', [$project->id, 'FILE_ID']) : route('file-manager.add-tag', 'FILE_ID') }}`.replace('FILE_ID', fileId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ tag_id: tagId })
+            })
+        );
+
+        Promise.all(promises).then(() => {
+            // بستن modal و رفرش صفحه
+            document.querySelector('.modal .btn-close').click();
+            location.reload();
+        });
+    });
+}
+
+// فیلتر بر اساس تگ
+document.addEventListener('DOMContentLoaded', function() {
+    const tagFilter = document.getElementById('tagFilter');
+    if (tagFilter) {
+        tagFilter.addEventListener('change', function() {
+            const tagId = this.value;
+            if (tagId) {
+                window.location.href = `{{ $project ? route('projects.filemanager.filter-tag', [$project->id, 'TAG_ID']) : route('file-manager.filter-tag', 'TAG_ID') }}`.replace('TAG_ID', tagId);
+            } else {
+                window.location.href = `{{ $project ? route('projects.filemanager.index', $project->id) : route('file-manager.index') }}`;
+            }
+        });
+    }
+});
 
 // راه‌اندازی فایل منیجر
 document.addEventListener('DOMContentLoaded', function() {
