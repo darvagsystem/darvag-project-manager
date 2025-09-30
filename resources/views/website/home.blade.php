@@ -419,7 +419,7 @@
                     <div class="col-6">
                         <h5>
                             <span>+70</span>
-                            <lord-icon src="assets/js/lord/hmzvkifi.json" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
+                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
                             </lord-icon>
                         </h5>
                         <p>پروژه های انجام شده</p>
@@ -427,7 +427,7 @@
                     <div class="col-6">
                         <h5>
                             <span>+70</span>
-                            <lord-icon src="assets/js/lord/hmzvkifi.json" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
+                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
                             </lord-icon>
                         </h5>
                         <p>پروژه های انجام شده</p>
@@ -435,7 +435,7 @@
                     <div class="col-6 mt-5">
                         <h5>
                             <span>+70</span>
-                            <lord-icon src="assets/js/lord/hmzvkifi.json" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
+                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
                             </lord-icon>
                         </h5>
                         <p>پروژه های انجام شده</p>
@@ -443,7 +443,7 @@
                     <div class="col-6 mt-5">
                         <h5>
                             <span>+70</span>
-                            <lord-icon src="assets/js/lord/hmzvkifi.json" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
+                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
                             </lord-icon>
                         </h5>
                         <p>پروژه های انجام شده</p>
@@ -612,11 +612,45 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 @endpush
 
 @push('scripts')
-<script src="{{ asset('assets/js/app.js') }}"></script>
-<script src="https://cdn.lordicon.com/lordicon.js"></script>
+<script>
+    // FAQ Toggle functionality
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".faq-item").forEach((item) => {
+            item.addEventListener("click", function () {
+                this.classList.toggle("active");
+
+                let answer = this.querySelector(".faq-answer");
+                if (this.classList.contains("active")) {
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                } else {
+                    answer.style.maxHeight = null;
+                }
+            });
+        });
+
+        // Toggle button functionality
+        const toggleButton = document.getElementById('toggleButton');
+        const textContainer = document.getElementById('textContainer');
+
+        if (toggleButton && textContainer) {
+            toggleButton.addEventListener('click', function() {
+                textContainer.classList.toggle('expanded');
+                const icon = this.querySelector('i');
+                if (textContainer.classList.contains('expanded')) {
+                    icon.classList.remove('bi-chevron-down');
+                    icon.classList.add('bi-chevron-up');
+                    this.innerHTML = '<i class="bi bi-chevron-up"></i> مشاهده کمتر';
+                } else {
+                    icon.classList.remove('bi-chevron-up');
+                    icon.classList.add('bi-chevron-down');
+                    this.innerHTML = '<i class="bi bi-chevron-down"></i> مشاهده بیشتر';
+                }
+            });
+        }
+    });
+</script>
 @endpush
