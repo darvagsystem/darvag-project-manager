@@ -19,13 +19,17 @@ Route::get('/projects/{project}', function ($project) {
     return view('website.project-detail', compact('project'));
 })->name('project.detail');
 
-Route::get('/news', function () {
-    return view('website.news');
-})->name('news');
+Route::get('/blog', function () {
+    return view('website.blog');
+})->name('blog');
 
-Route::get('/news/{news}', function ($news) {
-    return view('website.news-detail', compact('news'));
-})->name('news.detail');
+Route::get('/blog/{post}', function ($post) {
+    return view('website.blog-detail', compact('post'));
+})->name('blog.detail');
+
+Route::get('/charity', function () {
+    return view('website.charity');
+})->name('charity');
 
 Route::get('/services', function () {
     return view('website.services');
@@ -43,3 +47,8 @@ Route::post('/contact', function () {
     // Handle contact form submission
     return redirect()->back()->with('success', 'پیام شما با موفقیت ارسال شد');
 })->name('contact.submit');
+//news routes just for test with message
+Route::get('/news', function () {
+    //show message that this is just for test with message that this is just for test without any view
+    return "this is just for test";
+})->name('news');
