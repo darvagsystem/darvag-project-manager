@@ -4,449 +4,337 @@
 @section('description', 'کاخ‌سازان داروگ با بیش از دو دهه تجربه در زمینه‌های سلر‌سازی، محوطه‌سازی، جاده‌سازی و تسهیل تأسیسات سرچاهی')
 
 @section('content')
-<!-- Hero Slider Section -->
-<div class="slider-container">
-    <div class="swiper hero-slider">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <div class="slider-item">
-                    <img src="{{ asset('assets/images/1.webp') }}" alt="اسلاید ۱" />
-                    <div class="slider-content">
-                        <div class="slider-title">داروگ پیشرو در صنعت عمران</div>
-                        <div class="slider-description">
-                            توضیحات کوتاه درباره این اسلاید که به کاربران اطلاعات می‌دهد.
-                        </div>
-                        <div class="slider-buttons">
-                            <button class="btn btn-light">
-                                <span>تماس با ما</span>
-                                <span><i class="bi bi-telephone"></i></span>
-                            </button>
-                            <button class="btn btn-outline-light display-6 fw-bolder px-3">
-                                ثبت نام
-                            </button>
-                        </div>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-gradient-line"></div>
+    <div class="hero-decorative-circle hero-orange-glow"></div>
+    <div class="hero-decorative-circle hero-blue-glow"></div>
+
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="hero-title-main">گروه صنعتی داروگ</span>
+                        <span class="hero-title-sub">پیشرو در صنعت عمران</span>
+                    </h1>
+                    <p class="hero-description">
+                        کاخ‌سازان داروگ با بیش از دو دهه تجربه در زمینه‌های سلر‌سازی، محوطه‌سازی، جاده‌سازی و تسهیل تأسیسات سرچاهی، با بهره‌گیری از تجهیزات پیشرفته و تیم متخصص، پروژه‌های بزرگ و پیچیده را با کیفیت و سرعت بالا اجرا می‌کند.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="{{ route('contact') }}" class="btn btn-primary-custom">
+                            <span>تماس با ما</span>
+                            <i class="bi bi-telephone"></i>
+                        </a>
+                        <a href="{{ route('projects') }}" class="btn btn-outline-custom">
+                            <span>مشاهده پروژه‌ها</span>
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="swiper-slide">
-                <div class="slider-item">
-                    <img src="{{ asset('assets/images/2.webp') }}" alt="اسلاید ۲" />
-                    <div class="slider-content">
-                        <div class="slider-title">عنوان دوم</div>
-                        <div class="slider-description">
-                            یک متن دیگر برای توضیح این اسلاید که جذاب باشد.
-                        </div>
-                        <div class="slider-buttons">
-                            <button class="btn btn-light">
-                                <span>زمان بندی های ما</span>
-                                <i class="bi bi-calendar-date"></i>
-                            </button>
-                            <button class="btn btn-outline-light display-6 fw-bolder px-3">
-                                شروع کنید
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="slider-item">
-                    <img src="{{ asset('assets/images/3.webp') }}" alt="اسلاید ۳" />
-                    <div class="slider-content">
-                        <div class="slider-title">عنوان سوم</div>
-                        <div class="slider-description">
-                            آخرین توضیحات درباره این اسلاید که مرتبط باشد.
-                        </div>
-                        <div class="slider-buttons">
-                            <button class="btn btn-light">همین حالا</button>
-                            <button class="btn btn-outline-light display-6 fw-bolder px-3">
-                                بیشتر بدانید
-                            </button>
-                        </div>
-                    </div>
+            <div class="col-lg-6">
+                <div class="hero-image">
+                    <img src="{{ asset('assets/images/1.webp') }}" alt="داروگ" class="img-fluid">
                 </div>
             </div>
         </div>
-        <!-- دکمه‌های ناوبری -->
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
     </div>
-</div>
+</section>
 
 <!-- About Section -->
-<div class="container mt-128">
-    <!-- عنوان بخش -->
-    <div class="section-title">درباره داروگ</div>
-    <div class="divider"></div>
-    <!-- توضیح بخش -->
-    <div class="section-description">
-        کارخانه کاخ سازان داروگ در سال ۱۳۵۳ با هدف تولید محصولات ساختمانی تأسیس
-        شده است و بیش از دو دهه است که داروگ با تمرکز بر طراحی، تدارک و تولید
-        ساختمان‌های پیش ساخته، اجرای کمپ‌ و تجهیز کارگاه پروژه‌های بزرگ عمرانی
-        فعالیت می‌کند.
-    </div>
-
-    <div class="row justify-content-center px-5">
-        <div class="col-6 col-md-2">
-            <div class="image-item">
-                <div class="image-box">
-                    <img src="{{ asset('assets/images/files/1.png') }}" alt="Image 1" />
-                </div>
-                <p>عنوان 1</p>
-            </div>
-        </div>
-        <div class="col-6 col-md-2">
-            <div class="image-item">
-                <div class="image-box">
-                    <img src="https://vima-ir.com/wp-content/uploads/2023/11/5448c0a2b5b6f0efe0807e94d13fbc59-300x300.png" alt="Image 2" />
-                </div>
-                <p>عنوان 2</p>
-            </div>
-        </div>
-        <div class="col-6 col-md-2">
-            <div class="image-item">
-                <div class="image-box">
-                    <img src="https://vima-ir.com/wp-content/uploads/2023/11/machine-300x300.png" alt="Image 3" />
-                </div>
-                <p>عنوان 3</p>
-            </div>
-        </div>
-        <div class="col-6 col-md-2">
-            <div class="image-item">
-                <div class="image-box">
-                    <img src="https://vima-ir.com/wp-content/uploads/2023/11/customer-support-300x300.png" alt="Image 4" />
-                </div>
-                <p>عنوان 4</p>
-            </div>
-        </div>
-        <div class="col-6 col-md-2">
-            <div class="image-item">
-                <div class="image-box">
-                    <img src="https://vima-ir.com/wp-content/uploads/2023/11/building-300x300.png" alt="Image 5" />
-                </div>
-                <p>عنوان 5</p>
-            </div>
-        </div>
-        <div class="col-6 col-md-2">
-            <div class="image-item">
-                <div class="image-box">
-                    <img src="https://vima-ir.com/wp-content/uploads/2023/11/house-300x300.png" alt="Image 6" />
-                </div>
-                <p>عنوان 6</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Projects Slider Section -->
-<div class="swiper-container custom-swiper mt-128">
-    <div class="swiper-wrapper">
-        <!-- اسلاید ۱ -->
-        <div class="swiper-slide">
-            <img src="https://vima-ir.com/wp-content/uploads/2023/11/Banner-Shorijeh-camp-jpg.webp" alt="Banner 1" />
-            <div class="slide-content">
-                <h2>شاخص‌ترین پروژه‌های داروگ</h2>
-                <h5>کمپ اقامتی پردیس آذر</h5>
-                <ul>
-                    <li>طراحی، تأمین و ساخت تجهیزات کمپ پروژه شوریجه</li>
-                    <li>کمپ اقامتی پردیس آذر</li>
-                    <li>محل اجرا: خراسان رضوی، سرخس</li>
-                </ul>
-                <div class="btn-group">
-                    <button class="btn btn-gold">بیشتر بدانید</button>
-                </div>
-            </div>
+<section class="about-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="title-accent">درباره داروگ</span>
+                <span class="title-underline"></span>
+            </h2>
+            <p class="section-description">
+                کارخانه کاخ سازان داروگ در سال ۱۳۵۳ با هدف تولید محصولات ساختمانی تأسیس شده است و بیش از دو دهه است که داروگ با تمرکز بر طراحی، تدارک و تولید ساختمان‌های پیش ساخته، اجرای کمپ‌ و تجهیز کارگاه پروژه‌های بزرگ عمرانی فعالیت می‌کند.
+            </p>
         </div>
 
-        <!-- اسلاید ۲ -->
-        <div class="swiper-slide">
-            <img src="https://vima-ir.com/wp-content/uploads/2023/12/pic-no-201-copy-2048x852.webp" alt="Banner 2" />
-            <div class="slide-content">
-                <h2>شاخص‌ترین پروژه‌های داروگ</h2>
-                <h5 class="mt-3">پروژه پتروشیمی بوشهر</h5>
-                <ul>
-                    <li>طراحی و اجرای کمپ اقامتی کارکنان</li>
-                    <li>ساخت و تجهیز فضاهای اداری و رفاهی</li>
-                    <li>محل اجرا: عسلویه، بوشهر</li>
-                </ul>
-                <div class="btn-group">
-                    <button class="btn btn-gold">بیشتر بدانید</button>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h4>ساخت و ساز</h4>
+                    <p>طراحی و اجرای پروژه‌های عمرانی بزرگ</p>
                 </div>
             </div>
-        </div>
-
-        <!-- اسلاید ۳ -->
-        <div class="swiper-slide">
-            <img src="https://vima-ir.com/wp-content/uploads/2023/11/Tabnak-project-1-jpg.webp" alt="Banner 3" />
-            <div class="slide-content">
-                <h2>شاخص‌ترین پروژه‌های داروگ</h2>
-                <h5 class="mt-3">پروژه مسکونی و رفاهی تابناک</h5>
-                <ul>
-                    <li>تأمین و تجهیز واحدهای مسکونی</li>
-                    <li>ساخت و بهره‌برداری از مراکز تفریحی و تجاری</li>
-                    <li>محل اجرا: تهران، ایران</li>
-                </ul>
-                <div class="btn-group">
-                    <button class="btn btn-gold">بیشتر بدانید</button>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-gear"></i>
+                    </div>
+                    <h4>تجهیزات پیشرفته</h4>
+                    <p>استفاده از آخرین تکنولوژی‌های روز</p>
                 </div>
             </div>
-        </div>
-
-        <!-- اسلاید ۴ -->
-        <div class="swiper-slide">
-            <img src="https://vima-ir.com/wp-content/uploads/2023/11/Homma-baner-jpg.webp" alt="Banner 4" />
-            <div class="slide-content">
-                <h2>شاخص‌ترین پروژه‌های داروگ</h2>
-                <h5 class="mt-3">مرکز نوآوری و فناوری هُما</h5>
-                <ul>
-                    <li>ایجاد فضای کاری مدرن و خلاقانه</li>
-                    <li>همکاری با استارتاپ‌ها و شرکت‌های دانش‌بنیان</li>
-                    <li>محل اجرا: تهران، ایران</li>
-                </ul>
-                <div class="btn-group">
-                    <button class="btn btn-gold">بیشتر بدانید</button>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h4>تیم متخصص</h4>
+                    <p>کارشناسان مجرب و با تجربه</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h4>کیفیت بالا</h4>
+                    <p>تضمین کیفیت و رضایت مشتری</p>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- پاژینیشن -->
-    <div class="swiper-pagination"></div>
-</div>
+<!-- Projects Section -->
+<section class="projects-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="title-accent">پروژه‌های شاخص</span>
+                <span class="title-underline"></span>
+            </h2>
+        </div>
 
-<!-- Products Section -->
-<div class="container mt-128 chair-sec">
-    <section>
-        <div class="section-title">محصولات پیش‌ساخته داروگ</div>
-        <div class="divider"></div>
-
-        <!-- اسلایدر Swiper -->
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                <!-- آیتم ۱ -->
-                <div class="swiper-slide">
-                    <figure class="chair">
-                        <div class="img-box-prj">
-                            <img src="https://vima-ir.com/wp-content/uploads/2023/11/Foldable-porta-cabin-768x512.webp" alt="کانکس تاشو" />
-                            <div class="img-text">
-                                کانکس تاشو <br />
-                                Foldable porta cabin
-                            </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://vima-ir.com/wp-content/uploads/2023/11/Banner-Shorijeh-camp-jpg.webp" alt="کمپ اقامتی پردیس آذر">
+                        <div class="project-overlay">
+                            <a href="#" class="btn btn-light">مشاهده جزئیات</a>
                         </div>
-                        <div class="chair-box">
-                            <h3>لورم ایپسوم متن</h3>
-                            <ul class="chair-details">
-                                <li>
-                                    <i class="bi bi-calendar-date"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-person-fill-check"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-bank"></i> <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-geo-alt-fill"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                            </ul>
+                    </div>
+                    <div class="project-content">
+                        <h4>کمپ اقامتی پردیس آذر</h4>
+                        <p>طراحی، تأمین و ساخت تجهیزات کمپ پروژه شوریجه</p>
+                        <div class="project-meta">
+                            <span><i class="bi bi-geo-alt"></i> خراسان رضوی، سرخس</span>
                         </div>
-                    </figure>
-                </div>
-
-                <!-- آیتم ۲ -->
-                <div class="swiper-slide">
-                    <figure class="chair">
-                        <div class="img-box-prj">
-                            <img src="https://vima-ir.com/wp-content/uploads/2023/11/IMG_0653-768x576.webp" alt="کانکس تاشو" />
-                            <div class="img-text">
-                                کانکس تاشو <br />
-                                Foldable porta cabin
-                            </div>
-                        </div>
-                        <div class="chair-box">
-                            <h3>لورم ایپسوم متن</h3>
-                            <ul class="chair-details">
-                                <li>
-                                    <i class="bi bi-calendar-date"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-person-fill-check"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-bank"></i> <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-geo-alt-fill"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </figure>
-                </div>
-
-                <!-- آیتم ۳ -->
-                <div class="swiper-slide">
-                    <figure class="chair">
-                        <div class="img-box-prj">
-                            <img src="https://vima-ir.com/wp-content/uploads/2023/11/IMG_1361-1-768x576.webp" alt="کانکس تاشو" />
-                            <div class="img-text">
-                                کانکس تاشو <br />
-                                Foldable porta cabin
-                            </div>
-                        </div>
-                        <div class="chair-box">
-                            <h3>لورم ایپسوم متن</h3>
-                            <ul class="chair-details">
-                                <li>
-                                    <i class="bi bi-calendar-date"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-person-fill-check"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-bank"></i> <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-geo-alt-fill"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </figure>
-                </div>
-
-                <div class="swiper-slide">
-                    <figure class="chair">
-                        <div class="img-box-prj">
-                            <img src="https://vima-ir.com/wp-content/uploads/2023/11/Foldable-porta-cabin-768x512.webp" alt="کانکس تاشو" />
-                            <div class="img-text">
-                                کانکس تاشو <br />
-                                Foldable porta cabin
-                            </div>
-                        </div>
-                        <div class="chair-box">
-                            <h3>لورم ایپسوم متن</h3>
-                            <ul class="chair-details">
-                                <li>
-                                    <i class="bi bi-calendar-date"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-person-fill-check"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-bank"></i> <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-geo-alt-fill"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </figure>
-                </div>
-
-                <div class="swiper-slide">
-                    <figure class="chair">
-                        <div class="img-box-prj">
-                            <img src="https://vima-ir.com/wp-content/uploads/2023/11/Foldable-porta-cabin-768x512.webp" alt="کانکس تاشو" />
-                            <div class="img-text">
-                                کانکس تاشو <br />
-                                Foldable porta cabin
-                            </div>
-                        </div>
-                        <div class="chair-box">
-                            <h3>لورم ایپسوم متن</h3>
-                            <ul class="chair-details">
-                                <li>
-                                    <i class="bi bi-calendar-date"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-person-fill-check"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-bank"></i> <span>لورم ایپسوم متن</span>
-                                </li>
-                                <li>
-                                    <i class="bi bi-geo-alt-fill"></i>
-                                    <span>لورم ایپسوم متن</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </figure>
+                    </div>
                 </div>
             </div>
-
-            <!-- دکمه‌های ناوبری -->
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-
-            <!-- دایره‌های صفحه‌بندی -->
-            <div class="swiper-pagination"></div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://vima-ir.com/wp-content/uploads/2023/12/pic-no-201-copy-2048x852.webp" alt="پروژه پتروشیمی بوشهر">
+                        <div class="project-overlay">
+                            <a href="#" class="btn btn-light">مشاهده جزئیات</a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h4>پروژه پتروشیمی بوشهر</h4>
+                        <p>طراحی و اجرای کمپ اقامتی کارکنان</p>
+                        <div class="project-meta">
+                            <span><i class="bi bi-geo-alt"></i> عسلویه، بوشهر</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://vima-ir.com/wp-content/uploads/2023/11/Tabnak-project-1-jpg.webp" alt="پروژه مسکونی تابناک">
+                        <div class="project-overlay">
+                            <a href="#" class="btn btn-light">مشاهده جزئیات</a>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h4>پروژه مسکونی تابناک</h4>
+                        <p>تأمین و تجهیز واحدهای مسکونی</p>
+                        <div class="project-meta">
+                            <span><i class="bi bi-geo-alt"></i> تهران، ایران</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
-</div>
 
-<!-- Experience Section -->
-<section class="scroll-section mt-128 d-flex align-items-center justify-content-center text-center">
+        <div class="text-center mt-5">
+            <a href="{{ route('projects') }}" class="btn btn-primary-custom">
+                <span>مشاهده همه پروژه‌ها</span>
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="title-accent">خدمات ما</span>
+                <span class="title-underline"></span>
+            </h2>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="bi bi-house"></i>
+                    </div>
+                    <h4>ساخت و ساز</h4>
+                    <p>طراحی و اجرای پروژه‌های عمرانی با کیفیت بالا</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="bi bi-tools"></i>
+                    </div>
+                    <h4>محوطه‌سازی</h4>
+                    <p>طراحی و اجرای محوطه‌های زیبا و کاربردی</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="bi bi-road"></i>
+                    </div>
+                    <h4>جاده‌سازی</h4>
+                    <p>ساخت و تعمیر جاده‌ها و راه‌های ارتباطی</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
     <div class="container">
         <div class="row">
-            <div class="col-md-6 col-sm-12 look_at_darvag d-flex flex-column align-content-start justify-content-start text-right">
-                <h3 class="fw-bolder">نگاهی به تجربه داروگ در سال های اخیر</h3>
-                <p>مجموعه ای از فعالیت‌های داروگ</p>
-                <div class="row">
-                    <div class="d-flex align-items-center justify-content-right gap-3">
-                        <button class="btn btn-outline-light display-6 border-2 px-4">
-                            کاتالوگ پروژه ها
-                        </button>
-                        <button class="btn btn-outline-light display-6 border-2 px-4">
-                            کاتالوگ محصولات
-                        </button>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div class="stat-number">70+</div>
+                    <div class="stat-label">پروژه انجام شده</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">سال تجربه</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">رضایت مشتری</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">شهر</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Distribution Map Section -->
+<section class="map-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="title-accent">نقشه پراکندگی پروژه‌های داروگ</span>
+                <span class="title-underline"></span>
+            </h2>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="map-container">
+                    <div class="map-wrapper">
+                        <img src="https://darvag-1.s3.ir-thr-at1.arvanstorage.ir/settings/iran_map_67b8447c7a1bc_341419.png" alt="نقشه ایران" class="map-image">
+
+                        <!-- Project markers -->
+                        <div class="project-marker" style="top: 25%; left: 45%;" data-project="تهران">
+                            <div class="marker-dot"></div>
+                            <div class="marker-label">تهران</div>
+                        </div>
+
+                        <div class="project-marker" style="top: 30%; left: 40%;" data-project="اصفهان">
+                            <div class="marker-dot"></div>
+                            <div class="marker-label">اصفهان</div>
+                        </div>
+
+                        <div class="project-marker" style="top: 35%; left: 35%;" data-project="شیراز">
+                            <div class="marker-dot"></div>
+                            <div class="marker-label">شیراز</div>
+                        </div>
+
+                        <div class="project-marker" style="top: 40%; left: 50%;" data-project="مشهد">
+                            <div class="marker-dot"></div>
+                            <div class="marker-label">مشهد</div>
+                        </div>
+
+                        <div class="project-marker" style="top: 45%; left: 25%;" data-project="بوشهر">
+                            <div class="marker-dot"></div>
+                            <div class="marker-label">بوشهر</div>
+                        </div>
+
+                        <div class="project-marker" style="top: 50%; left: 30%;" data-project="اهواز">
+                            <div class="marker-dot"></div>
+                            <div class="marker-label">اهواز</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-12 darvag-statisicd">
-                <div class="row">
-                    <div class="col-6">
-                        <h5>
-                            <span>+70</span>
-                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
-                            </lord-icon>
-                        </h5>
-                        <p>پروژه های انجام شده</p>
+
+            <div class="col-lg-4">
+                <div class="map-stats">
+                    <h4>آمار پروژه‌ها</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">70+</div>
+                            <div class="stat-label">پروژه انجام شده</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">25+</div>
+                            <div class="stat-label">استان</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">15+</div>
+                            <div class="stat-label">شهر</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">رضایت مشتری</div>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <h5>
-                            <span>+70</span>
-                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
-                            </lord-icon>
-                        </h5>
-                        <p>پروژه های انجام شده</p>
-                    </div>
-                    <div class="col-6 mt-5">
-                        <h5>
-                            <span>+70</span>
-                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
-                            </lord-icon>
-                        </h5>
-                        <p>پروژه های انجام شده</p>
-                    </div>
-                    <div class="col-6 mt-5">
-                        <h5>
-                            <span>+70</span>
-                            <lord-icon src="{{ asset('assets/js/lord/hmzvkifi.json') }}" trigger="loop" delay="1500" stroke="bold" state="hover-loading" colors="primary:#ffe500" style="width: 40px; height: 40px">
-                            </lord-icon>
-                        </h5>
-                        <p>پروژه های انجام شده</p>
+
+                    <div class="project-list">
+                        <h5>پروژه‌های شاخص</h5>
+                        <ul>
+                            <li>پروژه پتروشیمی بوشهر</li>
+                            <li>کمپ اقامتی پردیس آذر</li>
+                            <li>پروژه مسکونی تابناک</li>
+                            <li>مرکز نوآوری هُما</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -454,254 +342,429 @@
     </div>
 </section>
 
-<!-- Partners Section -->
-<div class="container mt-128">
-    <div class="section-title">همکاری با برندهای معتبر</div>
-    <div class="divider"></div>
-
-    <div class="swiper companySwiper">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/11/%D9%BE%D8%B1%D8%B4%DB%8C%D8%A7-jpg.webp" alt="Company 1" />
-            </div>
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/12/%DA%AF%D8%B1%D9%88%D9%87-OIEC-jpg.webp" alt="Company 2" />
-            </div>
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/11/%D9%BE%D8%B1%D8%B4%DB%8C%D8%A7-jpg.webp" alt="Company 3" />
-            </div>
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/12/%DA%AF%D8%B1%D9%88%D9%87-OIEC-jpg.webp" alt="Company 4" />
-            </div>
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/11/%D9%BE%D8%B1%D8%B4%DB%8C%D8%A7-jpg.webp" alt="Company 5" />
-            </div>
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/12/%DA%AF%D8%B1%D9%88%D9%87-OIEC-jpg.webp" alt="Company 6" />
-            </div>
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/11/%D9%BE%D8%B1%D8%B4%DB%8C%D8%A7-jpg.webp" alt="Company 7" />
-            </div>
-            <div class="swiper-slide">
-                <img src="https://vima-ir.com/wp-content/uploads/2023/12/%DA%AF%D8%B1%D9%88%D9%87-OIEC-jpg.webp" alt="Company 8" />
-            </div>
-        </div>
-        <div class="swiper-pagination"></div>
-    </div>
-</div>
-
-<!-- Projects Distribution Map Section -->
-<div class="container mt-128">
-    <div class="section-title">نقشه پراکندگی پروژه‌های داروگ</div>
-    <div class="divider"></div>
-    
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="map-container">
-                <div class="map-wrapper">
-                    <img src="https://darvag-1.s3.ir-thr-at1.arvanstorage.ir/settings/iran_map_67b8447c7a1bc_341419.png" alt="نقشه ایران" class="map-image">
-                    
-                    <!-- Project markers -->
-                    <div class="project-marker" style="top: 25%; left: 45%;" data-project="تهران">
-                        <div class="marker-dot"></div>
-                        <div class="marker-label">تهران</div>
-                    </div>
-                    
-                    <div class="project-marker" style="top: 30%; left: 40%;" data-project="اصفهان">
-                        <div class="marker-dot"></div>
-                        <div class="marker-label">اصفهان</div>
-                    </div>
-                    
-                    <div class="project-marker" style="top: 35%; left: 35%;" data-project="شیراز">
-                        <div class="marker-dot"></div>
-                        <div class="marker-label">شیراز</div>
-                    </div>
-                    
-                    <div class="project-marker" style="top: 40%; left: 50%;" data-project="مشهد">
-                        <div class="marker-dot"></div>
-                        <div class="marker-label">مشهد</div>
-                    </div>
-                    
-                    <div class="project-marker" style="top: 45%; left: 25%;" data-project="بوشهر">
-                        <div class="marker-dot"></div>
-                        <div class="marker-label">بوشهر</div>
-                    </div>
-                    
-                    <div class="project-marker" style="top: 50%; left: 30%;" data-project="اهواز">
-                        <div class="marker-dot"></div>
-                        <div class="marker-label">اهواز</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="map-stats">
-                <h4>آمار پروژه‌ها</h4>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number">70+</div>
-                        <div class="stat-label">پروژه انجام شده</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">25+</div>
-                        <div class="stat-label">استان</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">15+</div>
-                        <div class="stat-label">شهر</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">100%</div>
-                        <div class="stat-label">رضایت مشتری</div>
-                    </div>
-                </div>
-                
-                <div class="project-list">
-                    <h5>پروژه‌های شاخص</h5>
-                    <ul>
-                        <li>پروژه پتروشیمی بوشهر</li>
-                        <li>کمپ اقامتی پردیس آذر</li>
-                        <li>پروژه مسکونی تابناک</li>
-                        <li>مرکز نوآوری هُما</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- FAQ Section -->
-<div class="faq-section mt-128">
+<!-- Contact CTA Section -->
+<section class="contact-cta-section">
     <div class="container">
-        <h2 class="my-4">سوالات متداول</h2>
-
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>چگونه ثبت‌نام کنم؟</span>
-                <span class="faq-icon">+</span>
-            </div>
-            <div class="faq-answer">
-                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با
-                استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در
-                ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز،
-                و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای
-                زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و
-                متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان
-                رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد
-                کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه
-                راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل
-                حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود
-                طراحی اساسا مورد استفاده قرار گیرد.
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>چگونه پسورد خود را بازیابی کنم؟</span>
-                <span class="faq-icon">+</span>
-            </div>
-            <div class="faq-answer">
-                می‌توانید از طریق گزینه "فراموشی رمز عبور" درخواست بازیابی رمز دهید.
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">
-                <span>چگونه با پشتیبانی تماس بگیرم؟</span>
-                <span class="faq-icon">+</span>
-            </div>
-            <div class="faq-answer">
-                شما می‌توانید از طریق ایمیل یا شماره تماس درج شده در سایت، با ما در
-                ارتباط باشید.
+        <div class="cta-content">
+            <h2>آماده شروع پروژه بعدی خود هستید؟</h2>
+            <p>با تیم متخصص ما تماس بگیرید و از مشاوره رایگان بهره‌مند شوید</p>
+            <div class="cta-buttons">
+                <a href="{{ route('contact') }}" class="btn btn-primary-custom">
+                    <span>تماس با ما</span>
+                    <i class="bi bi-telephone"></i>
+                </a>
+                <a href="tel:09350801600" class="btn btn-outline-custom">
+                    <span>09350801600</span>
+                    <i class="bi bi-phone"></i>
+                </a>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Company Info Section -->
-<div class="container mt-128">
-    <div class="section-title">شرکت کاخ سازان داروگ</div>
-    <div class="divider"></div>
-    <div class="content-container p-3 rounded" id="textContainer">
-        <p class="vima-company-content">
-            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با
-            استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در
-            ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و
-            کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی
-            در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می
-            طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی
-            الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این
-            صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها،
-            <br />
-            و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی
-            دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا
-            مورد استفاده قرار گیرد.لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم
-            از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه
-            روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی
-            تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می
-            باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان
-            جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای
-            طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی
-            ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در
-            ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل
-            حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود
-            طراحی اساسا مورد استفاده قرار گیرد.لورم ایپسوم متن ساختگی با تولید
-            سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها
-            و متون بلکه روزنامه و
-            <br />
-            مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد
-            نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای
-            زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان
-            را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای
-            علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این
-            صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و
-            شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای
-            اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده
-            قرار گیرد.لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و
-            با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در
-            ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و
-            کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی
-            در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می
-            طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی
-            الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این
-            صورت می توان امید داشت که
-            <br />
-            تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و
-            زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته
-            اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.لورم ایپسوم متن
-            ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان
-            گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که
-            لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با
-            هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد
-            گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم
-            افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی،
-            و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت
-            که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان
-            رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات
-            پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.
-        </p>
-        <div class="fade-out"></div>
-    </div>
-
-    <div class="text-center mt-3">
-        <button class="toggle-button" id="toggleButton">
-            <i class="bi bi-chevron-down"></i> مشاهده بیشتر
-        </button>
-    </div>
-</div>
+</section>
 @endsection
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-/* Projects Distribution Map Styles */
-.map-container {
+/* Global Styles */
+:root {
+    --primary-color: #ff6b00;
+    --secondary-color: #0077ff;
+    --accent-color: #ffd700;
+    --text-dark: #333;
+    --text-light: #666;
+    --bg-light: #f0f2f5;
+    --white: #ffffff;
+    --shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf0 100%);
+    padding: 100px 0;
     position: relative;
-    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.hero-gradient-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b00, #0077ff, #ff6b00);
+}
+
+.hero-decorative-circle {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+.hero-orange-glow {
+    background: radial-gradient(circle, rgba(255, 107, 0, 0.05), transparent 70%);
+    top: 20px;
+    right: 10%;
+}
+
+.hero-blue-glow {
+    background: radial-gradient(circle, rgba(0, 119, 255, 0.05), transparent 70%);
+    bottom: 20px;
+    left: 10%;
+}
+
+.hero-content {
+    padding: 40px 0;
+}
+
+.hero-title {
+    margin-bottom: 30px;
+}
+
+.hero-title-main {
+    display: block;
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.hero-title-sub {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    line-height: 1.8;
+    margin-bottom: 40px;
+    text-align: justify;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.hero-image {
+    text-align: center;
+}
+
+.hero-image img {
     border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow);
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--primary-color), #ff8c00);
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+    color: white;
+}
+
+.btn-outline-custom {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-custom:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Section Headers */
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.title-accent {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    position: relative;
+}
+
+.title-underline {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+}
+
+.section-description {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* About Section */
+.about-section {
+    padding: 100px 0;
+    background: var(--white);
+}
+
+.feature-card {
+    background: var(--white);
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), #ff8c00);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 2rem;
+}
+
+.feature-card h4 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.feature-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Projects Section */
+.projects-section {
+    padding: 100px 0;
+    background: var(--bg-light);
+}
+
+.project-card {
+    background: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.project-image {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+}
+
+.project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-image img {
+    transform: scale(1.05);
+}
+
+.project-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.project-card:hover .project-overlay {
+    opacity: 1;
+}
+
+.project-content {
+    padding: 30px;
+}
+
+.project-content h4 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.project-content p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.project-meta {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.project-meta i {
+    margin-left: 5px;
+}
+
+/* Services Section */
+.services-section {
+    padding: 100px 0;
+    background: var(--white);
+}
+
+.service-card {
+    background: var(--white);
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 2px solid transparent;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 25px rgba(255, 107, 0, 0.2);
+}
+
+.service-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--secondary-color), #00a0ff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 2rem;
+}
+
+.service-card h4 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.service-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Statistics Section */
+.stats-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, var(--primary-color), #ff8c00);
+    color: white;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.2);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--accent-color);
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Map Section */
+.map-section {
+    padding: 100px 0;
+    background: var(--bg-light);
+}
+
+.map-container {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: var(--shadow);
 }
 
 .map-wrapper {
@@ -733,8 +796,8 @@
 .marker-dot {
     width: 12px;
     height: 12px;
-    background: linear-gradient(135deg, #ff6b00, #ff8c00);
-    border: 3px solid #fff;
+    background: linear-gradient(135deg, var(--primary-color), #ff8c00);
+    border: 3px solid var(--white);
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(255, 107, 0, 0.4);
     animation: pulse 2s infinite;
@@ -773,17 +836,18 @@
 }
 
 .map-stats {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--secondary-color), #00a0ff);
     color: white;
-    padding: 30px;
+    padding: 40px;
     border-radius: 15px;
     height: fit-content;
 }
 
 .map-stats h4 {
     color: white;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     font-weight: bold;
+    font-size: 1.5rem;
 }
 
 .stats-grid {
@@ -795,7 +859,7 @@
 
 .stat-item {
     text-align: center;
-    padding: 15px;
+    padding: 20px;
     background: rgba(255,255,255,0.1);
     border-radius: 10px;
     backdrop-filter: blur(10px);
@@ -804,7 +868,7 @@
 .stat-number {
     font-size: 2rem;
     font-weight: bold;
-    color: #ffd700;
+    color: var(--accent-color);
     margin-bottom: 5px;
 }
 
@@ -815,7 +879,7 @@
 
 .project-list h5 {
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-weight: bold;
 }
 
@@ -826,35 +890,83 @@
 }
 
 .project-list li {
-    padding: 8px 0;
+    padding: 10px 0;
     border-bottom: 1px solid rgba(255,255,255,0.2);
     position: relative;
-    padding-right: 20px;
+    padding-right: 25px;
 }
 
 .project-list li:before {
     content: "📍";
     position: absolute;
     right: 0;
-    top: 8px;
+    top: 10px;
 }
 
 .project-list li:last-child {
     border-bottom: none;
 }
 
+/* Contact CTA Section */
+.contact-cta-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, var(--text-dark), #444);
+    color: white;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.cta-content p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
+    .hero-title-main {
+        font-size: 2rem;
+    }
+
+    .hero-title-sub {
+        font-size: 1.2rem;
+    }
+
+    .title-accent {
+        font-size: 2rem;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
     .map-wrapper {
         height: 300px;
     }
-    
-    .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
+
     .stat-number {
-        font-size: 1.5rem;
+        font-size: 2rem;
     }
 }
 </style>
@@ -862,47 +974,12 @@
 
 @push('scripts')
 <script>
-    // FAQ Toggle functionality
+    // Map markers functionality
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".faq-item").forEach((item) => {
-            item.addEventListener("click", function () {
-                this.classList.toggle("active");
-
-                let answer = this.querySelector(".faq-answer");
-                if (this.classList.contains("active")) {
-                    answer.style.maxHeight = answer.scrollHeight + "px";
-                } else {
-                    answer.style.maxHeight = null;
-                }
-            });
-        });
-
-        // Toggle button functionality
-        const toggleButton = document.getElementById('toggleButton');
-        const textContainer = document.getElementById('textContainer');
-
-        if (toggleButton && textContainer) {
-            toggleButton.addEventListener('click', function() {
-                textContainer.classList.toggle('expanded');
-                const icon = this.querySelector('i');
-                if (textContainer.classList.contains('expanded')) {
-                    icon.classList.remove('bi-chevron-down');
-                    icon.classList.add('bi-chevron-up');
-                    this.innerHTML = '<i class="bi bi-chevron-up"></i> مشاهده کمتر';
-                } else {
-                    icon.classList.remove('bi-chevron-up');
-                    icon.classList.add('bi-chevron-down');
-                    this.innerHTML = '<i class="bi bi-chevron-down"></i> مشاهده بیشتر';
-                }
-            });
-        }
-
-        // Map markers functionality
         document.querySelectorAll('.project-marker').forEach(marker => {
             marker.addEventListener('click', function() {
                 const projectName = this.getAttribute('data-project');
-                
-                // Create a simple modal or alert for project details
+
                 const projectDetails = {
                     'تهران': 'پروژه‌های متعدد در پایتخت شامل مراکز تجاری و مسکونی',
                     'اصفهان': 'پروژه‌های صنعتی و مسکونی در شهر تاریخی اصفهان',
@@ -911,10 +988,8 @@
                     'بوشهر': 'پروژه‌های پتروشیمی و صنعتی در بوشهر',
                     'اهواز': 'پروژه‌های نفتی و صنعتی در اهواز'
                 };
-                
+
                 const details = projectDetails[projectName] || 'اطلاعات پروژه در دسترس نیست';
-                
-                // You can replace this with a proper modal
                 alert(`${projectName}:\n${details}`);
             });
         });
