@@ -14,8 +14,8 @@ use App\Http\Controllers\{
     ClientContactController,
     HelpController,
     FileManagerController,
-    ProjectTemplateController,
     TagController,
+    TagCategoryController,
     TaskController
 };
 use App\Models\{User, Project};
@@ -114,6 +114,9 @@ Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
             Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
             Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
         });
+
+        // Tag Categories Management
+        Route::resource('tag-categories', TagCategoryController::class);
 
         // Tags Management
         Route::resource('tags', TagController::class);
