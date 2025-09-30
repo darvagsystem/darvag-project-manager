@@ -95,90 +95,90 @@ Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
         });
     });
 
-    // General File Manager
-    Route::prefix('file-manager')->name('file-manager.')->group(function () {
-        Route::get('/', function() {
-            return view('admin.file-manager.livewire');
-        })->name('index');
-        Route::get('/files', [FileManagerController::class, 'getFiles'])->name('files');
-        Route::post('/create-folder', [FileManagerController::class, 'createFolder'])->name('create-folder');
-        Route::post('/upload', [FileManagerController::class, 'upload'])->name('upload');
-        Route::get('/thumbnail/{file}', [FileManagerController::class, 'thumbnail'])->name('thumbnail');
-        Route::get('/download/{file}', [FileManagerController::class, 'download'])->name('download');
-        Route::put('/{file}/rename', [FileManagerController::class, 'rename'])->name('rename');
-        Route::delete('/delete', [FileManagerController::class, 'delete'])->name('delete');
+        // General File Manager
+        Route::prefix('file-manager')->name('file-manager.')->group(function () {
+            Route::get('/', function() {
+                return view('admin.file-manager.livewire');
+            })->name('index');
+            Route::get('/files', [FileManagerController::class, 'getFiles'])->name('files');
+            Route::post('/create-folder', [FileManagerController::class, 'createFolder'])->name('create-folder');
+            Route::post('/upload', [FileManagerController::class, 'upload'])->name('upload');
+            Route::get('/thumbnail/{file}', [FileManagerController::class, 'thumbnail'])->name('thumbnail');
+            Route::get('/download/{file}', [FileManagerController::class, 'download'])->name('download');
+            Route::put('/{file}/rename', [FileManagerController::class, 'rename'])->name('rename');
+            Route::delete('/delete', [FileManagerController::class, 'delete'])->name('delete');
 
-        // Tag routes
-        Route::get('/tags', [FileManagerController::class, 'getTags'])->name('tags');
-        Route::post('/{file}/tags', [FileManagerController::class, 'addTag'])->name('add-tag');
-        Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
-        Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
-    });
+            // Tag routes
+            Route::get('/tags', [FileManagerController::class, 'getTags'])->name('tags');
+            Route::post('/{file}/tags', [FileManagerController::class, 'addTag'])->name('add-tag');
+            Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
+            Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
+        });
 
-    // Tags Management
-    Route::resource('tags', TagController::class);
-    Route::get('/tags-api', [TagController::class, 'getTags'])->name('tags.api');
-    Route::get('/tags/{tag}/files', [TagController::class, 'files'])->name('tags.files');
-    Route::post('/tags/{tag}/bulk-download', [TagController::class, 'bulkDownload'])->name('tags.bulk-download');
-    Route::post('/tags/{tag}/merge-pdf', [TagController::class, 'mergePdf'])->name('tags.merge-pdf');
+        // Tags Management
+        Route::resource('tags', TagController::class);
+        Route::get('/tags-api', [TagController::class, 'getTags'])->name('tags.api');
+        Route::get('/tags/{tag}/files', [TagController::class, 'files'])->name('tags.files');
+        Route::post('/tags/{tag}/bulk-download', [TagController::class, 'bulkDownload'])->name('tags.bulk-download');
+        Route::post('/tags/{tag}/merge-pdf', [TagController::class, 'mergePdf'])->name('tags.merge-pdf');
 
-    // Tasks Management
-    Route::resource('tasks', TaskController::class);
-    Route::get('/tasks-dashboard', [TaskController::class, 'dashboard'])->name('tasks.dashboard');
-    Route::get('/my-tasks', [TaskController::class, 'myTasks'])->name('tasks.my-tasks');
-    Route::post('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
+        // Tasks Management
+        Route::resource('tasks', TaskController::class);
+        Route::get('/tasks-dashboard', [TaskController::class, 'dashboard'])->name('tasks.dashboard');
+        Route::get('/my-tasks', [TaskController::class, 'myTasks'])->name('tasks.my-tasks');
+        Route::post('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
 
-    // Settings
-    Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('/', [AdminController::class, 'settings'])->name('index');
-        Route::get('/company', [AdminController::class, 'companySettings'])->name('company');
-        Route::post('/company', [AdminController::class, 'settingsUpdate'])->name('company.update');
+        // Settings
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [AdminController::class, 'settings'])->name('index');
+            Route::get('/company', [AdminController::class, 'companySettings'])->name('company');
+            Route::post('/company', [AdminController::class, 'settingsUpdate'])->name('company.update');
 
-        // Banks
-        Route::resource('banks', BankController::class);
-        Route::post('/banks/seed', [BankController::class, 'seed'])->name('banks.seed');
-    });
+            // Banks
+            Route::resource('banks', BankController::class);
+            Route::post('/banks/seed', [BankController::class, 'seed'])->name('banks.seed');
+        });
 
-    // Project Templates
-    Route::resource('project-templates', ProjectTemplateController::class);
-    Route::post('/project-templates/apply', [ProjectTemplateController::class, 'applyToProject'])->name('project-templates.apply');
-    Route::post('/project-templates/create-from-project', [ProjectTemplateController::class, 'createFromProject'])->name('project-templates.create-from-project');
+        // Project Templates
+        Route::resource('project-templates', ProjectTemplateController::class);
+        Route::post('/project-templates/apply', [ProjectTemplateController::class, 'applyToProject'])->name('project-templates.apply');
+        Route::post('/project-templates/create-from-project', [ProjectTemplateController::class, 'createFromProject'])->name('project-templates.create-from-project');
 
-    // Services
-    Route::get('/services', [AdminController::class, 'services'])->name('services');
+        // Services
+        Route::get('/services', [AdminController::class, 'services'])->name('services');
 
-    // Blog
-    Route::get('/blog', [AdminController::class, 'blog'])->name('blog');
+        // Blog
+        Route::get('/blog', [AdminController::class, 'blog'])->name('blog');
 
-    // Gallery
-    Route::get('/gallery', [AdminController::class, 'gallery'])->name('gallery');
+        // Gallery
+        Route::get('/gallery', [AdminController::class, 'gallery'])->name('gallery');
 
-    // Help
-    Route::get('/help', [HelpController::class, 'index'])->name('help');
-    Route::prefix('help')->name('help.')->group(function () {
-        Route::get('/', [HelpController::class, 'index'])->name('index');
-        Route::get('/getting-started', [HelpController::class, 'gettingStarted'])->name('getting-started');
-        Route::get('/dashboard', [HelpController::class, 'dashboard'])->name('dashboard');
-        Route::get('/employees', [HelpController::class, 'employees'])->name('employees');
-        Route::get('/projects', [HelpController::class, 'projects'])->name('projects');
-        Route::get('/clients', [HelpController::class, 'clients'])->name('clients');
-        Route::get('/settings', [HelpController::class, 'settings'])->name('settings');
-        Route::get('/bank-accounts', [HelpController::class, 'bankAccounts'])->name('bank-accounts');
-        Route::get('/project-employees', [HelpController::class, 'projectEmployees'])->name('project-employees');
-    });
+        // Help
+        Route::get('/help', [HelpController::class, 'index'])->name('help');
+        Route::prefix('help')->name('help.')->group(function () {
+            Route::get('/', [HelpController::class, 'index'])->name('index');
+            Route::get('/getting-started', [HelpController::class, 'gettingStarted'])->name('getting-started');
+            Route::get('/dashboard', [HelpController::class, 'dashboard'])->name('dashboard');
+            Route::get('/employees', [HelpController::class, 'employees'])->name('employees');
+            Route::get('/projects', [HelpController::class, 'projects'])->name('projects');
+            Route::get('/clients', [HelpController::class, 'clients'])->name('clients');
+            Route::get('/settings', [HelpController::class, 'settings'])->name('settings');
+            Route::get('/bank-accounts', [HelpController::class, 'bankAccounts'])->name('bank-accounts');
+            Route::get('/project-employees', [HelpController::class, 'projectEmployees'])->name('project-employees');
+        });
 
-    // System
-    Route::get('/backup', [AdminController::class, 'backup'])->name('backup');
-    Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
+        // System
+        Route::get('/backup', [AdminController::class, 'backup'])->name('backup');
+        Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
 
-    // API Routes
-    Route::prefix('api')->name('api.')->group(function () {
-        Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
-        Route::get('/project-templates', [ProjectTemplateController::class, 'getTemplatesForProject'])->name('project-templates');
-        Route::get('/projects', function() {
-            return response()->json(['projects' => Project::select('id', 'name')->get()]);
-        })->name('projects');
-    });
+        // API Routes
+        Route::prefix('api')->name('api.')->group(function () {
+            Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
+            Route::get('/project-templates', [ProjectTemplateController::class, 'getTemplatesForProject'])->name('project-templates');
+            Route::get('/projects', function() {
+                return response()->json(['projects' => Project::select('id', 'name')->get()]);
+            })->name('projects');
+        });
 });
 
 // Route Model Binding
