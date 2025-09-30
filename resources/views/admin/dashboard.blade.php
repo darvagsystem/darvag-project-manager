@@ -15,7 +15,7 @@
                         <div class="card-body">
                             <h5 class="card-title">مدیریت فایل‌ها</h5>
                             <p class="card-text">مدیریت فایل‌های عمومی سیستم</p>
-                            <a href="{{ route('file-manager.index') }}" class="btn btn-primary">مشاهده</a>
+                            <a href="{{ route('panel.file-manager.index') }}" class="btn btn-primary">مشاهده</a>
                         </div>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                         <div class="card-body">
                             <h5 class="card-title">پروژه‌ها</h5>
                             <p class="card-text">مدیریت پروژه‌ها و فایل‌های آن‌ها</p>
-                            <a href="{{ route('projects.index') }}" class="btn btn-primary">مشاهده</a>
+                            <a href="{{ route('panel.projects.index') }}" class="btn btn-primary">مشاهده</a>
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                         <div class="card-body">
                             <h5 class="card-title">کارمندان</h5>
                             <p class="card-text">مدیریت کارمندان</p>
-                            <a href="{{ route('employees.index') }}" class="btn btn-primary">مشاهده</a>
+                            <a href="{{ route('panel.employees.index') }}" class="btn btn-primary">مشاهده</a>
                         </div>
                     </div>
                 </div>
