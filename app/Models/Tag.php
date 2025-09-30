@@ -12,13 +12,18 @@ class Tag extends Model
         'description',
         'allowed_extensions',
         'allowed_mime_types',
-        'is_folder_tag'
+        'is_folder_tag',
+        'priority',
+        'is_required',
+        'required_for_projects'
     ];
 
     protected $casts = [
         'allowed_extensions' => 'array',
         'allowed_mime_types' => 'array',
-        'is_folder_tag' => 'boolean'
+        'is_folder_tag' => 'boolean',
+        'is_required' => 'boolean',
+        'required_for_projects' => 'array'
     ];
 
     /**
@@ -82,5 +87,77 @@ class Tag extends Model
             return 'همه';
         }
         return implode(', ', $this->allowed_mime_types);
+    }
+
+    /**
+     * دریافت متن اولویت
+     */
+    public function getPriorityText()
+    {
+        return match($this->priority) {
+            'critical' => 'بحرانی',
+            'high' => 'بالا',
+            'medium' => 'متوسط',
+            'low' => 'پایین',
+            'optional' => 'اختیاری',
+            default => 'متوسط'
+        };
+    }
+
+    /**
+     * دریافت کلاس CSS برای اولویت
+     */
+    public function getPriorityClass()
+    {
+        return match($this->priority) {
+            'critical' => 'danger',
+            'high' => 'warning',
+            'medium' => 'info',
+            'low' => 'secondary',
+            'optional' => 'light',
+            default => 'info'
+        };
+    }
+
+    /**
+     * بررسی اینکه آیا این تگ برای پروژه الزامی است
+     */
+    public function isRequiredForProject(Project $project)
+    {
+        if (!$this->is_required) {
+            return false;
+        }
+
+        // اگر تگ برای همه پروژه‌ها الزامی است
+        if (empty($this->required_for_projects)) {
+            return true;
+        }
+
+        // بررسی دسته‌بندی پروژه
+        return in_array($project->category, $this->required_for_projects);
+    }
+
+    /**
+     * Scope برای تگ‌های الزامی
+     */
+    public function scopeRequired($query)
+    {
+        return $query->where('is_required', true);
+    }
+
+    /**
+     * Scope برای تگ‌های با اولویت خاص
+     */
+    public function scopePriority($query, $priority)
+    {
+        return $query->where('priority', $priority);
+    }
+
+    /**
+     * Scope برای تگ‌های بحرانی
+     */
+    public function scopeCritical($query)
+    {
+        return $query->where('priority', 'critical');
     }
 }

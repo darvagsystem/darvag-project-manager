@@ -69,6 +69,56 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="priority" class="form-label">اولویت</label>
+                        <select id="priority" name="priority" class="form-select">
+                            <option value="critical">بحرانی</option>
+                            <option value="high">بالا</option>
+                            <option value="medium" selected>متوسط</option>
+                            <option value="low">پایین</option>
+                            <option value="optional">اختیاری</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_required" name="is_required" value="1" {{ old('is_required') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_required">
+                                این تگ برای پروژه‌ها الزامی است
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="required_for_projects_group" style="display: none;">
+                        <label class="form-label">دسته‌بندی‌های پروژه</label>
+                        <div class="form-check-group">
+                            <div class="form-check">
+                                <input type="checkbox" id="all_categories" name="all_categories" value="1" class="form-check-input">
+                                <label for="all_categories" class="form-check-label">همه دسته‌بندی‌ها</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="construction" name="required_for_projects[]" value="construction" class="form-check-input">
+                                <label for="construction" class="form-check-label">ساخت و ساز</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="industrial" name="required_for_projects[]" value="industrial" class="form-check-input">
+                                <label for="industrial" class="form-check-label">صنعتی</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="infrastructure" name="required_for_projects[]" value="infrastructure" class="form-check-input">
+                                <label for="infrastructure" class="form-check-label">زیرساخت</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="energy" name="required_for_projects[]" value="energy" class="form-check-input">
+                                <label for="energy" class="form-check-label">انرژی</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="petrochemical" name="required_for_projects[]" value="petrochemical" class="form-check-input">
+                                <label for="petrochemical" class="form-check-label">پتروشیمی</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="allowed_extensions" class="form-label">پسوندهای مجاز</label>
                         <input type="text" class="form-control @error('allowed_extensions') is-invalid @enderror"
                                id="allowed_extensions" name="allowed_extensions"
@@ -192,6 +242,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial preview
     updatePreview();
+
+    // مدیریت نمایش دسته‌بندی‌های پروژه
+    const isRequiredCheckbox = document.getElementById('is_required');
+    const requiredForProjectsGroup = document.getElementById('required_for_projects_group');
+    const allCategoriesCheckbox = document.getElementById('all_categories');
+    const categoryCheckboxes = document.querySelectorAll('input[name="required_for_projects[]"]');
+
+    isRequiredCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            requiredForProjectsGroup.style.display = 'block';
+        } else {
+            requiredForProjectsGroup.style.display = 'none';
+            // پاک کردن انتخاب‌ها
+            allCategoriesCheckbox.checked = false;
+            categoryCheckboxes.forEach(cb => cb.checked = false);
+        }
+    });
+
+    // مدیریت "همه دسته‌بندی‌ها"
+    allCategoriesCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            categoryCheckboxes.forEach(cb => cb.checked = false);
+        }
+    });
+
+    // مدیریت دسته‌بندی‌های فردی
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                allCategoriesCheckbox.checked = false;
+            }
+        });
+    });
 });
 </script>
 @endpush

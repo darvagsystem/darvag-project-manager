@@ -139,10 +139,6 @@ Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
             Route::post('/banks/seed', [BankController::class, 'seed'])->name('banks.seed');
         });
 
-        // Project Templates
-        Route::resource('project-templates', ProjectTemplateController::class);
-        Route::post('/project-templates/apply', [ProjectTemplateController::class, 'applyToProject'])->name('project-templates.apply');
-        Route::post('/project-templates/create-from-project', [ProjectTemplateController::class, 'createFromProject'])->name('project-templates.create-from-project');
 
         // Services
         Route::get('/services', [AdminController::class, 'services'])->name('services');
@@ -174,7 +170,6 @@ Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
         // API Routes
         Route::prefix('api')->name('api.')->group(function () {
             Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
-            Route::get('/project-templates', [ProjectTemplateController::class, 'getTemplatesForProject'])->name('project-templates');
             Route::get('/projects', function() {
                 return response()->json(['projects' => Project::select('id', 'name')->get()]);
             })->name('projects');
