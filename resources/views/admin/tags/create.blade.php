@@ -10,7 +10,7 @@
             <p class="page-subtitle">تگ جدید برای فایل‌ها ایجاد کنید</p>
         </div>
         <div>
-            <a href="{{ route('tags.index') }}" class="btn btn-secondary">
+            <a href="{{ route('panel.tags.index') }}" class="btn btn-secondary">
                 <i class="mdi mdi-arrow-right"></i> بازگشت
             </a>
         </div>
@@ -21,7 +21,7 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('tags.store') }}" method="POST">
+                <form action="{{ route('panel.tags.store') }}" method="POST">
                     @csrf
 
                     <div class="mb-3">
@@ -96,7 +96,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="mdi mdi-check"></i> ایجاد تگ
                         </button>
-                        <a href="{{ route('tags.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('panel.tags.index') }}" class="btn btn-secondary">
                             <i class="mdi mdi-close"></i> انصراف
                         </a>
                     </div>

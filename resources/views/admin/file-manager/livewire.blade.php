@@ -10,7 +10,7 @@
             <p class="page-subtitle">مدیریت و سازماندهی فایل‌های سیستم</p>
         </div>
         <div>
-            <a href="{{ route('tags.index') }}" class="btn btn-outline-primary me-2">
+            <a href="{{ route('panel.tags.index') }}" class="btn btn-outline-primary me-2">
                 <i class="mdi mdi-tag me-1"></i>
                 مدیریت تگ‌ها
             </a>
@@ -25,7 +25,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0">فایل‌های سیستم</h6>
                     <div>
-                        <a href="{{ route('tags.index') }}" class="btn btn-sm btn-outline-primary">
+                        <a href="{{ route('panel.tags.index') }}" class="btn btn-sm btn-outline-primary">
                             <i class="mdi mdi-tag me-1"></i>
                             مدیریت تگ‌ها
                         </a>

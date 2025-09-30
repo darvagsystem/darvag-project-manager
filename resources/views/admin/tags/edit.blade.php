@@ -10,7 +10,7 @@
             <p class="page-subtitle">{{ $tag->name }}</p>
         </div>
         <div>
-            <a href="{{ route('tags.index') }}" class="btn btn-secondary">
+            <a href="{{ route('panel.tags.index') }}" class="btn btn-secondary">
                 <i class="mdi mdi-arrow-right"></i> بازگشت
             </a>
         </div>
@@ -21,7 +21,7 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('tags.update', $tag) }}" method="POST">
+                <form action="{{ route('panel.tags.update', $tag) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -98,7 +98,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="mdi mdi-check"></i> به‌روزرسانی تگ
                         </button>
-                        <a href="{{ route('tags.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('panel.tags.index') }}" class="btn btn-secondary">
                             <i class="mdi mdi-close"></i> انصراف
                         </a>
                     </div>

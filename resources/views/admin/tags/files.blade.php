@@ -10,7 +10,7 @@
             <p class="page-subtitle">فایل‌هایی که دارای تگ "{{ $tag->name }}" هستند</p>
         </div>
         <div>
-            <a href="{{ route('tags.index') }}" class="btn btn-secondary">
+            <a href="{{ route('panel.tags.index') }}" class="btn btn-secondary">
                 <i class="mdi mdi-arrow-left"></i> بازگشت به تگ‌ها
             </a>
         </div>

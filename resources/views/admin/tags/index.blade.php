@@ -10,7 +10,7 @@
             <p class="page-subtitle">ایجاد و مدیریت تگ‌های فایل‌ها</p>
         </div>
         <div>
-            <a href="{{ route('tags.create') }}" class="btn btn-primary">
+            <a href="{{ route('panel.tags.create') }}" class="btn btn-primary">
                 <i class="mdi mdi-plus"></i> تگ جدید
             </a>
         </div>
@@ -74,20 +74,20 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <a href="{{ route('tags.files', $tag) }}" class="badge bg-info text-decoration-none" style="cursor: pointer;">
+                                            <a href="{{ route('panel.tags.files', $tag) }}" class="badge bg-info text-decoration-none" style="cursor: pointer;">
                                                 {{ $tag->files->count() }}
                                             </a>
                                         </td>
                                         <td>{{ $tag->created_at->format('Y/m/d H:i') }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('tags.files', $tag) }}" class="btn btn-sm btn-outline-info" title="مشاهده فایل‌ها">
+                                                <a href="{{ route('panel.tags.files', $tag) }}" class="btn btn-sm btn-outline-info" title="مشاهده فایل‌ها">
                                                     <i class="mdi mdi-eye"></i>
                                                 </a>
-                                                <a href="{{ route('tags.edit', $tag) }}" class="btn btn-sm btn-outline-primary" title="ویرایش">
+                                                <a href="{{ route('panel.tags.edit', $tag) }}" class="btn btn-sm btn-outline-primary" title="ویرایش">
                                                     <i class="mdi mdi-pencil"></i>
                                                 </a>
-                                                <form action="{{ route('tags.destroy', $tag) }}" method="POST" class="d-inline" onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                                <form action="{{ route('panel.tags.destroy', $tag) }}" method="POST" class="d-inline" onsubmit="return confirm('آیا مطمئن هستید؟')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
@@ -106,7 +106,7 @@
                         <i class="mdi mdi-tag-outline" style="font-size: 64px; color: #6c757d;"></i>
                         <h5 class="mt-3">هیچ تگی وجود ندارد</h5>
                         <p class="text-muted">برای شروع، اولین تگ خود را ایجاد کنید</p>
-                        <a href="{{ route('tags.create') }}" class="btn btn-primary">
+                        <a href="{{ route('panel.tags.create') }}" class="btn btn-primary">
                             <i class="mdi mdi-plus"></i> ایجاد تگ جدید
                         </a>
                     </div>
