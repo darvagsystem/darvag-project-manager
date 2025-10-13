@@ -14,7 +14,6 @@ class EmployeeBankAccount extends Model
         'bank_id',
         'account_number',
         'iban',
-        'sheba_number',
         'card_number',
         'account_holder_name',
         'is_default',

@@ -43,14 +43,6 @@
                 </a>
             </div>
             <div class="nav-item">
-                <a href="{{ route('panel.services') }}" class="nav-link {{ Request::routeIs('panel.services') ? 'active' : '' }}">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="nav-text">خدمات</span>
-                </a>
-            </div>
-            <div class="nav-item">
                 <a href="{{ route('panel.clients.index') }}" class="nav-link {{ Request::routeIs('panel.clients.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -68,32 +60,78 @@
                     <span class="nav-text">مدیریت فایل‌ها</span>
                 </a>
             </div>
+        </div>
+
+
+
+            <!-- <!-- Documents and Forms Section change veiw -->
+        <div class="nav-section">
+            <div class="nav-section-title">مدارک و فرم‌ها</div>
             <div class="nav-item">
-                <a href="{{ route('panel.tasks.index') }}" class="nav-link {{ Request::routeIs('panel.tasks.*') ? 'active' : '' }}">
+                <a href="{{ route('panel.documents.index') }}" class="nav-link {{ Request::routeIs('panel.documents.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    <span class="nav-text">مدیریت کارها</span>
+                    <span class="nav-text">مدیریت مدارک</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('panel.document-categories.index') }}" class="nav-link {{ Request::routeIs('panel.document-categories.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    <span class="nav-text">دسته‌بندی‌ها</span>
                 </a>
             </div>
         </div>
 
 
+
         <div class="nav-section">
-            <div class="nav-section-title">سیستم</div>
+            <div class="nav-section-title">وظایف و فعالیت‌ها</div>
             <div class="nav-item">
-                <a href="{{ route('panel.settings.index') }}" class="nav-link {{ Request::routeIs('panel.settings.*') ? 'active' : '' }}">
+                <a href="{{ route('panel.tasks.index') }}" class="nav-link {{ Request::routeIs('panel.tasks.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
-                    <span class="nav-text">تنظیمات</span>
+                    <span class="nav-text">مدیریت وظایف</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('panel.checklists.index') }}" class="nav-link {{ Request::routeIs('panel.checklists.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="nav-text">چک لیست‌ها</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">ابزارها</div>
+            <div class="nav-item">
+                <a href="{{ route('admin.contact-messages.index') }}" class="nav-link {{ Request::routeIs('admin.contact-messages.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="nav-text">پیام‌های تماس</span>
+                    @if(\App\Models\ContactMessage::new()->count() > 0)
+                        <span class="nav-badge">{{ \App\Models\ContactMessage::new()->count() }}</span>
+                    @endif
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('panel.upload-files') }}" class="nav-link {{ Request::routeIs('panel.upload-files*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <span class="nav-text">آپلود فایل‌ها</span>
                 </a>
             </div>
             <div class="nav-item">
                 <a href="{{ route('panel.tag-categories.index') }}" class="nav-link {{ Request::routeIs('panel.tag-categories.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                     </svg>
                     <span class="nav-text">دسته‌بندی تگ‌ها</span>
                 </a>
@@ -107,23 +145,76 @@
                 </a>
             </div>
             <div class="nav-item">
-                <a href="{{ route('panel.backup') }}" class="nav-link {{ Request::routeIs('panel.backup') ? 'active' : '' }}">
+                <a href="{{ route('panel.card-to-iban.index') }}" class="nav-link {{ Request::routeIs('panel.card-to-iban.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                     </svg>
-                    <span class="nav-text">پشتیبان‌گیری</span>
+                    <span class="nav-text">تبدیل کارت به شبا</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">مدیریت سیستم</div>
+            <div class="nav-item">
+                <a href="{{ route('panel.users.index') }}" class="nav-link {{ Request::routeIs('panel.users.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    <span class="nav-text">مدیریت کاربران</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="{{ route('panel.logs') }}" class="nav-link {{ Request::routeIs('panel.logs') ? 'active' : '' }}">
+                <a href="{{ route('panel.roles.index') }}" class="nav-link {{ Request::routeIs('panel.roles.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
-                    <span class="nav-text">گزارش‌های سیستم</span>
+                    <span class="nav-text">نقش‌ها</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="{{ route('panel.help.index') }}" class="nav-link {{ Request::routeIs('panel.help.*') ? 'active' : '' }}">
+                <a href="{{ route('panel.permissions.index') }}" class="nav-link {{ Request::routeIs('panel.permissions.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <span class="nav-text">مجوزها</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('panel.settings.index') }}" class="nav-link {{ Request::routeIs('panel.settings.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span class="nav-text">تنظیمات</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">گزارش‌ها و لاگ‌ها</div>
+            <div class="nav-item">
+                <a href="{{ route('panel.activity-logs') }}" class="nav-link {{ Request::routeIs('activity-logs.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    <span class="nav-text">لاگ فعالیت‌ها</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('panel.logs') }}" class="nav-link {{ Request::routeIs('logs.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="nav-text">لاگ سیستم</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">راهنما</div>
+            <div class="nav-item">
+                <a href="{{ route('panel.help.index') }}" class="nav-link {{ Request::routeIs('help.*') ? 'active' : '' }}"></a>
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -131,5 +222,6 @@
                 </a>
             </div>
         </div>
+
     </nav>
 </aside>

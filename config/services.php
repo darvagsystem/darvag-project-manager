@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'sajar' => [
+        'api_key' => env('SAJAR_API_KEY'),
+        'base_url' => env('SAJAR_BASE_URL', 'https://api.sajar.ir'),
+    ],
+
 ];

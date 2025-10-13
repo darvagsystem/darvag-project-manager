@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('file_manager', function (Blueprint $table) {
+        Schema::create('file_managers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('original_name')->nullable();
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->index(['type']);
 
             // Foreign key constraints
-            $table->foreign('parent_id')->references('id')->on('file_manager')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('file_managers')->onDelete('cascade');
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
             $table->foreign('uploaded_by')->references('id')->on('users')->onDelete('set null');
         });
@@ -52,6 +52,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('file_manager');
+        Schema::dropIfExists('file_managers');
     }
 };

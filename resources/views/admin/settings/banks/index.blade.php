@@ -10,14 +10,14 @@
             <p class="page-subtitle">مدیریت و تنظیمات بانک‌های سیستم</p>
         </div>
         <div style="display: flex; gap: 12px;">
-            <a href="{{ route('admin.settings.banks.create') }}" class="btn btn-primary">
+            <a href="{{ route('panel.settings.banks.create') }}" class="btn btn-primary">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
                 افزودن بانک جدید
             </a>
             @if($banks->count() == 0)
-            <form action="{{ route('admin.settings.banks.seed') }}" method="POST" style="display: inline;">
+            <form action="{{ route('panel.settings.banks.seed') }}" method="POST" style="display: inline;">
                 @csrf
                 <button type="submit" class="btn btn-secondary" onclick="return confirm('آیا می‌خواهید بانک‌های پیش‌فرض ایران را اضافه کنید؟')">
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,7 +50,7 @@
                 <h3 class="card-title">لیست بانک‌ها</h3>
                 <p class="card-subtitle">مجموع {{ count($banks) }} بانک</p>
             </div>
-            <a href="{{ route('admin.settings.banks.create') }}" class="btn btn-primary">
+            <a href="{{ route('panel.settings.banks.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 افزودن بانک جدید
             </a>
@@ -94,10 +94,10 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{{ route('admin.settings.banks.edit', $bank->id) }}" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ route('panel.settings.banks.edit', $bank->id) }}" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form method="POST" action="{{ route('admin.settings.banks.destroy', $bank->id) }}" style="display: inline;"
+                                        <form method="POST" action="{{ route('panel.settings.banks.destroy', $bank->id) }}" style="display: inline;"
                                               onsubmit="return confirm('آیا از حذف این بانک اطمینان دارید؟')">
                                             @csrf
                                             @method('DELETE')
@@ -119,7 +119,7 @@
                 </div>
                 <h3>هیچ بانکی یافت نشد</h3>
                 <p>برای شروع، یک بانک جدید اضافه کنید</p>
-                <a href="{{ route('admin.settings.banks.create') }}" class="btn btn-primary">
+                <a href="{{ route('panel.settings.banks.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     افزودن بانک جدید
                 </a>

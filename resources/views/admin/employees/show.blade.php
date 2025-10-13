@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div class="col-auto">
-                            <a href="{{ route('admin.employees.edit', $employee) }}" class="btn btn-primary">
+                            <a href="{{ route('panel.employees.edit', $employee) }}" class="btn btn-primary">
                                 <i class="mdi mdi-pencil me-1"></i>
                                 ویرایش
                             </a>
@@ -165,7 +165,7 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h6 class="card-title">
-                                                        <a href="{{ route('projects.show', $project) }}" class="text-decoration-none">
+                                                        <a href="{{ route('panel.projects.show', $project) }}" class="text-decoration-none">
                                                             {{ $project->name }}
                                                         </a>
                                                     </h6>

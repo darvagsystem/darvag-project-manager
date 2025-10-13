@@ -9,8 +9,8 @@
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">داشبورد</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('admin.help') }}">راهنما</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('panel.dashboard') }}">داشبورد</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('panel.help.index') }}">راهنما</a></li>
                         <li class="breadcrumb-item active">داشبورد</li>
                     </ol>
                 </div>
@@ -333,11 +333,11 @@
                     <!-- Action Buttons -->
                     <div class="row mt-4">
                         <div class="col-12 text-center">
-                            <a href="{{ route('admin.help') }}" class="btn btn-secondary me-2">
+                            <a href="{{ route('panel.help.index') }}" class="btn btn-secondary me-2">
                                 <i class="mdi mdi-arrow-right me-1"></i>
                                 بازگشت به راهنما
                             </a>
-                            <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">
+                            <a href="{{ route('panel.dashboard') }}" class="btn btn-primary">
                                 <i class="mdi mdi-view-dashboard me-1"></i>
                                 مشاهده داشبورد
                             </a>

@@ -50,34 +50,32 @@ class ClientController extends Controller
 
         Client::create($data);
 
-        return redirect()->route('clients.index')->with('success', 'کارفرما با موفقیت اضافه شد');
+        return redirect()->route('panel.clients.index')->with('success', 'کارفرما با موفقیت اضافه شد');
     }
 
     /**
      * Display the specified client.
      */
-    public function show($id)
+    public function show(Client $client)
     {
-        $client = Client::with('projects')->findOrFail($id);
+        $client->load('projects');
         return view('admin.clients.show', compact('client'));
     }
 
     /**
      * Show the form for editing the specified client.
      */
-    public function edit($id)
+    public function edit(Client $client)
     {
-        $client = Client::findOrFail($id);
+
         return view('admin.clients.edit', compact('client'));
     }
 
     /**
      * Update the specified client.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Client $client)
     {
-        $client = Client::findOrFail($id);
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -99,24 +97,23 @@ class ClientController extends Controller
 
         $client->update($data);
 
-        return redirect()->route('clients.index')->with('success', 'اطلاعات کارفرما با موفقیت به‌روزرسانی شد');
+        return redirect()->route('panel.clients.index')->with('success', 'اطلاعات کارفرما با موفقیت به‌روزرسانی شد');
     }
 
     /**
      * Remove the specified client.
      */
-    public function destroy($id)
+    public function destroy(Client $client)
     {
-        $client = Client::findOrFail($id);
 
         // Check if client has any projects
         if ($client->projects()->count() > 0) {
-            return redirect()->route('clients.index')
+            return redirect()->route('panel.clients.index')
                            ->with('error', 'این کارفرما دارای پروژه‌های مرتبط است و قابل حذف نیست');
         }
 
         $client->delete();
 
-        return redirect()->route('clients.index')->with('success', 'کارفرما با موفقیت حذف شد');
+        return redirect()->route('panel.clients.index')->with('success', 'کارفرما با موفقیت حذف شد');
     }
 }

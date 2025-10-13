@@ -9,7 +9,7 @@
 </div>
 
 <!-- اضافه کردن action به form -->
-<form class="client-form" method="POST" action="{{ route('clients.store') }}" enctype="multipart/form-data">
+<form class="client-form" method="POST" action="{{ route('panel.clients.store') }}" enctype="multipart/form-data">
     @csrf
 
     <!-- نمایش خطاهای validation -->
@@ -129,7 +129,7 @@
             </svg>
             ایجاد کارفرما
         </button>
-        <a href="{{ route('clients.index') }}" class="btn btn-secondary">
+        <a href="{{ route('panel.clients.index') }}" class="btn btn-secondary">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>

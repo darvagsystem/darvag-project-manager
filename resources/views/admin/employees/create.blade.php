@@ -35,7 +35,7 @@
     </div>
 @endif
 
-<form class="employee-form" method="POST" action="{{ route('employees.store') }}" enctype="multipart/form-data">
+<form class="employee-form" method="POST" action="{{ route('panel.employees.store') }}" enctype="multipart/form-data">
     @csrf
 
     <!-- Personal Information Section -->
@@ -235,7 +235,7 @@
                 <div class="spinner-sm"></div>
             </div>
         </button>
-        <a href="{{ route('employees.index') }}" class="btn btn-light">
+        <a href="{{ route('panel.employees.index') }}" class="btn btn-light">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
@@ -657,7 +657,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('status').value = 'active';
     document.getElementById('marital_status').value = 'single';
     document.getElementById('education').value = 'diploma';
-    
+
     // Add real-time validation
     addFormValidation();
 });
@@ -669,26 +669,26 @@ function addFormValidation() {
     const emailInput = document.getElementById('email');
     const firstNameInput = document.getElementById('first_name');
     const lastNameInput = document.getElementById('last_name');
-    
+
     // National code validation
     nationalCodeInput.addEventListener('input', function() {
         validateNationalCode(this);
     });
-    
+
     // Email validation
     emailInput.addEventListener('input', function() {
         validateEmail(this);
     });
-    
+
     // Name validation
     firstNameInput.addEventListener('input', function() {
         validateName(this, 'نام');
     });
-    
+
     lastNameInput.addEventListener('input', function() {
         validateName(this, 'نام خانوادگی');
     });
-    
+
     // Form submission validation
     form.addEventListener('submit', function(e) {
         if (!validateForm()) {
@@ -702,28 +702,28 @@ function addFormValidation() {
 function validateNationalCode(input) {
     const value = input.value.trim();
     const errorElement = getOrCreateErrorElement(input);
-    
+
     if (value.length === 0) {
         showFieldError(input, errorElement, 'کد ملی الزامی است');
         return false;
     }
-    
+
     if (value.length !== 10) {
         showFieldError(input, errorElement, 'کد ملی باید 10 رقم باشد');
         return false;
     }
-    
+
     if (!/^\d{10}$/.test(value)) {
         showFieldError(input, errorElement, 'کد ملی باید فقط شامل اعداد باشد');
         return false;
     }
-    
+
     // Check for valid national code algorithm
     if (!isValidNationalCode(value)) {
         showFieldError(input, errorElement, 'کد ملی معتبر نیست');
         return false;
     }
-    
+
     hideFieldError(input, errorElement);
     return true;
 }
@@ -732,18 +732,18 @@ function validateNationalCode(input) {
 function validateEmail(input) {
     const value = input.value.trim();
     const errorElement = getOrCreateErrorElement(input);
-    
+
     if (value.length === 0) {
         hideFieldError(input, errorElement);
         return true; // Email is optional
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
         showFieldError(input, errorElement, 'فرمت ایمیل صحیح نیست');
         return false;
     }
-    
+
     hideFieldError(input, errorElement);
     return true;
 }
@@ -752,22 +752,22 @@ function validateEmail(input) {
 function validateName(input, fieldName) {
     const value = input.value.trim();
     const errorElement = getOrCreateErrorElement(input);
-    
+
     if (value.length === 0) {
         showFieldError(input, errorElement, `${fieldName} الزامی است`);
         return false;
     }
-    
+
     if (value.length < 2) {
         showFieldError(input, errorElement, `${fieldName} باید حداقل 2 کاراکتر باشد`);
         return false;
     }
-    
+
     if (!/^[\u0600-\u06FF\s]+$/.test(value)) {
         showFieldError(input, errorElement, `${fieldName} باید فارسی باشد`);
         return false;
     }
-    
+
     hideFieldError(input, errorElement);
     return true;
 }
@@ -778,7 +778,7 @@ function validateForm() {
     const email = validateEmail(document.getElementById('email'));
     const firstName = validateName(document.getElementById('first_name'), 'نام');
     const lastName = validateName(document.getElementById('last_name'), 'نام خانوادگی');
-    
+
     return nationalCode && email && firstName && lastName;
 }
 
@@ -787,15 +787,15 @@ function showValidationErrors() {
     const errorAlert = document.createElement('div');
     errorAlert.className = 'alert alert-danger';
     errorAlert.innerHTML = '<h4>خطاهای اعتبارسنجی:</h4><p>لطفاً فیلدهای قرمز را تصحیح کنید.</p>';
-    
+
     const firstSection = document.querySelector('.form-section');
     firstSection.parentNode.insertBefore(errorAlert, firstSection);
-    
+
     // Remove after 5 seconds
     setTimeout(() => {
         errorAlert.remove();
     }, 5000);
-    
+
     // Scroll to top
     window.scrollTo(0, 0);
 }
@@ -827,26 +827,26 @@ function hideFieldError(input, errorElement) {
 function isValidNationalCode(nationalCode) {
     // Convert to string and remove any non-numeric characters
     nationalCode = nationalCode.toString().replace(/\D/g, '');
-    
+
     // Check length
     if (nationalCode.length !== 10) {
         return false;
     }
-    
+
     // Check for repetitive numbers
     if (/^(\d)\1{9}$/.test(nationalCode)) {
         return false;
     }
-    
+
     // Calculate checksum
     let sum = 0;
     for (let i = 0; i < 9; i++) {
         sum += parseInt(nationalCode[i]) * (10 - i);
     }
-    
+
     const remainder = sum % 11;
     const checkDigit = parseInt(nationalCode[9]);
-    
+
     if (remainder < 2) {
         return checkDigit === remainder;
     } else {

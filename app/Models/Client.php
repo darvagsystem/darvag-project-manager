@@ -29,6 +29,14 @@ class Client extends Model
     }
 
     /**
+     * Get the phonebook entries for the client.
+     */
+    public function phonebook()
+    {
+        return $this->hasMany(ClientPhonebook::class);
+    }
+
+    /**
      * Get the contacts for the client.
      */
     public function contacts()

@@ -10,25 +10,94 @@
             <p class="page-subtitle">{{ $project->name }} - {{ $project->contract_number }}</p>
         </div>
         <div style="display: flex; gap: 1rem;">
-            <a href="{{ route('projects.employees.create', $project) }}" class="btn btn-primary">
+            <a href="{{ route('panel.projects.employees.create', $project) }}" class="btn btn-primary">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
                 افزودن کارمند
             </a>
-            <a href="{{ route('projects.attendance.index', $project) }}" class="btn btn-success">
+            <a href="{{ route('panel.projects.employees.report', $project) }}" class="btn btn-success">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
-                حضور و غیاب
+                گزارش کارمندان
             </a>
-            <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary">
+            <a href="{{ route('panel.projects.show', $project) }}" class="btn btn-secondary">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 بازگشت به پروژه
             </a>
         </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <h3>{{ $projectEmployees->count() }}</h3>
+            <p>کل کارمندان</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon active">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <h3>{{ $projectEmployees->where('is_active', true)->count() }}</h3>
+            <p>کارمندان فعال</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon inactive">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <h3>{{ $projectEmployees->where('is_active', false)->count() }}</h3>
+            <p>کارمندان غیرفعال</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon salary">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <h3>{{ number_format($projectEmployees->sum('salary_amount') + $projectEmployees->sum('daily_salary')) }}</h3>
+            <p>مجموع حقوق (تومان)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="search-filter-section">
+    <div class="search-box">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="searchInput" placeholder="جستجو در نام، کد پرسنلی یا یادداشت...">
+    </div>
+
+    <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">همه</button>
+        <button class="filter-btn" data-filter="active">فعال</button>
+        <button class="filter-btn" data-filter="inactive">غیرفعال</button>
+        <button class="filter-btn" data-filter="monthly">ماهیانه</button>
+        <button class="filter-btn" data-filter="daily">روزانه</button>
     </div>
 </div>
 
@@ -60,24 +129,24 @@
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">مبلغ حقوق:</span>
-                    <span class="detail-value">{{ $projectEmployee->formatted_salary }}</span>
+                    <span class="detail-value">{{ $projectEmployee->salary_amount_formatted }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">روزهای کاری ماه:</span>
-                    <span class="detail-value">{{ $projectEmployee->working_days_per_month }} روز</span>
+                    <span class="detail-value">{{ $projectEmployee->working_days_text }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">درصد کسر غیبت:</span>
-                    <span class="detail-value">{{ $projectEmployee->absence_deduction_rate }}%</span>
+                    <span class="detail-value">{{ $projectEmployee->absence_deduction_text }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">تاریخ شروع:</span>
-                    <span class="detail-value">{{ $projectEmployee->start_date->format('Y/m/d') }}</span>
+                    <span class="detail-value">{{ $projectEmployee->formatted_start_date }}</span>
                 </div>
                 @if($projectEmployee->end_date)
                 <div class="detail-row">
                     <span class="detail-label">تاریخ پایان:</span>
-                    <span class="detail-value">{{ $projectEmployee->end_date->format('Y/m/d') }}</span>
+                    <span class="detail-value">{{ $projectEmployee->formatted_end_date }}</span>
                 </div>
                 @endif
                 @if($projectEmployee->notes)
@@ -89,14 +158,14 @@
             </div>
 
             <div class="employee-actions">
-                <a href="{{ route('projects.employees.edit', [$project, $projectEmployee]) }}" class="btn btn-sm btn-edit">
+                <a href="{{ route('panel.projects.employees.edit', [$project, $projectEmployee]) }}" class="btn btn-sm btn-edit">
                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
                     ویرایش
                 </a>
 
-                <form action="{{ route('projects.employees.toggle-status', [$project, $projectEmployee]) }}" method="POST" style="display: inline;">
+                <form action="{{ route('panel.projects.employees.toggle-status', [$project, $projectEmployee]) }}" method="POST" style="display: inline;">
                     @csrf
                     <button type="submit" class="btn btn-sm {{ $projectEmployee->is_active ? 'btn-warning' : 'btn-success' }}">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +175,7 @@
                     </button>
                 </form>
 
-                <form action="{{ route('projects.employees.destroy', [$project, $projectEmployee]) }}" method="POST"
+                <form action="{{ route('panel.projects.employees.destroy', [$project, $projectEmployee]) }}" method="POST"
                       style="display: inline;"
                       onsubmit="return confirm('آیا از حذف این کارمند از پروژه اطمینان دارید؟ این عمل تمام سوابق حضور و غیاب را نیز حذف خواهد کرد.')">
                     @csrf
@@ -131,7 +200,7 @@
         </div>
         <h3>هنوز کارمندی به این پروژه اختصاص داده نشده</h3>
         <p>برای شروع، اولین کارمند را به پروژه اضافه کنید.</p>
-        <a href="{{ route('projects.employees.create', $project) }}" class="btn btn-primary">
+        <a href="{{ route('panel.projects.employees.create', $project) }}" class="btn btn-primary">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
@@ -141,6 +210,140 @@
 @endif
 
 <style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    background: #f3f4f6;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+.stat-icon.active {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.stat-icon.inactive {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.stat-icon.salary {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.stat-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.25rem 0;
+}
+
+.stat-content p {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.search-filter-section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+}
+
+.search-box svg {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #6b7280;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.filter-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
 .employees-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -372,4 +575,80 @@
     }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const employeeCards = document.querySelectorAll('.employee-card');
+
+    let currentFilter = 'all';
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filterEmployees(searchTerm, currentFilter);
+    });
+
+    // Filter functionality
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            currentFilter = this.dataset.filter;
+            const searchTerm = searchInput.value.toLowerCase();
+            filterEmployees(searchTerm, currentFilter);
+        });
+    });
+
+    function filterEmployees(searchTerm, filter) {
+        employeeCards.forEach(card => {
+            const employeeName = card.querySelector('.employee-name').textContent.toLowerCase();
+            const employeeCode = card.querySelector('.employee-code').textContent.toLowerCase();
+            const notes = card.querySelector('.detail-value') ? card.querySelector('.detail-value').textContent.toLowerCase() : '';
+
+            const matchesSearch = employeeName.includes(searchTerm) ||
+                                employeeCode.includes(searchTerm) ||
+                                notes.includes(searchTerm);
+
+            let matchesFilter = true;
+
+            if (filter === 'active') {
+                matchesFilter = !card.classList.contains('inactive');
+            } else if (filter === 'inactive') {
+                matchesFilter = card.classList.contains('inactive');
+            } else if (filter === 'monthly') {
+                const salaryType = card.querySelector('.detail-value').textContent;
+                matchesFilter = salaryType.includes('ماهیانه');
+            } else if (filter === 'daily') {
+                const salaryType = card.querySelector('.detail-value').textContent;
+                matchesFilter = salaryType.includes('روزانه');
+            }
+
+            if (matchesSearch && matchesFilter) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Update statistics
+        updateStatistics();
+    }
+
+    function updateStatistics() {
+        const visibleCards = Array.from(employeeCards).filter(card => card.style.display !== 'none');
+        const activeCards = visibleCards.filter(card => !card.classList.contains('inactive'));
+        const inactiveCards = visibleCards.filter(card => card.classList.contains('inactive'));
+
+        // Update stat numbers (you can add more sophisticated updates here)
+        console.log('Visible employees:', visibleCards.length);
+        console.log('Active employees:', activeCards.length);
+        console.log('Inactive employees:', inactiveCards.length);
+    }
+});
+</script>
 @endsection

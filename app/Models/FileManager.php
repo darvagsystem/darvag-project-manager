@@ -10,7 +10,7 @@ class FileManager extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'file_manager';
+    protected $table = 'file_managers';
 
     protected $fillable = [
         'name',
@@ -270,18 +270,22 @@ class FileManager extends Model
         $newItem->created_at = now();
         $newItem->updated_at = now();
 
-        // If it's a file, don't copy the actual file content for templates
-        if (!$this->is_folder && $this->is_template) {
+        // If it's a file, don't copy the actual file content - only copy folder structure
+        if (!$this->is_folder) {
+            // Skip files - only copy folder structure
             $newItem->path = null;
             $newItem->size = 0;
         }
 
         $newItem->save();
 
-        // If it's a folder, copy all children recursively
+        // If it's a folder, copy only child folders recursively (skip files)
         if ($this->is_folder) {
             foreach ($this->children as $child) {
-                $child->copyStructure($newProjectId, $newItem->id);
+                // Only copy folders, skip files
+                if ($child->is_folder) {
+                    $child->copyStructure($newProjectId, $newItem->id);
+                }
             }
         }
 

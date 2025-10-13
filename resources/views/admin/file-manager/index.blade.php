@@ -775,10 +775,10 @@
                 </h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">داشبورد</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('panel.dashboard') }}">داشبورد</a></li>
                         @if($project)
                             <li class="breadcrumb-item"><a href="{{ route('panel.projects.index') }}">پروژه‌ها</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('projects.show', $project->id) }}">{{ $project->name }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('panel.projects.show', $project->id) }}">{{ $project->name }}</a></li>
                         @endif
                         <li class="breadcrumb-item active">مدیریت فایل‌ها</li>
                     </ol>
@@ -865,12 +865,12 @@
                 <div class="p-3">
                     <h6 class="mb-3">دسترسی سریع</h6>
                     <div class="list-group list-group-flush">
-                        <a href="{{ route('file-manager.index') }}" class="list-group-item list-group-item-action {{ !$project ? 'active' : '' }}">
+                        <a href="{{ route('panel.file-manager.index') }}" class="list-group-item list-group-item-action {{ !$project ? 'active' : '' }}">
                             <i class="mdi mdi-folder-home me-2"></i>
                             فایل‌های عمومی
                         </a>
                         @if($project)
-                            <a href="{{ route('projects.filemanager.index', $project->id) }}" class="list-group-item list-group-item-action active">
+                            <a href="{{ route('panel.projects.filemanager.index', $project->id) }}" class="list-group-item list-group-item-action active">
                                 <i class="mdi mdi-folder-account me-2"></i>
                                 {{ $project->name }}
                             </a>
@@ -900,13 +900,13 @@
                             @foreach($files as $file)
                                 <div class="file-item" data-id="{{ $file->id }}" data-type="file">
                                     <!-- لینک دانلود مستقیم -->
-                                    <a href="{{ $project ? route('projects.filemanager.download', [$project->id, $file->id]) : route('file-manager.download', $file->id) }}"
+                                    <a href="{{ $project ? route('panel.projects.filemanager.download', [$project->id, $file->id]) : route('panel.file-manager.download', $file->id) }}"
                                        class="file-download-link"
                                        title="کلیک کنید برای دانلود {{ $file->name }}">
 
                                         @if(str_starts_with($file->mime_type ?? '', 'image/'))
                                             <div class="file-icon image-thumbnail">
-                                                <img src="{{ $project ? route('projects.filemanager.thumbnail', [$project->id, $file->id]) : route('file-manager.thumbnail', $file->id) }}"
+                                                <img src="{{ $project ? route('panel.projects.filemanager.thumbnail', [$project->id, $file->id]) : route('panel.file-manager.thumbnail', $file->id) }}"
                                                      alt="{{ $file->name }}"
                                                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
                                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
@@ -922,7 +922,7 @@
                                             {{ Str::length($file->name) > 20 ? Str::limit($file->name, 17) : $file->name }}
                                         </div>
                                         <div class="file-size">{{ $file->formatted_size }}</div>
-                                        
+
                                         <!-- Tags -->
                                         @if($file->tags && $file->tags->count() > 0)
                                             <div class="file-tags">
@@ -934,7 +934,7 @@
                                             </div>
                                         @endif
                                     </a>
-                                    
+
                                     <!-- File Actions -->
                                     <div class="file-actions">
                                         <button type="button" class="btn btn-sm btn-outline-info" onclick="manageFileTags({{ $file->id }})" title="مدیریت تگ‌ها">
@@ -953,7 +953,7 @@
                                         <h4 class="mb-3" style="color: #495057; font-weight: 600;">هیچ فایلی با این تگ یافت نشد</h4>
                                         <p class="text-muted mb-4" style="font-size: 16px;">فایل‌هایی با تگ انتخاب شده در این پوشه وجود ندارد</p>
                                         <div class="d-flex gap-2 justify-content-center">
-                                            <a href="{{ route('projects.filemanager.index', $project->id) }}" class="btn btn-outline-primary">
+                                            <a href="{{ route('panel.projects.filemanager.index', $project->id) }}" class="btn btn-outline-primary">
                                                 <i class="mdi mdi-arrow-right"></i> مشاهده همه فایل‌ها
                                             </a>
                                             <button type="button" class="btn btn-primary" onclick="document.getElementById('tagFilter').value = ''; window.location.reload();">

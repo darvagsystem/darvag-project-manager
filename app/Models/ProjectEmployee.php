@@ -54,4 +54,33 @@ class ProjectEmployee extends Model
     {
         return $this->salary_type === 'monthly' ? 'ماهیانه' : 'روزانه';
     }
+
+    public function getFormattedStartDateAttribute()
+    {
+        return $this->start_date ? \App\Services\PersianDateService::carbonToPersian($this->start_date) : null;
+    }
+
+    public function getFormattedEndDateAttribute()
+    {
+        return $this->end_date ? \App\Services\PersianDateService::carbonToPersian($this->end_date) : null;
+    }
+
+    public function getSalaryAmountFormattedAttribute()
+    {
+        if ($this->salary_type === 'monthly') {
+            return number_format($this->salary_amount) . ' تومان';
+        } else {
+            return number_format($this->daily_salary) . ' تومان';
+        }
+    }
+
+    public function getWorkingDaysTextAttribute()
+    {
+        return $this->working_days_per_month . ' روز';
+    }
+
+    public function getAbsenceDeductionTextAttribute()
+    {
+        return $this->absence_deduction_rate . '%';
+    }
 }

@@ -14,7 +14,7 @@
                 <i class="mdi mdi-tag me-1"></i>
                 مدیریت تگ‌ها
             </a>
-            <a href="{{ route('projects.show', $project) }}" class="btn btn-outline-secondary">
+            <a href="{{ route('panel.projects.show', $project) }}" class="btn btn-outline-secondary">
                 <i class="mdi mdi-arrow-left me-1"></i>
                 بازگشت به پروژه
             </a>
@@ -133,26 +133,28 @@
 
 .file-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
     margin-bottom: 20px;
     width: 100%;
     max-width: 100%;
+    padding: 20px;
 }
 
 .folder-item, .file-item {
     position: relative;
     background: white;
     border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 15px;
+    border-radius: 12px;
+    padding: 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 120px;
+    min-height: 140px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .folder-item:hover, .file-item:hover {
@@ -162,17 +164,35 @@
 }
 
 .folder-icon, .file-icon {
-    font-size: 32px;
-    margin-bottom: 8px;
+    font-size: 40px;
+    margin-bottom: 12px;
     color: #6c757d;
 }
 
+.folder-content, .file-download-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-top: 20px;
+}
+
 .file-name {
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     color: #495057;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     word-break: break-word;
+    line-height: 1.3;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .file-original-name {
@@ -211,6 +231,27 @@
     max-width: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.item-checkbox {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+
+.item-checkbox .form-check-input {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #dee2e6;
+    background-color: white;
+    cursor: pointer;
+}
+
+.item-checkbox .form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
 }
 
 .file-actions {
@@ -314,6 +355,26 @@
 }
 
 @media (max-width: 768px) {
+    .file-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .folder-item, .file-item {
+        min-height: 120px;
+        padding: 15px;
+    }
+
+    .folder-icon, .file-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .file-name {
+        font-size: 12px;
+    }
+
     .empty-folder {
         padding: 40px 15px;
     }
@@ -422,6 +483,25 @@
 .empty-state-actions .btn-outline-primary:hover {
     background: #007bff;
     color: white;
+}
+
+.select-all-inline {
+    margin-left: 15px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.select-all-inline .form-check {
+    margin: 0;
+}
+
+.select-all-inline .form-check-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
 }
 
 .tag-selection {

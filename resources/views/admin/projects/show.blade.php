@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load projects for copy structure
     function loadProjects() {
-        fetch('{{ route("panel.api.projects") }}')
+        fetch('{{ route("api.projects") }}')
             .then(response => response.json())
             .then(data => {
                 const select = document.getElementById('sourceProject');
@@ -540,10 +540,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('copyStructureForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
 
+        const sourceProjectId = document.getElementById('sourceProject').value;
+
+        if (!sourceProjectId) {
+            alert('لطفاً پروژه مبدأ را انتخاب کنید.');
+            return;
+        }
+
         const formData = new FormData(this);
+        // The form already has source_project_id, we just need to add target_project_id
         formData.append('target_project_id', '{{ $project->id }}');
 
-        fetch('{{ route("admin.project-templates.create-from-project") }}', {
+
+        fetch('{{ route("panel.project-templates.create-from-project") }}', {
             method: 'POST',
             body: formData,
             headers: {
@@ -553,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('ساختار پوشه‌بندی با موفقیت کپی شد!');
+                alert(data.message || 'ساختار پوشه‌بندی با موفقیت کپی شد!');
                 bootstrap.Modal.getInstance(document.getElementById('copyStructureModal')).hide();
                 // Refresh the page or update the file manager
                 location.reload();

@@ -24,7 +24,14 @@ class FileManager {
         });
 
         document.getElementById('uploadBtn')?.addEventListener('click', () => {
-            this.showUploadModal();
+            // هدایت به صفحه آپلود جدید
+            window.location.href = '{{ route("panel.upload-files") }}';
+        });
+
+        // دکمه آپلود در صفحه خالی
+        document.getElementById('uploadEmptyBtn')?.addEventListener('click', () => {
+            // هدایت به صفحه آپلود جدید
+            window.location.href = '{{ route("panel.upload-files") }}';
         });
 
         // دکمه‌های toolbar
@@ -40,9 +47,8 @@ class FileManager {
             this.showDeleteModal();
         });
 
-        // انتخاب فایل در modal آپلود
-        document.getElementById('fileInput')?.addEventListener('change', (e) => {
-            this.handleFileSelection(e.target.files);
+        document.getElementById('confirmDelete')?.addEventListener('click', () => {
+            this.deleteSelected();
         });
 
         // فرم‌ها
@@ -51,123 +57,57 @@ class FileManager {
             this.createFolder();
         });
 
-        document.getElementById('uploadForm')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.uploadFiles();
-        });
-
         document.getElementById('renameForm')?.addEventListener('submit', (e) => {
             e.preventDefault();
             this.renameItem();
         });
 
-        document.getElementById('confirmDelete')?.addEventListener('click', () => {
-            this.deleteSelected();
-        });
-
         // کلیک روی آیتم‌ها
-        this.bindItemEvents();
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.file-item')) {
+                this.toggleSelection(e.target.closest('.file-item'));
+            }
+        });
     }
 
     bindItemEvents() {
-        // حذف event listener های قبلی
-        document.querySelectorAll('.file-item, .folder-item').forEach(item => {
-            // کپی کردن element برای حذف تمام event listener ها
-            const newItem = item.cloneNode(true);
-            item.parentNode.replaceChild(newItem, item);
-        });
-
-        // اضافه کردن event listener فقط برای پوشه‌ها
-        document.querySelectorAll('.folder-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                this.handleItemClick(item, e);
-            });
-
-            item.addEventListener('dblclick', (e) => {
-                this.handleItemDoubleClick(item, e);
-            });
-        });
-
-        // برای فایل‌ها فقط برای انتخاب (بدون دانلود خودکار)
+        // bind کردن event های آیتم‌های موجود
         document.querySelectorAll('.file-item').forEach(item => {
             item.addEventListener('click', (e) => {
-                // اگر روی لینک دانلود کلیک شد، اجازه دانلود بده
-                if (e.target.closest('.file-download-link')) {
-                    return; // اجازه دانلود
-                }
-                // در غیر این صورت فقط انتخاب کن
-                e.preventDefault();
-                this.handleItemClick(item, e);
+                e.stopPropagation();
+                this.toggleSelection(item);
             });
         });
     }
 
-    handleItemClick(item, event) {
-        const isCtrlPressed = event.ctrlKey || event.metaKey;
-
-        if (isCtrlPressed) {
-            // انتخاب چندتایی
-            item.classList.toggle('selected');
+    toggleSelection(item) {
+        if (item.classList.contains('selected')) {
+            item.classList.remove('selected');
+            this.selectedItems = this.selectedItems.filter(selected => selected !== item);
         } else {
-            // انتخاب تکی
-            document.querySelectorAll('.file-item, .folder-item').forEach(i => {
-                i.classList.remove('selected');
-            });
             item.classList.add('selected');
+            this.selectedItems.push(item);
         }
-
-        this.updateSelectedItems();
         this.updateToolbar();
     }
 
-    handleItemDoubleClick(item, event) {
-        const isFolder = item.classList.contains('folder-item');
-
-        if (isFolder) {
-            // فقط برای پوشه‌ها - ورود به پوشه
-            const itemId = item.dataset.id;
-            this.navigateToFolder(itemId);
-        }
-        // برای فایل‌ها کاری نمی‌کنیم چون لینک مستقیم دارند
-    }
-
-    navigateToFolder(folderId) {
-        const currentUrl = new URL(window.location);
-
-        if (folderId) {
-            currentUrl.searchParams.set('folder', folderId);
-        } else {
-            currentUrl.searchParams.delete('folder');
-        }
-
-        window.location.href = currentUrl.toString();
-    }
-
-    updateSelectedItems() {
-        this.selectedItems = Array.from(document.querySelectorAll('.file-item.selected, .folder-item.selected'));
-    }
-
     updateToolbar() {
-        const hasSelection = this.selectedItems.length > 0;
-        const hasOneSelection = this.selectedItems.length === 1;
-
         const downloadBtn = document.getElementById('downloadBtn');
         const renameBtn = document.getElementById('renameBtn');
         const deleteBtn = document.getElementById('deleteBtn');
 
-        if (downloadBtn) {
-            downloadBtn.style.display = hasSelection ? 'inline-block' : 'none';
-            downloadBtn.disabled = !hasSelection;
-        }
-
-        if (renameBtn) {
-            renameBtn.style.display = hasOneSelection ? 'inline-block' : 'none';
-            renameBtn.disabled = !hasOneSelection;
-        }
-
-        if (deleteBtn) {
-            deleteBtn.style.display = hasSelection ? 'inline-block' : 'none';
-            deleteBtn.disabled = !hasSelection;
+        if (this.selectedItems.length === 0) {
+            downloadBtn?.setAttribute('disabled', 'disabled');
+            renameBtn?.setAttribute('disabled', 'disabled');
+            deleteBtn?.setAttribute('disabled', 'disabled');
+        } else if (this.selectedItems.length === 1) {
+            downloadBtn?.removeAttribute('disabled');
+            renameBtn?.removeAttribute('disabled');
+            deleteBtn?.removeAttribute('disabled');
+        } else {
+            downloadBtn?.removeAttribute('disabled');
+            renameBtn?.setAttribute('disabled', 'disabled');
+            deleteBtn?.removeAttribute('disabled');
         }
     }
 
@@ -177,19 +117,11 @@ class FileManager {
         modal.show();
     }
 
-    showUploadModal() {
-        const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
-        document.getElementById('uploadForm').reset();
-        document.getElementById('filePreview').style.display = 'none';
-        modal.show();
-    }
-
     showRenameModal() {
         if (this.selectedItems.length !== 1) return;
 
         const item = this.selectedItems[0];
         const currentName = item.querySelector('.file-name').textContent.trim();
-
         document.getElementById('newName').value = currentName;
 
         const modal = new bootstrap.Modal(document.getElementById('renameModal'));
@@ -199,458 +131,8 @@ class FileManager {
     showDeleteModal() {
         if (this.selectedItems.length === 0) return;
 
-        const count = this.selectedItems.length;
-        const message = count === 1 ?
-            'آیا مطمئن هستید که می‌خواهید این آیتم را حذف کنید؟' :
-            `آیا مطمئن هستید که می‌خواهید ${count} آیتم را حذف کنید؟`;
-
-        document.getElementById('deleteMessage').textContent = message;
-
         const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
         modal.show();
-    }
-
-    handleFileSelection(files) {
-        const preview = document.getElementById('filePreview');
-        const fileList = document.getElementById('fileList');
-
-        if (files.length > 0) {
-            preview.style.display = 'block';
-            fileList.innerHTML = '';
-
-            Array.from(files).forEach(file => {
-                const item = document.createElement('div');
-                item.className = 'list-group-item d-flex justify-content-between align-items-center';
-                item.innerHTML = `
-                    <div>
-                        <i class="mdi mdi-file me-2"></i>
-                        ${file.name}
-                    </div>
-                    <small class="text-muted">${this.formatFileSize(file.size)}</small>
-                `;
-                fileList.appendChild(item);
-            });
-        } else {
-            preview.style.display = 'none';
-        }
-    }
-
-    async createFolder() {
-        const form = document.getElementById('createFolderForm');
-        const formData = new FormData(form);
-
-        // اضافه کردن تگ‌های انتخاب شده
-        const selectedTags = Array.from(document.querySelectorAll('#folderTags input:checked'))
-            .map(input => input.value);
-        selectedTags.forEach(tagId => {
-            formData.append('tags[]', tagId);
-        });
-
-        // اضافه کردن پارامترهای اضافی
-        const currentFolderId = this.getCurrentFolderId();
-        if (currentFolderId) {
-            formData.append('parent_id', currentFolderId);
-        }
-        if (this.project) {
-            formData.append('project_id', this.project);
-        }
-
-        try {
-            const url = this.getApiUrl('create-folder');
-            const response = await fetch(url, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': this.getCsrfToken(),
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.showSuccess(result.message);
-                bootstrap.Modal.getInstance(document.getElementById('createFolderModal')).hide();
-                this.refreshView();
-            } else {
-                this.showError(result.message);
-            }
-        } catch (error) {
-            this.showError('خطا در ایجاد پوشه');
-        }
-    }
-
-    async uploadFiles() {
-        const fileInput = document.getElementById('fileInput');
-        const description = document.getElementById('fileDescription').value;
-
-        if (!fileInput.files || fileInput.files.length === 0) {
-            this.showError('لطفاً حداقل یک فایل انتخاب کنید');
-            return;
-        }
-
-        const formData = new FormData();
-
-        // اضافه کردن فایل‌ها
-        Array.from(fileInput.files).forEach(file => {
-            formData.append('files[]', file);
-        });
-
-        // اضافه کردن پارامترهای اضافی
-        if (description) {
-            formData.append('description', description);
-        }
-
-        // اضافه کردن تگ‌های انتخاب شده
-        const selectedTags = Array.from(document.querySelectorAll('#fileTags input:checked'))
-            .map(input => input.value);
-        selectedTags.forEach(tagId => {
-            formData.append('tags[]', tagId);
-        });
-
-        const currentFolderId = this.getCurrentFolderId();
-        if (currentFolderId) {
-            formData.append('parent_id', currentFolderId);
-        }
-        if (this.project) {
-            formData.append('project_id', this.project);
-        }
-
-        // نمایش progress modal
-        const progressModal = new bootstrap.Modal(document.getElementById('progressModal'));
-        progressModal.show();
-
-        try {
-            const url = this.getApiUrl('upload');
-            const response = await fetch(url, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': this.getCsrfToken(),
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const result = await response.json();
-            progressModal.hide();
-
-            if (result.success) {
-                this.showSuccess(result.message);
-                bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
-                this.refreshView();
-            } else {
-                this.showError(result.message);
-            }
-        } catch (error) {
-            progressModal.hide();
-            this.showError('خطا در آپلود فایل‌ها');
-        }
-    }
-
-    async renameItem() {
-        if (this.selectedItems.length !== 1) return;
-
-        const item = this.selectedItems[0];
-        const itemId = item.dataset.id;
-        const newName = document.getElementById('newName').value;
-
-        try {
-            const url = this.getApiUrl(`${itemId}/rename`);
-            const response = await fetch(url, {
-                method: 'PUT',
-                body: JSON.stringify({ name: newName }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': this.getCsrfToken(),
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.showSuccess(result.message);
-                bootstrap.Modal.getInstance(document.getElementById('renameModal')).hide();
-                this.refreshView();
-            } else {
-                this.showError(result.message);
-            }
-        } catch (error) {
-            this.showError('خطا در تغییر نام');
-        }
-    }
-
-    async deleteSelected() {
-        if (this.selectedItems.length === 0) return;
-
-        const ids = this.selectedItems.map(item => item.dataset.id);
-
-        try {
-            const url = this.getApiUrl('delete');
-            const response = await fetch(url, {
-                method: 'DELETE',
-                body: JSON.stringify({ ids }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': this.getCsrfToken(),
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.showSuccess(result.message);
-                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-                this.refreshView();
-            } else {
-                this.showError(result.message);
-            }
-        } catch (error) {
-            this.showError('خطا در حذف آیتم‌ها');
-        }
-    }
-
-    downloadSelected() {
-        if (this.selectedItems.length === 0) return;
-
-        // فیلتر کردن فقط فایل‌ها (نه پوشه‌ها)
-        const files = this.selectedItems.filter(item => item.classList.contains('file-item'));
-
-        if (files.length === 0) {
-            this.showError('لطفاً یک فایل برای دانلود انتخاب کنید');
-            return;
-        }
-
-        if (files.length === 1) {
-            // دانلود تکی - استفاده از route ساده
-            const fileId = files[0].dataset.id;
-            const downloadUrl = `/download/${fileId}`;
-            window.open(downloadUrl, '_blank');
-        } else {
-            this.showError('لطفاً یک فایل انتخاب کنید. دانلود چندتایی پشتیبانی نمی‌شود.');
-        }
-    }
-
-    async refreshView() {
-        try {
-            const currentFolderId = this.getCurrentFolderId();
-            const url = this.getApiUrl('files') + (currentFolderId ? `?folder=${currentFolderId}` : '');
-
-            const response = await fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-
-                if (result.success) {
-                    this.updateFileGrid(result.data.folders, result.data.files);
-                    this.updateBreadcrumb(result.data.breadcrumb);
-                } else {
-                    window.location.reload();
-                }
-            } else {
-                window.location.reload();
-            }
-        } catch (error) {
-            window.location.reload();
-        }
-    }
-
-    updateFileGrid(folders, files) {
-        const fileGrid = document.querySelector('.file-grid');
-        if (!fileGrid) return;
-
-        fileGrid.innerHTML = '';
-
-        // اضافه کردن پوشه‌ها
-        folders.forEach(folder => {
-            const element = this.createFolderElement(folder);
-            fileGrid.appendChild(element);
-        });
-
-        // اضافه کردن فایل‌ها
-        files.forEach(file => {
-            const element = this.createFileElement(file);
-            fileGrid.appendChild(element);
-        });
-
-        // بایند کردن مجدد event ها
-        this.bindItemEvents();
-        this.selectedItems = [];
-        this.updateToolbar();
-    }
-
-    createFolderElement(folder) {
-        const div = document.createElement('div');
-        div.className = 'folder-item';
-        div.dataset.id = folder.id;
-        div.dataset.type = 'folder';
-
-        // ایجاد HTML برای تگ‌ها
-        let tagsHtml = '';
-        if (folder.tags && folder.tags.length > 0) {
-            tagsHtml = '<div class="file-tags">';
-            folder.tags.forEach(tag => {
-                tagsHtml += `<span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border: 1px solid ${tag.color}40;">${tag.name}</span>`;
-            });
-            tagsHtml += '</div>';
-        }
-
-        div.innerHTML = `
-            <div class="folder-icon" style="color: ${folder.folder_color || '#ffc107'}">
-                <i class="mdi mdi-folder"></i>
-            </div>
-            <div class="file-name">${folder.name}</div>
-            <div class="file-size">پوشه</div>
-            ${tagsHtml}
-        `;
-
-        return div;
-    }
-
-    createFileElement(file) {
-        const div = document.createElement('div');
-        div.className = 'file-item';
-        div.dataset.id = file.id;
-        div.dataset.type = 'file';
-
-        const icon = this.getFileIcon(file.mime_type);
-        const size = this.formatFileSize(file.size);
-        const isImage = file.mime_type && file.mime_type.startsWith('image/');
-        const downloadUrl = `/download/${file.id}`;
-
-        // ایجاد HTML برای تگ‌ها
-        let tagsHtml = '';
-        if (file.tags && file.tags.length > 0) {
-            tagsHtml = '<div class="file-tags">';
-            file.tags.forEach(tag => {
-                tagsHtml += `<span class="tag" style="background-color: ${tag.color}20; color: ${tag.color}; border: 1px solid ${tag.color}40;">${tag.name}</span>`;
-            });
-            tagsHtml += '</div>';
-        }
-
-        if (isImage) {
-            const thumbnailUrl = this.getApiUrl(`thumbnail/${file.id}`);
-            div.innerHTML = `
-                <a href="${downloadUrl}" class="file-download-link" title="کلیک کنید برای دانلود ${file.name}">
-                    <div class="file-icon image-thumbnail">
-                        <img src="${thumbnailUrl}" alt="${file.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <i class="mdi ${icon}" style="display: none;"></i>
-                    </div>
-                    <div class="file-name" title="${file.name}">${this.truncateFileName(file.name)}</div>
-                    <div class="file-size">${size}</div>
-                    ${tagsHtml}
-                </a>
-            `;
-        } else {
-            div.innerHTML = `
-                <a href="${downloadUrl}" class="file-download-link" title="کلیک کنید برای دانلود ${file.name}">
-                    <div class="file-icon">
-                        <i class="mdi ${icon}"></i>
-                    </div>
-                    <div class="file-name" title="${file.name}">${this.truncateFileName(file.name)}</div>
-                    <div class="file-size">${size}</div>
-                    ${tagsHtml}
-                </a>
-            `;
-        }
-
-        return div;
-    }
-
-    truncateFileName(fileName) {
-        // اگر نام فایل خیلی طولانی است، آن را کوتاه کنیم
-        if (fileName.length > 20) {
-            const lastDotIndex = fileName.lastIndexOf('.');
-            if (lastDotIndex > 0) {
-                // فایل دارای پسوند است
-                const nameWithoutExt = fileName.substring(0, lastDotIndex);
-                const extension = fileName.substring(lastDotIndex);
-                if (nameWithoutExt.length > 15) {
-                    return nameWithoutExt.substring(0, 15) + '...' + extension;
-                }
-            } else {
-                // فایل بدون پسوند
-                return fileName.substring(0, 17) + '...';
-            }
-        }
-        return fileName;
-    }
-
-    updateBreadcrumb(breadcrumb) {
-        const breadcrumbNav = document.querySelector('.breadcrumb-nav');
-        if (!breadcrumbNav) return;
-
-        let html = `
-            <div class="breadcrumb-item" onclick="fileManager.navigateToFolder(null)" style="cursor: pointer;">
-                <i class="mdi mdi-home"></i>
-                <span>خانه</span>
-            </div>
-        `;
-
-        if (breadcrumb && breadcrumb.length > 0) {
-            breadcrumb.forEach((item, index) => {
-                html += `<span class="breadcrumb-separator">/</span>`;
-
-                if (index === breadcrumb.length - 1) {
-                    // آخرین آیتم (پوشه فعلی) غیرقابل کلیک
-                    html += `
-                        <div class="breadcrumb-item active">
-                            <i class="mdi mdi-folder"></i>
-                            <span>${item.name}</span>
-                        </div>
-                    `;
-                } else {
-                    // سایر آیتم‌ها قابل کلیک
-                    html += `
-                        <div class="breadcrumb-item" onclick="fileManager.navigateToFolder(${item.id})" style="cursor: pointer;">
-                            <i class="mdi mdi-folder"></i>
-                            <span>${item.name}</span>
-                        </div>
-                    `;
-                }
-            });
-        }
-
-        breadcrumbNav.innerHTML = html;
-    }
-
-    getCurrentFolderId() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('folder');
-    }
-
-    getApiUrl(endpoint) {
-        if (this.project) {
-            return `/projects/${this.project}/filemanager/${endpoint}`;
-        } else {
-            return `/file-manager/${endpoint}`;
-        }
-    }
-
-    getCsrfToken() {
-        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    }
-
-    getFileIcon(mimeType) {
-        if (!mimeType) return 'mdi-file';
-
-        if (mimeType.startsWith('image/')) return 'mdi-file-image';
-        if (mimeType.startsWith('video/')) return 'mdi-file-video';
-        if (mimeType.startsWith('audio/')) return 'mdi-file-music';
-        if (mimeType.includes('pdf')) return 'mdi-file-pdf-box';
-        if (mimeType.includes('word')) return 'mdi-file-word';
-        if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return 'mdi-file-excel';
-        if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return 'mdi-file-powerpoint';
-        if (mimeType.includes('zip') || mimeType.includes('rar')) return 'mdi-file-archive';
-
-        return 'mdi-file';
     }
 
     formatFileSize(bytes) {
@@ -663,124 +145,214 @@ class FileManager {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    showSuccess(message) {
-        // می‌توانید از toast notification استفاده کنید
-        alert(message);
+    getFileIcon(mimeType) {
+        if (!mimeType) return 'mdi-file';
+        if (mimeType.startsWith('image/')) return 'mdi-file-image';
+        if (mimeType.startsWith('video/')) return 'mdi-file-video';
+        if (mimeType.startsWith('audio/')) return 'mdi-file-music';
+        if (mimeType.includes('pdf')) return 'mdi-file-pdf-box';
+        if (mimeType.includes('word')) return 'mdi-file-word';
+        if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return 'mdi-file-excel';
+        if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return 'mdi-file-powerpoint';
+        if (mimeType.includes('zip') || mimeType.includes('rar')) return 'mdi-file-archive';
+        return 'mdi-file';
     }
 
-    showError(message) {
-        // می‌توانید از toast notification استفاده کنید
-        alert(message);
+    getCurrentFolderId() {
+        const container = document.getElementById('fileManagerContainer');
+        return container ? container.dataset.folderId : null;
     }
-}
 
-// مدیریت تگ‌ها
-function manageFileTags(fileId) {
-    // دریافت تگ‌های موجود
-    fetch(`{{ $project ? route('projects.filemanager.tags', $project->id) : route('file-manager.tags') }}`)
-        .then(response => response.json())
-        .then(tags => {
-            // دریافت تگ‌های فایل
-            fetch(`{{ $project ? route('projects.filemanager.tags', $project->id) : route('file-manager.tags') }}`)
-                .then(response => response.json())
-                .then(allTags => {
-                    showTagModal(fileId, allTags);
-                });
-        });
-}
+    getProjectId() {
+        return this.project;
+    }
 
-function showTagModal(fileId, tags) {
-    // ایجاد modal برای مدیریت تگ‌ها
-    const modal = document.createElement('div');
-    modal.className = 'modal fade';
-    modal.innerHTML = `
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">مدیریت تگ‌ها</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">تگ‌های موجود:</label>
-                        <div class="tag-list" id="availableTags">
-                            ${tags.map(tag => `
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="${tag.id}" id="tag_${tag.id}">
-                                    <label class="form-check-label" for="tag_${tag.id}" style="color: ${tag.color}">
-                                        ${tag.name}
-                                    </label>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                    <button type="button" class="btn btn-primary" onclick="saveFileTags(${fileId})">ذخیره</button>
-                </div>
-            </div>
-        </div>
-    `;
+    async createFolder() {
+        const form = document.getElementById('createFolderForm');
+        const formData = new FormData(form);
+        const currentFolderId = this.getCurrentFolderId();
+        const projectId = this.getProjectId();
 
-    document.body.appendChild(modal);
-    const bsModal = new bootstrap.Modal(modal);
-    bsModal.show();
-
-    // حذف modal بعد از بسته شدن
-    modal.addEventListener('hidden.bs.modal', () => {
-        document.body.removeChild(modal);
-    });
-}
-
-function saveFileTags(fileId) {
-    const selectedTags = Array.from(document.querySelectorAll('#availableTags input:checked'))
-        .map(input => input.value);
-
-    // حذف تمام تگ‌های قبلی
-    fetch(`{{ $project ? route('projects.filemanager.remove-tag', [$project->id, 'FILE_ID', 'TAG_ID']) : route('file-manager.remove-tag', ['FILE_ID', 'TAG_ID']) }}`.replace('FILE_ID', fileId).replace('TAG_ID', 'all'), {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        if (currentFolderId) {
+            formData.append('parent_id', currentFolderId);
         }
-    }).then(() => {
-        // اضافه کردن تگ‌های جدید
-        const promises = selectedTags.map(tagId =>
-            fetch(`{{ $project ? route('projects.filemanager.add-tag', [$project->id, 'FILE_ID']) : route('file-manager.add-tag', 'FILE_ID') }}`.replace('FILE_ID', fileId), {
+        if (projectId) {
+            formData.append('project_id', projectId);
+        }
+
+        try {
+            const response = await fetch('{{ isset($project) ? route("panel.projects.filemanager.create-folder", $project->id) : route("panel.file-manager.create-folder") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                this.showSuccess('پوشه با موفقیت ایجاد شد');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
+                modal.hide();
+                this.refreshView();
+            } else {
+                this.showError(result.message);
+            }
+        } catch (error) {
+            this.showError('خطا در ایجاد پوشه: ' + error.message);
+        }
+    }
+
+    async renameItem() {
+        if (this.selectedItems.length !== 1) return;
+
+        const item = this.selectedItems[0];
+        const itemId = item.dataset.itemId;
+        const newName = document.getElementById('newName').value.trim();
+
+        if (!newName) {
+            this.showError('لطفاً نام جدید را وارد کنید');
+            return;
+        }
+
+        try {
+            const response = await fetch('{{ isset($project) ? route("panel.projects.filemanager.rename.post", $project->id) : route("panel.file-manager.rename.post") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ tag_id: tagId })
-            })
-        );
+                body: JSON.stringify({
+                    id: itemId,
+                    name: newName
+                })
+            });
 
-        Promise.all(promises).then(() => {
-            // بستن modal و رفرش صفحه
-            document.querySelector('.modal .btn-close').click();
-            location.reload();
-        });
-    });
+            const result = await response.json();
+            if (result.success) {
+                this.showSuccess('نام با موفقیت تغییر کرد');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('renameModal'));
+                modal.hide();
+                this.refreshView();
+            } else {
+                this.showError(result.message);
+            }
+        } catch (error) {
+            this.showError('خطا در تغییر نام: ' + error.message);
+        }
+    }
+
+    async deleteSelected() {
+        if (this.selectedItems.length === 0) return;
+
+        const itemIds = this.selectedItems.map(item => item.dataset.itemId);
+
+        try {
+            const response = await fetch('{{ isset($project) ? route("panel.projects.filemanager.delete", $project->id) : route("panel.file-manager.delete") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    ids: itemIds
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                this.showSuccess(`${itemIds.length} آیتم با موفقیت حذف شد`);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                modal.hide();
+                this.refreshView();
+            } else {
+                this.showError(result.message);
+            }
+        } catch (error) {
+            this.showError('خطا در حذف آیتم‌ها: ' + error.message);
+        }
+    }
+
+    async downloadSelected() {
+        if (this.selectedItems.length === 0) return;
+
+        if (this.selectedItems.length === 1) {
+            // دانلود تک فایل
+            const item = this.selectedItems[0];
+            const itemId = item.dataset.itemId;
+            const itemName = item.querySelector('.file-name').textContent.trim();
+
+            window.open(`{{ isset($project) ? route("panel.projects.filemanager.download.post", $project->id) : route("panel.file-manager.download.post") }}?id=${itemId}`, '_blank');
+        } else {
+            // دانلود چند فایل (ZIP)
+            const itemIds = this.selectedItems.map(item => item.dataset.itemId);
+            const params = new URLSearchParams();
+            itemIds.forEach(id => params.append('ids[]', id));
+
+            window.open(`{{ isset($project) ? route("panel.projects.filemanager.download.post", $project->id) : route("panel.file-manager.download.post") }}?${params.toString()}`, '_blank');
+        }
+    }
+
+    refreshView() {
+        window.location.reload();
+    }
+
+    showSuccess(message) {
+        // ایجاد toast notification
+        const toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white bg-success border-0';
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="mdi mdi-check-circle me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+
+        // حذف toast بعد از 5 ثانیه
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    }
+
+    showError(message) {
+        // ایجاد toast notification
+        const toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white bg-danger border-0';
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="mdi mdi-alert-circle me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+
+        // حذف toast بعد از 5 ثانیه
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    }
 }
 
-// فیلتر بر اساس تگ
+// Initialize file manager
 document.addEventListener('DOMContentLoaded', function() {
-    const tagFilter = document.getElementById('tagFilter');
-    if (tagFilter) {
-        tagFilter.addEventListener('change', function() {
-            const tagId = this.value;
-            if (tagId) {
-                window.location.href = `{{ $project ? route('projects.filemanager.filter-tag', [$project->id, 'TAG_ID']) : route('file-manager.filter-tag', 'TAG_ID') }}`.replace('TAG_ID', tagId);
-            } else {
-                window.location.href = `{{ $project ? route('projects.filemanager.index', $project->id) : route('file-manager.index') }}`;
-            }
-        });
-    }
-});
-
-// راه‌اندازی فایل منیجر
-document.addEventListener('DOMContentLoaded', function() {
-    window.fileManager = new FileManager();
+    new FileManager();
 });
 </script>

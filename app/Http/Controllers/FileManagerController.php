@@ -13,6 +13,81 @@ use Illuminate\Support\Str;
 class FileManagerController extends Controller
 {
     /**
+     * صفحه آپلود فایل
+     */
+    public function uploadPage()
+    {
+        $tags = \App\Models\Tag::all();
+        return view('admin.file-manager.upload-page', compact('tags'));
+    }
+
+    /**
+     * آپلود فایل‌ها از صفحه جداگانه
+     */
+    public function uploadFiles(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'files' => 'required|array',
+            'files.*' => 'file|max:204800', // 200MB
+            'description' => 'nullable|string',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'داده‌های ورودی نامعتبر است',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $uploadedFiles = [];
+
+            foreach ($request->file('files') as $file) {
+                // ذخیره فایل
+                $path = $file->store('file-manager', 'public');
+
+                // ایجاد رکورد در دیتابیس
+                $originalName = $file->getClientOriginalName();
+                $fileRecord = FileManager::create([
+                    'name' => $originalName,
+                    'original_name' => $originalName,
+                    'path' => $path,
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                    'type' => 'file',
+                    'is_folder' => false,
+                    'parent_id' => null,
+                    'project_id' => null,
+                    'description' => $request->description,
+                    'uploaded_by' => auth()->id()
+                ]);
+
+                // اضافه کردن تگ‌ها
+                if ($request->has('tags') && is_array($request->tags)) {
+                    $fileRecord->tags()->attach($request->tags);
+                }
+
+                $uploadedFiles[] = $fileRecord->load(['uploader', 'tags']);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => count($uploadedFiles) . ' فایل با موفقیت آپلود شد',
+                'files' => $uploadedFiles
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در آپلود فایل‌ها: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * نمایش فایل منیجر عمومی
      */
     public function index(Request $request)
@@ -117,13 +192,160 @@ class FileManagerController extends Controller
     }
 
     /**
+     * آپلود تکه‌ای فایل‌های بزرگ
+     */
+    public function uploadChunk(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file',
+            'chunk_index' => 'required|integer|min:0',
+            'total_chunks' => 'required|integer|min:1',
+            'original_name' => 'required|string|max:255',
+            'file_size' => 'required|integer|min:1',
+            'mime_type' => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'parent_id' => 'nullable|exists:file_manager,id',
+            'project_id' => 'nullable|exists:projects,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'داده‌های ورودی نامعتبر است',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $chunkIndex = $request->chunk_index;
+            $totalChunks = $request->total_chunks;
+            $originalName = $request->original_name;
+            $fileSize = $request->file_size;
+            $mimeType = $request->mime_type;
+
+            // ایجاد نام فایل موقت برای تکه‌ها
+            $tempFileName = 'chunk_' . md5($originalName . $fileSize) . '_' . $chunkIndex;
+            $tempPath = 'temp-chunks/' . $tempFileName;
+
+            // ذخیره تکه
+            $chunk = $request->file('file');
+            $chunk->storeAs('temp-chunks', $tempFileName, 'public');
+
+            // اگر آخرین تکه است، فایل کامل را بساز
+            if ($chunkIndex == $totalChunks - 1) {
+                $finalPath = $this->combineChunks($originalName, $totalChunks, $fileSize, $mimeType, $request);
+
+                if ($finalPath) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'فایل با موفقیت آپلود شد',
+                        'file_path' => $finalPath
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'خطا در ترکیب تکه‌های فایل'
+                    ], 500);
+                }
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تکه آپلود شد',
+                    'chunk_index' => $chunkIndex
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در آپلود تکه: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * ترکیب تکه‌های فایل
+     */
+    private function combineChunks($originalName, $totalChunks, $fileSize, $mimeType, $request)
+    {
+        try {
+            $tempDir = storage_path('app/public/temp-chunks');
+            $finalPath = 'file-manager/' . time() . '_' . uniqid() . '_' . $originalName;
+            $finalFullPath = storage_path('app/public/' . $finalPath);
+
+            // ایجاد دایرکتوری نهایی
+            $finalDir = dirname($finalFullPath);
+            if (!is_dir($finalDir)) {
+                mkdir($finalDir, 0755, true);
+            }
+
+            // باز کردن فایل نهایی برای نوشتن
+            $finalFile = fopen($finalFullPath, 'wb');
+            if (!$finalFile) {
+                return false;
+            }
+
+            // ترکیب تکه‌ها
+            for ($i = 0; $i < $totalChunks; $i++) {
+                $chunkFileName = 'chunk_' . md5($originalName . $fileSize) . '_' . $i;
+                $chunkPath = $tempDir . '/' . $chunkFileName;
+
+                if (file_exists($chunkPath)) {
+                    $chunkData = file_get_contents($chunkPath);
+                    fwrite($finalFile, $chunkData);
+                    unlink($chunkPath); // حذف تکه بعد از استفاده
+                } else {
+                    fclose($finalFile);
+                    return false;
+                }
+            }
+
+            fclose($finalFile);
+
+            // بررسی اندازه فایل نهایی
+            if (filesize($finalFullPath) !== $fileSize) {
+                unlink($finalFullPath);
+                return false;
+            }
+
+            // ایجاد رکورد در دیتابیس
+            $fileRecord = FileManager::create([
+                'name' => $originalName,
+                'original_name' => $originalName,
+                'path' => $finalPath,
+                'size' => $fileSize,
+                'mime_type' => $mimeType,
+                'type' => 'file',
+                'is_folder' => false,
+                'parent_id' => $request->parent_id,
+                'project_id' => $request->project_id,
+                'description' => $request->description,
+                'uploaded_by' => auth()->id()
+            ]);
+
+            // اضافه کردن تگ‌ها
+            if ($request->has('tags') && is_array($request->tags)) {
+                $fileRecord->tags()->attach($request->tags);
+            }
+
+            return $finalPath;
+
+        } catch (\Exception $e) {
+            \Log::error('Error combining chunks: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * آپلود فایل‌ها
      */
     public function upload(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'files' => 'required|array',
-            'files.*' => 'file|max:20480', // 20MB
+            'files.*' => 'file|max:204800', // 200MB
             'description' => 'nullable|string',
             'parent_id' => 'nullable|exists:file_manager,id',
             'project_id' => 'nullable|exists:projects,id',
@@ -185,7 +407,59 @@ class FileManagerController extends Controller
     }
 
     /**
-     * تغییر نام فایل یا پوشه
+     * تغییر نام فایل یا پوشه (POST)
+     */
+    public function renamePost(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:file_managers,id',
+            'name' => 'required|string|max:255'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'داده‌های ورودی نامعتبر است',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $item = FileManager::findOrFail($request->id);
+
+            // بررسی تکراری نبودن نام
+            $exists = FileManager::where('name', $request->name)
+                ->where('parent_id', $item->parent_id)
+                ->where('project_id', $item->project_id)
+                ->where('is_folder', $item->is_folder)
+                ->where('id', '!=', $request->id)
+                ->exists();
+
+            if ($exists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'نام انتخاب شده تکراری است'
+                ], 422);
+            }
+
+            $item->update(['name' => $request->name]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'نام با موفقیت تغییر کرد',
+                'item' => $item->fresh()->load('uploader')
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در تغییر نام: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * تغییر نام فایل یا پوشه (PUT)
      */
     public function rename(Request $request, $fileId)
     {
@@ -241,7 +515,7 @@ class FileManagerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ids' => 'required|array',
-            'ids.*' => 'exists:file_manager,id'
+            'ids.*' => 'exists:file_managers,id'
         ]);
 
         if ($validator->fails()) {
@@ -281,7 +555,66 @@ class FileManagerController extends Controller
     }
 
     /**
-     * دانلود فایل
+     * دانلود فایل (POST)
+     */
+    public function downloadPost(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:file_managers,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'فایل انتخاب شده نامعتبر است'
+            ], 422);
+        }
+
+        try {
+            $file = FileManager::findOrFail($request->id);
+
+            // بررسی اینکه آیا در context پروژه هستیم یا نه
+            $project = $request->route('project');
+
+            // بررسی اینکه فایل در context صحیح است
+            if ($project && $file->project_id != $project->id) {
+                abort(404, 'فایل متعلق به این پروژه نیست');
+            }
+
+            if (!$project && $file->project_id !== null) {
+                abort(404, 'فایل متعلق به پروژه است');
+            }
+
+            // بررسی وجود فایل فیزیکی
+            if (!$file->path) {
+                abort(404, 'مسیر فایل مشخص نیست');
+            }
+
+            // بررسی وجود فایل در storage
+            if (!Storage::disk('public')->exists($file->path)) {
+                abort(404, 'فایل فیزیکی یافت نشد');
+            }
+
+            // به‌روزرسانی آمار دانلود
+            try {
+                $file->increment('download_count');
+                $file->update(['last_accessed_at' => now()]);
+            } catch (\Exception $e) {
+                // در صورت خطا در به‌روزرسانی آمار، دانلود را ادامه بده
+            }
+
+            return Storage::disk('public')->download($file->path, $file->original_name);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در دانلود فایل: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * دانلود فایل (GET)
      */
     public function download(Request $request, $file)
     {
@@ -452,7 +785,56 @@ class FileManagerController extends Controller
     }
 
     /**
-     * نمایش تصویر کوچک
+     * نمایش تصویر کوچک (GET)
+     */
+    public function thumbnailPost(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:file_managers,id'
+        ]);
+
+        if ($validator->fails()) {
+            abort(404);
+        }
+
+        try {
+            // بررسی اینکه آیا در context پروژه هستیم یا نه
+            $project = $request->route('project');
+
+            $query = FileManager::where('is_folder', false)->where('id', $request->id);
+
+            if ($project) {
+                $query->where('project_id', $project->id);
+            } else {
+                $query->whereNull('project_id');
+            }
+
+            $file = $query->first();
+
+            if (!$file || !$file->path) {
+                abort(404);
+            }
+
+            // بررسی اینکه فایل تصویر است
+            if (!$file->mime_type || !str_starts_with($file->mime_type, 'image/')) {
+                abort(404);
+            }
+
+            // بررسی وجود فایل در storage
+            if (!Storage::disk('public')->exists($file->path)) {
+                abort(404);
+            }
+
+            // بازگرداندن تصویر
+            return Storage::disk('public')->response($file->path);
+
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * نمایش تصویر کوچک (GET)
      */
     public function thumbnail(Request $request, $fileId)
     {

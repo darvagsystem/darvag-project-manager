@@ -1,185 +1,72 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{
-    AuthController,
-    DashboardController,
-    AdminController,
-    BankController,
-    EmployeeController,
-    EmployeeBankAccountController,
-    ProjectController,
-    ProjectEmployeeController,
-    ClientController,
-    ClientContactController,
-    HelpController,
-    FileManagerController,
-    TagController,
-    TagCategoryController,
-    TaskController
-};
-use App\Models\{User, Project};
-use Illuminate\Support\Facades\Hash;
 
 // Include Website Routes
 require __DIR__.'/website.php';
 
-// Authentication Routes (Public)
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-});
+// Include Authentication Routes
+require __DIR__.'/auth.php';
 
-// Logout (Authenticated)
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+// Include No Access Routes
+require __DIR__.'/no-access.php';
 
-// Panel Routes (All authenticated routes under panel prefix)
-Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
+// Include Profile Routes
+require __DIR__.'/profile.php';
 
-    // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.alt');
+// Include Dashboard Routes
+require __DIR__.'/dashboard.php';
 
-    // Employees
-    Route::resource('employees', EmployeeController::class);
-    Route::prefix('employees/{employee}')->name('employees.')->group(function () {
-        Route::get('/bank-accounts', [EmployeeBankAccountController::class, 'index'])->name('bank-accounts');
-        Route::post('/bank-accounts', [EmployeeBankAccountController::class, 'store'])->name('bank-accounts.store');
-        Route::get('/documents', [EmployeeController::class, 'documents'])->name('documents');
-        Route::get('/default-account', [EmployeeBankAccountController::class, 'getDefaultAccount'])->name('default-account');
-    });
+// Include Employee Management Routes
+require __DIR__.'/employees.php';
 
-    // Employee Bank Accounts
-    Route::prefix('employee-bank-accounts')->name('employee-bank-accounts.')->group(function () {
-        Route::get('/{account}', [EmployeeBankAccountController::class, 'show'])->name('show');
-        Route::put('/{account}', [EmployeeBankAccountController::class, 'update'])->name('update');
-        Route::delete('/{account}', [EmployeeBankAccountController::class, 'destroy'])->name('destroy');
-        Route::post('/{account}/set-default', [EmployeeBankAccountController::class, 'setAsDefault'])->name('set-default');
-        Route::post('/{account}/toggle-status', [EmployeeBankAccountController::class, 'toggleStatus'])->name('toggle-status');
-    });
+// Include Client Management Routes
+require __DIR__.'/clients.php';
 
-    // Validation Routes
-    Route::post('/validate-iban', [EmployeeBankAccountController::class, 'validateIban'])->name('validate-iban');
-    Route::post('/validate-card-number', [EmployeeBankAccountController::class, 'validateCardNumber'])->name('validate-card-number');
+// Include Project Management Routes
+require __DIR__.'/projects.php';
 
-    // Clients
-    Route::resource('clients', ClientController::class);
-    Route::resource('clients.contacts', ClientContactController::class)->except(['index']);
-    Route::get('/clients/{client}/contacts', [ClientContactController::class, 'index'])->name('clients.contacts.index');
+// Include Document Management Routes
+require __DIR__.'/documents.php';
 
-    // Projects
-    Route::resource('projects', ProjectController::class);
-    Route::prefix('projects/{project}')->name('projects.')->group(function () {
-        // Project Employees
-        Route::resource('employees', ProjectEmployeeController::class)->except(['show']);
-        Route::post('/employees/{projectEmployee}/toggle-status', [ProjectEmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
+// Include File Manager Routes
+require __DIR__.'/file-manager.php';
 
-        // Project File Manager
-        Route::prefix('filemanager')->name('filemanager.')->group(function () {
-            Route::get('/', function(Project $project) {
-                return view('admin.file-manager.project-livewire', compact('project'));
-            })->name('index');
-            Route::get('/files', [FileManagerController::class, 'getFiles'])->name('files');
-            Route::post('/create-folder', [FileManagerController::class, 'createFolder'])->name('create-folder');
-            Route::post('/upload', [FileManagerController::class, 'upload'])->name('upload');
-            Route::get('/thumbnail/{file}', [FileManagerController::class, 'thumbnail'])->name('thumbnail');
-            Route::get('/download/{file}', [FileManagerController::class, 'download'])->name('download');
-            Route::put('/{file}/rename', [FileManagerController::class, 'rename'])->name('rename');
-            Route::delete('/delete', [FileManagerController::class, 'delete'])->name('delete');
+// Include Tag Management Routes
+require __DIR__.'/tags.php';
 
-            // Tag routes
-            Route::get('/tags', [FileManagerController::class, 'getTags'])->name('tags');
-            Route::post('/{file}/tags', [FileManagerController::class, 'addTag'])->name('add-tag');
-            Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
-            Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
-        });
-    });
+// Include Task Management Routes
+require __DIR__.'/tasks.php';
 
-        // General File Manager
-        Route::prefix('file-manager')->name('file-manager.')->group(function () {
-            Route::get('/', function() {
-                return view('admin.file-manager.livewire');
-            })->name('index');
-            Route::get('/files', [FileManagerController::class, 'getFiles'])->name('files');
-            Route::post('/create-folder', [FileManagerController::class, 'createFolder'])->name('create-folder');
-            Route::post('/upload', [FileManagerController::class, 'upload'])->name('upload');
-            Route::get('/thumbnail/{file}', [FileManagerController::class, 'thumbnail'])->name('thumbnail');
-            Route::get('/download/{file}', [FileManagerController::class, 'download'])->name('download');
-            Route::put('/{file}/rename', [FileManagerController::class, 'rename'])->name('rename');
-            Route::delete('/delete', [FileManagerController::class, 'delete'])->name('delete');
+// Include Card to IBAN Routes
+require __DIR__.'/card-to-iban.php';
 
-            // Tag routes
-            Route::get('/tags', [FileManagerController::class, 'getTags'])->name('tags');
-            Route::post('/{file}/tags', [FileManagerController::class, 'addTag'])->name('add-tag');
-            Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
-            Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
-        });
+// Include System Management Routes
+require __DIR__.'/system.php';
 
-        // Tag Categories Management
-        Route::resource('tag-categories', TagCategoryController::class);
+// Include Log Management Routes
+require __DIR__.'/logs.php';
 
-        // Tags Management
-        Route::resource('tags', TagController::class);
-        Route::get('/tags-api', [TagController::class, 'getTags'])->name('tags.api');
-        Route::get('/tags/{tag}/files', [TagController::class, 'files'])->name('tags.files');
-        Route::post('/tags/{tag}/bulk-download', [TagController::class, 'bulkDownload'])->name('tags.bulk-download');
-        Route::post('/tags/{tag}/merge-pdf', [TagController::class, 'mergePdf'])->name('tags.merge-pdf');
+// Include Help Routes
+require __DIR__.'/help.php';
 
-        // Tasks Management
-        Route::resource('tasks', TaskController::class);
-        Route::get('/tasks-dashboard', [TaskController::class, 'dashboard'])->name('tasks.dashboard');
-        Route::get('/my-tasks', [TaskController::class, 'myTasks'])->name('tasks.my-tasks');
-        Route::post('/tasks/{task}/update-status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
+// Include Backup Routes
+require __DIR__.'/backup.php';
 
-        // Settings
-        Route::prefix('settings')->name('settings.')->group(function () {
-            Route::get('/', [AdminController::class, 'settings'])->name('index');
-            Route::get('/company', [AdminController::class, 'companySettings'])->name('company');
-            Route::post('/company', [AdminController::class, 'settingsUpdate'])->name('company.update');
+// Include Checklist Routes
+require __DIR__.'/checklists.php';
 
-            // Banks
-            Route::resource('banks', BankController::class);
-            Route::post('/banks/seed', [BankController::class, 'seed'])->name('banks.seed');
-        });
+// Include Contact Messages Routes
+require __DIR__.'/contact-messages.php';
 
-
-        // Services
-        Route::get('/services', [AdminController::class, 'services'])->name('services');
-
-        // Blog
-        Route::get('/blog', [AdminController::class, 'blog'])->name('blog');
-
-        // Gallery
-        Route::get('/gallery', [AdminController::class, 'gallery'])->name('gallery');
-
-        // Help
-        Route::get('/help', [HelpController::class, 'index'])->name('help');
-        Route::prefix('help')->name('help.')->group(function () {
-            Route::get('/', [HelpController::class, 'index'])->name('index');
-            Route::get('/getting-started', [HelpController::class, 'gettingStarted'])->name('getting-started');
-            Route::get('/dashboard', [HelpController::class, 'dashboard'])->name('dashboard');
-            Route::get('/employees', [HelpController::class, 'employees'])->name('employees');
-            Route::get('/projects', [HelpController::class, 'projects'])->name('projects');
-            Route::get('/clients', [HelpController::class, 'clients'])->name('clients');
-            Route::get('/settings', [HelpController::class, 'settings'])->name('settings');
-            Route::get('/bank-accounts', [HelpController::class, 'bankAccounts'])->name('bank-accounts');
-            Route::get('/project-employees', [HelpController::class, 'projectEmployees'])->name('project-employees');
-        });
-
-        // System
-        Route::get('/backup', [AdminController::class, 'backup'])->name('backup');
-        Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
-
-        // API Routes
-        Route::prefix('api')->name('api.')->group(function () {
-            Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
-            Route::get('/projects', function() {
-                return response()->json(['projects' => Project::select('id', 'name')->get()]);
-            })->name('projects');
-        });
-});
+// Include API Routes
+require __DIR__.'/api.php';
 
 // Route Model Binding
 Route::model('employee', \App\Models\Employee::class);
 Route::model('client', \App\Models\Client::class);
 Route::model('file', \App\Models\FileManager::class);
+Route::model('company', \App\Models\Company::class);
+Route::model('phonebook', \App\Models\ClientPhonebook::class);
+Route::model('projectEmployee', \App\Models\ProjectEmployee::class);
+Route::model('contactMessage', \App\Models\ContactMessage::class);

@@ -164,7 +164,7 @@ class AdminController extends Controller
         $this->companySettings = CompanySetting::getSettings();
         view()->share('companySettings', $this->companySettings);
 
-        return redirect()->route('admin.settings.company')->with('success', 'تنظیمات شرکت با موفقیت به‌روزرسانی شد');
+        return redirect()->route('panel.settings.company')->with('success', 'تنظیمات شرکت با موفقیت به‌روزرسانی شد');
     }
 
     /**
@@ -175,13 +175,6 @@ class AdminController extends Controller
         return view('admin.backup');
     }
 
-    /**
-     * Display system logs page.
-     */
-    public function logs()
-    {
-        return view('admin.logs');
-    }
 
     /**
      * Handle admin logout.

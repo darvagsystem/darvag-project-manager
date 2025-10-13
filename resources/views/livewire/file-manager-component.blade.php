@@ -148,7 +148,7 @@
                         <button type="button" class="btn btn-sm btn-outline-primary" wire:click.stop="openTagModal({{ $folder->id }})" title="مدیریت تگ‌ها">
                             <i class="mdi mdi-tag-plus"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-danger" wire:click.stop="deleteItem({{ $folder->id }}, 'folder')" title="حذف پوشه">
+                        <button type="button" class="btn btn-sm btn-outline-danger" wire:click="deleteItem({{ $folder->id }}, 'folder')" title="حذف پوشه">
                             <i class="mdi mdi-delete"></i>
                         </button>
                     </div>
@@ -167,7 +167,7 @@
                     </div>
 
                     <!-- File Content -->
-                    <a href="{{ route('file-manager.download', $file->id) }}" class="file-download-link" title="دانلود {{ $file->name }}">
+                    <a href="{{ route('panel.file-manager.download', $file->id) }}" class="file-download-link" title="دانلود {{ $file->name }}">
                         <div class="file-icon">
                             <i class="mdi {{ $this->getFileIcon($file->mime_type) }}"></i>
                         </div>

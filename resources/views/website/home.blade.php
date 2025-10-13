@@ -30,6 +30,20 @@
                             <span>مشاهده پروژه‌ها</span>
                             <i class="bi bi-arrow-left"></i>
                         </a>
+
+                        @auth
+                            <!-- User is logged in - Show admin panel link -->
+                            <a href="{{ route('panel.dashboard') }}" class="btn btn-success-custom">
+                                <span>پنل مدیریت</span>
+                                <i class="bi bi-gear"></i>
+                            </a>
+                        @else
+                            <!-- User is not logged in - Show login link -->
+                            <a href="{{ route('login') }}" class="btn btn-warning-custom">
+                                <span>ورود</span>
+                                <i class="bi bi-box-arrow-in-right"></i>
+                            </a>
+                        @endauth
                     </div>
                 </div>
             </div>
@@ -41,6 +55,78 @@
         </div>
     </div>
 </section>
+
+@auth
+<!-- User Dashboard Section -->
+<section class="user-dashboard-section py-5" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="user-welcome-card" style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="user-info">
+                                <h3 class="mb-2" style="color: #1e3a8a; font-family: 'Vazirmatn', sans-serif;">
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    خوش آمدید، {{ Auth::user()->name ?? 'کاربر عزیز' }}!
+                                </h3>
+                                <p class="text-muted mb-3">به پنل مدیریت پروژه‌های داروگ خوش آمدید. از اینجا می‌توانید تمام فعالیت‌های خود را مدیریت کنید.</p>
+
+                                <div class="quick-stats row g-3">
+                                    <div class="col-sm-4">
+                                        <div class="stat-item text-center">
+                                            <div class="stat-number text-primary fw-bold">{{ \App\Models\Project::count() }}</div>
+                                            <div class="stat-label text-muted small">پروژه‌ها</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="stat-item text-center">
+                                            <div class="stat-number text-success fw-bold">{{ \App\Models\ContactMessage::new()->count() }}</div>
+                                            <div class="stat-label text-muted small">پیام‌های جدید</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="stat-item text-center">
+                                            <div class="stat-number text-warning fw-bold">{{ \App\Models\Employee::count() }}</div>
+                                            <div class="stat-label text-muted small">پرسنل</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="quick-actions">
+                                <h5 class="mb-3" style="color: #1e3a8a; font-family: 'Vazirmatn', sans-serif;">دسترسی سریع</h5>
+                                <div class="d-grid gap-2">
+                                    <a href="{{ route('panel.dashboard') }}" class="btn btn-primary">
+                                        <i class="fas fa-tachometer-alt me-2"></i>
+                                        داشبورد
+                                    </a>
+                                    <a href="{{ route('panel.projects.index') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-project-diagram me-2"></i>
+                                        مدیریت پروژه‌ها
+                                    </a>
+                                    <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-outline-success">
+                                        <i class="fas fa-envelope me-2"></i>
+                                        پیام‌های تماس
+                                        @if(\App\Models\ContactMessage::new()->count() > 0)
+                                            <span class="badge bg-danger ms-1">{{ \App\Models\ContactMessage::new()->count() }}</span>
+                                        @endif
+                                    </a>
+                                    <a href="{{ route('panel.employees.index') }}" class="btn btn-outline-info">
+                                        <i class="fas fa-users me-2"></i>
+                                        مدیریت پرسنل
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endauth
 
 <!-- About Section -->
 <section class="about-section">
@@ -950,6 +1036,130 @@
 
     .hero-buttons {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-success-custom,
+        .btn-warning-custom {
+            width: 100%;
+            max-width: 200px;
+            justify-content: center;
+        }
+
+        .user-welcome-card {
+            padding: 20px;
+        }
+
+        .user-info h3 {
+            font-size: 1.25rem;
+        }
+
+        .quick-stats .stat-number {
+            font-size: 1.5rem;
+        }
+
+        .quick-actions .btn {
+            font-size: 0.875rem;
+            padding: 8px 16px;
+        }
+    }
+
+    .btn-success-custom,
+    .btn-warning-custom {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-success-custom {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-success-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        color: white;
+    }
+
+    .btn-warning-custom {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-warning-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        color: white;
+    }
+
+    .btn-success-custom i,
+    .btn-warning-custom i {
+        font-size: 1.1em;
+    }
+
+    /* User Dashboard Section */
+    .user-dashboard-section {
+        margin: 50px 0;
+    }
+
+    .user-welcome-card {
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    .user-info h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .quick-stats .stat-number {
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .quick-stats .stat-label {
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+
+    .quick-actions .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .quick-actions .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .cta-buttons {

@@ -337,25 +337,80 @@ class FileManagerComponent extends Component
 
     public function deleteItem($itemId, $type)
     {
-        $this->itemToDelete = $itemId;
-        $this->itemTypeToDelete = $type;
-        $this->showDeleteModal = true;
+        try {
+            \Log::info('Delete item called with ID: ' . $itemId . ', Type: ' . $type);
+            $this->itemToDelete = $itemId;
+            $this->itemTypeToDelete = $type;
+            $this->showDeleteModal = true;
+            \Log::info('Delete modal should be shown now');
+        } catch (\Exception $e) {
+            \Log::error('Error in deleteItem: ' . $e->getMessage());
+            session()->flash('error', 'خطا در حذف آیتم: ' . $e->getMessage());
+        }
     }
 
     public function confirmDelete()
     {
         if ($this->itemToDelete && $this->itemTypeToDelete) {
             try {
+                \Log::info('Attempting to delete item: ' . $this->itemToDelete);
                 $item = FileManager::findOrFail($this->itemToDelete);
-                $item->delete();
+                \Log::info('Item found: ' . $item->name . ' (is_folder: ' . ($item->is_folder ? 'true' : 'false') . ')');
+
+                // If it's a folder, delete all children first
+                if ($item->is_folder) {
+                    \Log::info('Deleting folder recursively');
+                    $this->deleteFolderRecursively($item);
+                } else {
+                    \Log::info('Deleting file');
+                    // Delete the physical file if it exists
+                    if ($item->path && \Storage::disk('public')->exists($item->path)) {
+                        \Storage::disk('public')->delete($item->path);
+                        \Log::info('Physical file deleted: ' . $item->path);
+                    }
+                    $item->forceDelete(); // Force delete instead of soft delete
+                    \Log::info('Database record deleted');
+                }
 
                 $this->showDeleteModal = false;
                 $this->loadData();
                 session()->flash('success', 'آیتم با موفقیت حذف شد');
+                \Log::info('Delete completed successfully');
             } catch (\Exception $e) {
+                \Log::error('Delete error: ' . $e->getMessage());
                 session()->flash('error', 'خطا در حذف آیتم: ' . $e->getMessage());
             }
         }
+    }
+
+    private function deleteFolderRecursively($folder)
+    {
+        \Log::info('Deleting folder recursively: ' . $folder->name);
+
+        // Get all children (both folders and files)
+        $children = FileManager::where('parent_id', $folder->id)->get();
+        \Log::info('Found ' . $children->count() . ' children in folder: ' . $folder->name);
+
+        foreach ($children as $child) {
+            if ($child->is_folder) {
+                \Log::info('Deleting child folder: ' . $child->name);
+                $this->deleteFolderRecursively($child);
+            } else {
+                \Log::info('Deleting child file: ' . $child->name);
+                // Delete the physical file if it exists
+                if ($child->path && \Storage::disk('public')->exists($child->path)) {
+                    \Storage::disk('public')->delete($child->path);
+                    \Log::info('Physical file deleted: ' . $child->path);
+                }
+                $child->forceDelete();
+                \Log::info('Child file database record deleted');
+            }
+        }
+
+        // Delete the folder itself
+        \Log::info('Deleting folder itself: ' . $folder->name);
+        $folder->forceDelete();
+        \Log::info('Folder database record deleted');
     }
 
     public function cancelDelete()
@@ -447,7 +502,16 @@ class FileManagerComponent extends Component
             foreach ($this->selectedItems as $itemId) {
                 $item = FileManager::find($itemId);
                 if ($item) {
-                    $item->delete();
+                    // If it's a folder, delete all children first
+                    if ($item->is_folder) {
+                        $this->deleteFolderRecursively($item);
+                    } else {
+                        // Delete the physical file if it exists
+                        if ($item->path && \Storage::disk('public')->exists($item->path)) {
+                            \Storage::disk('public')->delete($item->path);
+                        }
+                        $item->forceDelete();
+                    }
                     $deletedCount++;
                 }
             }

@@ -43,8 +43,26 @@ Route::get('/contact', function () {
     return view('website.contact');
 })->name('contact');
 
-Route::post('/contact', function () {
-    // Handle contact form submission
+Route::post('/contact', function (Illuminate\Http\Request $request) {
+    // Validate the request
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'phone' => 'required|string|max:20',
+        'email' => 'required|email|max:255',
+        'subject' => 'required|in:consultation,quotation,support,complaint,other',
+        'message' => 'required|string|max:2000',
+    ]);
+
+    // Create contact message
+    \App\Models\ContactMessage::create([
+        'name' => $request->name,
+        'phone' => $request->phone,
+        'email' => $request->email,
+        'subject' => $request->subject,
+        'message' => $request->message,
+        'status' => 'new'
+    ]);
+
     return redirect()->back()->with('success', 'پیام شما با موفقیت ارسال شد');
 })->name('contact.submit');
 //news routes just for test with message

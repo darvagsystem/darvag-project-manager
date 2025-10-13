@@ -9,7 +9,7 @@
             <div class="page-title-box">
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">داشبورد</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('panel.dashboard') }}">داشبورد</a></li>
                         <li class="breadcrumb-item active">راهنما</li>
                     </ol>
                 </div>
@@ -39,7 +39,7 @@
                                     </div>
                                     <h5 class="card-title">شروع کار</h5>
                                     <p class="card-text text-muted">راهنمای گام به گام برای شروع کار با سیستم</p>
-                                    <a href="{{ route('admin.help.getting-started') }}" class="btn btn-primary btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.getting-started') }}" class="btn btn-primary btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                                     </div>
                                     <h5 class="card-title">داشبورد</h5>
                                     <p class="card-text text-muted">آشنایی با داشبورد و آمارهای کلی</p>
-                                    <a href="{{ route('admin.help.dashboard') }}" class="btn btn-info btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.dashboard') }}" class="btn btn-info btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                                     </div>
                                     <h5 class="card-title">مدیریت کارمندان</h5>
                                     <p class="card-text text-muted">راهنمای کامل مدیریت اطلاعات کارمندان</p>
-                                    <a href="{{ route('admin.help.employees') }}" class="btn btn-success btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.employees') }}" class="btn btn-success btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                                     </div>
                                     <h5 class="card-title">مدیریت پروژه‌ها</h5>
                                     <p class="card-text text-muted">راهنمای ایجاد و مدیریت پروژه‌ها</p>
-                                    <a href="{{ route('admin.help.projects') }}" class="btn btn-warning btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.projects') }}" class="btn btn-warning btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                                     </div>
                                     <h5 class="card-title">مدیریت مشتریان</h5>
                                     <p class="card-text text-muted">راهنمای مدیریت اطلاعات مشتریان</p>
-                                    <a href="{{ route('admin.help.clients') }}" class="btn btn-danger btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.clients') }}" class="btn btn-danger btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -119,7 +119,7 @@
                                     </div>
                                     <h5 class="card-title">مدیریت حضور و غیاب</h5>
                                     <p class="card-text text-muted">راهنمای ثبت و مدیریت حضور و غیاب</p>
-                                    <a href="{{ route('admin.help.attendance') }}" class="btn btn-secondary btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.attendance') }}" class="btn btn-secondary btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                                     </div>
                                     <h5 class="card-title">حساب‌های بانکی</h5>
                                     <p class="card-text text-muted">راهنمای مدیریت حساب‌های بانکی کارمندان</p>
-                                    <a href="{{ route('admin.help.bank-accounts') }}" class="btn btn-dark btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.bank-accounts') }}" class="btn btn-dark btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
                                     </div>
                                     <h5 class="card-title">تخصیص کارمندان به پروژه</h5>
                                     <p class="card-text text-muted">راهنمای تخصیص کارمندان به پروژه‌ها</p>
-                                    <a href="{{ route('admin.help.project-employees') }}" class="btn btn-purple btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.project-employees') }}" class="btn btn-purple btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>
@@ -167,7 +167,7 @@
                                     </div>
                                     <h5 class="card-title">تنظیمات سیستم</h5>
                                     <p class="card-text text-muted">راهنمای تنظیمات و پیکربندی سیستم</p>
-                                    <a href="{{ route('admin.help.settings') }}" class="btn btn-indigo btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.settings') }}" class="btn btn-indigo btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>

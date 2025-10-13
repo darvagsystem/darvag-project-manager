@@ -61,40 +61,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Test method to handle form submission without validation
-     */
-    public function testStore(Request $request)
-    {
-        try {
-            \Log::info('Test store method called', $request->all());
 
-            $data = $request->except(['avatar', 'employee_code']);
-            $data['employee_code'] = 'DVG' . $request->national_code;
-            $data['marital_status'] = $data['marital_status'] ?: 'single';
-            $data['education'] = $data['education'] ?: 'diploma';
-            $data['status'] = $data['status'] ?: 'active';
-            $data['avatar'] = 'default-avatar.png';
-
-            \Log::info('Creating employee with data:', $data);
-
-            $employee = Employee::create($data);
-
-            if ($employee) {
-                \Log::info('Employee created successfully with ID: ' . $employee->id);
-                return redirect()->route('employees.index')->with('success', 'کارمند تست با موفقیت اضافه شد');
-            } else {
-                \Log::error('Employee creation failed');
-                return redirect()->back()->with('error', 'خطا در ثبت اطلاعات')->withInput();
-            }
-
-        } catch (\Exception $e) {
-            \Log::error('Test store error: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
-            return redirect()->back()->with('error', 'خطا در ثبت اطلاعات: ' . $e->getMessage())->withInput();
-        }
-    }
-
-    /**
      * Display a listing of employees.
      */
     public function index()
@@ -172,7 +139,7 @@ class EmployeeController extends Controller
 
             if ($employee) {
                 \Log::info('Employee created successfully with ID: ' . $employee->id);
-                return redirect()->route('employees.index')->with('success', 'کارمند با موفقیت اضافه شد');
+                return redirect()->route('panel.employees.index')->with('success', 'کارمند با موفقیت اضافه شد');
             } else {
                 \Log::error('Employee creation failed');
                 return redirect()->back()->with('error', 'خطا در ثبت اطلاعات')->withInput();
@@ -191,13 +158,12 @@ class EmployeeController extends Controller
     /**
      * Display the specified employee.
      */
-    public function show($id)
+    public function show(Employee $employee)
     {
-        $employee = Employee::findOrFail($id);
 
         // آمار حضور و غیاب
         $attendanceStats = DB::table('attendances')
-            ->where('employee_id', $id)
+            ->where('employee_id', $employee->id)
             ->selectRaw('
                 COUNT(*) as total_days,
                 SUM(CASE WHEN status = "present" THEN 1 ELSE 0 END) as present_days,
@@ -213,7 +179,7 @@ class EmployeeController extends Controller
         // آخرین حضور و غیاب‌ها
         $recentAttendances = DB::table('attendances')
             ->join('projects', 'attendances.project_id', '=', 'projects.id')
-            ->where('attendances.employee_id', $id)
+            ->where('attendances.employee_id', $employee->id)
             ->orderBy('attendances.attendance_date', 'desc')
             ->limit(10)
             ->select('attendances.*', 'projects.name as project_name')
@@ -238,18 +204,19 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified employee.
      */
-    public function edit($id)
+    public function edit(Employee $employee)
     {
-        $employee = Employee::findOrFail($id);
+        //پیاده سازی کردن بخش ویرایش پرنسل اگر ایدی وجود نداشت هم پیاده کن
         return view('admin.employees.edit', compact('employee'));
+
+
     }
 
     /**
      * Update the specified employee.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Employee $employee)
     {
-        $employee = Employee::findOrFail($id);
 
         $request->validate([
             'first_name' => 'required|string|max:255',
@@ -297,34 +264,32 @@ class EmployeeController extends Controller
 
         $employee->update($data);
 
-        return redirect()->route('employees.index')->with('success', 'اطلاعات کارمند با موفقیت به‌روزرسانی شد');
+        return redirect()->route('panel.employees.index')->with('success', 'اطلاعات کارمند با موفقیت به‌روزرسانی شد');
     }
 
     /**
      * Remove the specified employee.
      */
-    public function destroy($id)
+    public function destroy(Employee $employee)
     {
-        $employee = Employee::findOrFail($id);
 
         // Check if employee has any related data
         if ($employee->bankAccounts()->count() > 0 || $employee->documents()->count() > 0) {
-            return redirect()->route('employees.index')
+            return redirect()->route('panel.employees.index')
                            ->with('error', 'این کارمند دارای اطلاعات مرتبط است و قابل حذف نیست');
         }
 
         $employee->delete();
 
-        return redirect()->route('employees.index')->with('success', 'کارمند با موفقیت حذف شد');
+        return redirect()->route('panel.employees.index')->with('success', 'کارمند با موفقیت حذف شد');
     }
 
 
     /**
      * Display employee documents.
      */
-    public function documents($id)
+    public function documents(Employee $employee)
     {
-        $employee = Employee::findOrFail($id);
         $documents = $employee->documents()->get();
         $documentTypes = EmployeeDocument::getDocumentTypes();
 

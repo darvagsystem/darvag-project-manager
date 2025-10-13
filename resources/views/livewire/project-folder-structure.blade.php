@@ -12,7 +12,7 @@
             </div>
             <h6>هیچ پوشه‌ای در این پروژه وجود ندارد</h6>
             <p class="text-muted">برای شروع، اولین پوشه را در فایل منیجر ایجاد کنید</p>
-            <a href="{{ route('projects.filemanager.index', $project->id) }}" class="btn btn-primary btn-sm">
+            <a href="{{ route('panel.projects.filemanager.index', ['project' => $project->id]) }}" class="btn btn-primary btn-sm">
                 <i class="mdi mdi-folder-plus me-1"></i>
                 ایجاد پوشه
             </a>

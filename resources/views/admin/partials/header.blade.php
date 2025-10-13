@@ -49,21 +49,81 @@
             <span class="notification-badge">5</span>
         </div>
 
-        <div class="header-profile" title="پروفایل کاربری">
-            <div class="profile-avatar">م.ب</div>
-            <div class="profile-info">
-                <div class="profile-name">مصیب بامری</div>
-                <div class="profile-role">مدیر عامل</div>
+        <div class="header-profile dropdown" title="پروفایل کاربری">
+            <div class="profile-trigger" onclick="toggleProfileDropdown()" aria-expanded="false">
+                <div class="profile-avatar">
+                    @if(auth()->check())
+                        {{ substr(auth()->user()->name, 0, 1) }}{{ substr(auth()->user()->username, 0, 1) }}
+                    @else
+                        م.ب
+                    @endif
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">
+                        @if(auth()->check())
+                            {{ auth()->user()->name }}
+                        @else
+                            مصیب بامری
+                        @endif
+                    </div>
+                    <div class="profile-role">
+                        @if(auth()->check())
+                            @if(auth()->user()->roles->count() > 0)
+                                {{ auth()->user()->roles->first()->name }}
+                            @else
+                                کاربر
+                            @endif
+                        @else
+                            مدیر عامل
+                        @endif
+                    </div>
+                </div>
+                <svg class="dropdown-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
             </div>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <div class="dropdown-header">
+                        <div class="fw-bold">
+                            @if(auth()->check())
+                                {{ auth()->user()->name }}
+                            @else
+                                مصیب بامری
+                            @endif
+                        </div>
+                        <small class="text-muted">
+                            @if(auth()->check())
+                                {{ auth()->user()->email }}
+                            @else
+                                admin@example.com
+                            @endif
+                        </small>
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" href="{{ route('panel.profile.show') }}">
+                        <i class="fas fa-user me-2"></i> پروفایل من
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ route('panel.profile.edit') }}">
+                        <i class="fas fa-cog me-2"></i> تنظیمات
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i> خروج از سیستم
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
 
-        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-            @csrf
-            <button type="submit" class="header-logout" title="خروج از سیستم">
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-            </button>
-        </form>
     </div>
 </header>

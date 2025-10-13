@@ -9,7 +9,7 @@
             <h1 class="page-title">افزودن بانک جدید</h1>
             <p class="page-subtitle">تعریف بانک جدید در سیستم</p>
         </div>
-        <a href="{{ route('admin.settings.banks') }}" class="btn btn-light">
+        <a href="{{ route('panel.settings.banks') }}" class="btn btn-light">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
@@ -23,7 +23,7 @@
         <h3 class="card-title">اطلاعات بانک</h3>
         <p class="card-subtitle">لطفاً اطلاعات بانک را وارد کنید</p>
     </div>
-    <form action="{{ route('admin.settings.banks.store') }}" method="POST" enctype="multipart/form-data" class="card-body">
+    <form action="{{ route('panel.settings.banks.store') }}" method="POST" enctype="multipart/form-data" class="card-body">
         @csrf
 
         <div class="form-grid">
@@ -62,7 +62,7 @@
                 </svg>
                 ذخیره بانک
             </button>
-            <a href="{{ route('admin.settings.banks') }}" class="btn btn-light">انصراف</a>
+            <a href="{{ route('panel.settings.banks') }}" class="btn btn-light">انصراف</a>
         </div>
     </form>
 </div>

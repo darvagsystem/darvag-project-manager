@@ -10,7 +10,7 @@
             <p class="page-subtitle">{{ $projectEmployee->employee->full_name }} - {{ $project->name }}</p>
         </div>
         <div style="display: flex; gap: 1rem;">
-            <a href="{{ route('projects.employees.index', $project) }}" class="btn btn-secondary">
+            <a href="{{ route('panel.projects.employees.index', $project) }}" class="btn btn-secondary">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
@@ -25,7 +25,7 @@
         <h3 class="card-title">اطلاعات کارمند و شرایط کاری</h3>
     </div>
     <div class="card-body">
-        <form action="{{ route('projects.employees.update', [$project, $projectEmployee]) }}" method="POST">
+        <form action="{{ route('panel.projects.employees.update', [$project, $projectEmployee]) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -64,8 +64,9 @@
                 <!-- Monthly Salary -->
                 <div class="form-group" id="monthly-salary-group" style="display: none;">
                     <label for="salary_amount" class="form-label">مبلغ حقوق ماهیانه (تومان) *</label>
-                    <input type="number" id="salary_amount" name="salary_amount" class="form-input"
-                           value="{{ old('salary_amount', $projectEmployee->salary_amount) }}" placeholder="مثال: 15000000" min="0" step="1000">
+                    <input type="text" id="salary_amount" name="salary_amount" class="form-input money-input"
+                           value="{{ old('salary_amount', $projectEmployee->salary_amount ? number_format($projectEmployee->salary_amount) : '') }}" placeholder="مثال: 15,000,000">
+                    <input type="hidden" id="salary_amount_raw" name="salary_amount_raw" value="{{ old('salary_amount_raw', $projectEmployee->salary_amount) }}">
                     @error('salary_amount')
                         <div class="form-error">{{ $message }}</div>
                     @enderror
@@ -74,8 +75,9 @@
                 <!-- Daily Salary -->
                 <div class="form-group" id="daily-salary-group" style="display: none;">
                     <label for="daily_salary" class="form-label">مبلغ حقوق روزانه (تومان) *</label>
-                    <input type="number" id="daily_salary" name="daily_salary" class="form-input"
-                           value="{{ old('daily_salary', $projectEmployee->daily_salary) }}" placeholder="مثال: 500000" min="0" step="1000">
+                    <input type="text" id="daily_salary" name="daily_salary" class="form-input money-input"
+                           value="{{ old('daily_salary', $projectEmployee->daily_salary ? number_format($projectEmployee->daily_salary) : '') }}" placeholder="مثال: 500,000">
+                    <input type="hidden" id="daily_salary_raw" name="daily_salary_raw" value="{{ old('daily_salary_raw', $projectEmployee->daily_salary) }}">
                     @error('daily_salary')
                         <div class="form-error">{{ $message }}</div>
                     @enderror
@@ -110,8 +112,12 @@
                 <!-- Start Date -->
                 <div class="form-group">
                     <label for="start_date" class="form-label">تاریخ شروع همکاری *</label>
-                    <input type="date" id="start_date" name="start_date" class="form-input"
-                           value="{{ old('start_date', $projectEmployee->start_date->format('Y-m-d')) }}" required>
+                    <input type="text" id="start_date" name="start_date" class="form-input persian-date"
+                           value="{{ old('start_date', $projectEmployee->start_date ? \App\Services\PersianDateService::carbonToPersian($projectEmployee->start_date) : '') }}"
+                           placeholder="1403/01/15" required>
+                    <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+                        فرمت: 1403/01/15
+                    </div>
                     @error('start_date')
                         <div class="form-error">{{ $message }}</div>
                     @enderror
@@ -120,10 +126,11 @@
                 <!-- End Date -->
                 <div class="form-group">
                     <label for="end_date" class="form-label">تاریخ پایان همکاری</label>
-                    <input type="date" id="end_date" name="end_date" class="form-input"
-                           value="{{ old('end_date', $projectEmployee->end_date ? $projectEmployee->end_date->format('Y-m-d') : '') }}">
+                    <input type="text" id="end_date" name="end_date" class="form-input persian-date"
+                           value="{{ old('end_date', $projectEmployee->end_date ? \App\Services\PersianDateService::carbonToPersian($projectEmployee->end_date) : '') }}"
+                           placeholder="1403/12/29">
                     <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
-                        اختیاری - در صورت خالی بودن، همکاری نامحدود در نظر گرفته می‌شود
+                        اختیاری - فرمت: 1403/12/29 - در صورت خالی بودن، همکاری نامحدود در نظر گرفته می‌شود
                     </div>
                     @error('end_date')
                         <div class="form-error">{{ $message }}</div>
@@ -163,7 +170,7 @@
                     </svg>
                     به‌روزرسانی اطلاعات
                 </button>
-                <a href="{{ route('projects.employees.index', $project) }}" class="btn btn-light">انصراف</a>
+                <a href="{{ route('panel.projects.employees.index', $project) }}" class="btn btn-light">انصراف</a>
             </div>
         </form>
     </div>
@@ -323,6 +330,16 @@
 }
 </style>
 
+@push('styles')
+<!-- Persian Date Picker CSS -->
+<link rel="stylesheet" href="{{ asset('css/persian-date-simple.css') }}">
+@endpush
+
+@push('scripts')
+<!-- Persian Date Picker JavaScript -->
+<script src="{{ asset('js/persian-date-simple.js') }}"></script>
+@endpush
+
 <script>
 function toggleSalaryFields() {
     const salaryType = document.getElementById('salary_type').value;
@@ -347,9 +364,106 @@ function toggleSalaryFields() {
     }
 }
 
+// Money formatting functions
+function formatMoney(value) {
+    // Remove all non-numeric characters
+    const numericValue = value.replace(/[^\d]/g, '');
+
+    // Add commas every 3 digits
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function parseMoney(value) {
+    // Remove all non-numeric characters and return as number
+    return parseInt(value.replace(/[^\d]/g, '')) || 0;
+}
+
+// Initialize money inputs
+function initializeMoneyInputs() {
+    const moneyInputs = document.querySelectorAll('.money-input');
+
+    moneyInputs.forEach(input => {
+        // Format on input
+        input.addEventListener('input', function() {
+            const cursorPosition = this.selectionStart;
+            const oldValue = this.value;
+            const newValue = formatMoney(this.value);
+
+            this.value = newValue;
+
+            // Adjust cursor position
+            const newCursorPosition = cursorPosition + (newValue.length - oldValue.length);
+            this.setSelectionRange(newCursorPosition, newCursorPosition);
+
+            // Update hidden field with raw value
+            const hiddenField = this.nextElementSibling;
+            if (hiddenField && hiddenField.type === 'hidden') {
+                hiddenField.value = parseMoney(this.value);
+            }
+        });
+
+        // Format on focus
+        input.addEventListener('focus', function() {
+            if (this.value && !isNaN(parseMoney(this.value))) {
+                this.value = formatMoney(this.value);
+            }
+        });
+
+        // Update hidden field on blur
+        input.addEventListener('blur', function() {
+            const hiddenField = this.nextElementSibling;
+            if (hiddenField && hiddenField.type === 'hidden') {
+                hiddenField.value = parseMoney(this.value);
+            }
+        });
+    });
+}
+
+// Initialize Persian date pickers
+function initializePersianDatePickers() {
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+
+    if (startDateInput) {
+        new PersianDatePicker(startDateInput, {
+            format: 'YYYY/MM/DD',
+            locale: 'fa',
+            calendar: {
+                persian: {
+                    locale: 'fa',
+                    showHint: true,
+                    leapYearMode: 'algorithmic'
+                }
+            },
+            checkDate: function(unix) {
+                return unix;
+            }
+        });
+    }
+
+    if (endDateInput) {
+        new PersianDatePicker(endDateInput, {
+            format: 'YYYY/MM/DD',
+            locale: 'fa',
+            calendar: {
+                persian: {
+                    locale: 'fa',
+                    showHint: true,
+                    leapYearMode: 'algorithmic'
+                }
+            },
+            checkDate: function(unix) {
+                return unix;
+            }
+        });
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     toggleSalaryFields();
+    initializeMoneyInputs();
+    initializePersianDatePickers();
 });
 </script>
 @endsection

@@ -52,51 +52,6 @@
     </div>
 </div>
 
-<!-- Upload File Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">آپلود فایل</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="uploadForm" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="fileInput" class="form-label">انتخاب فایل‌ها</label>
-                        <input type="file" class="form-control" id="fileInput" name="files[]" multiple required>
-                        <div class="form-text">می‌توانید چندین فایل را همزمان انتخاب کنید</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="fileDescription" class="form-label">توضیحات (اختیاری)</label>
-                        <textarea class="form-control" id="fileDescription" name="description" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">تگ‌ها (اختیاری)</label>
-                        <div id="fileTags" class="tag-selection">
-                            @foreach(\App\Models\Tag::all() as $tag)
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $tag->id }}" id="file_tag_{{ $tag->id }}">
-                                    <label class="form-check-label" for="file_tag_{{ $tag->id }}" style="color: {{ $tag->color }}">
-                                        {{ $tag->name }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div id="filePreview" class="mb-3" style="display: none;">
-                        <h6>فایل‌های انتخاب شده:</h6>
-                        <div id="fileList" class="list-group"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                    <button type="submit" class="btn btn-primary">آپلود فایل‌ها</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <!-- Rename Modal -->
 <div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
@@ -190,19 +145,3 @@
     </div>
 </div>
 
-<!-- Progress Modal -->
-<div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="progressModalLabel">در حال پردازش...</h5>
-            </div>
-            <div class="modal-body">
-                <div class="progress mb-3">
-                    <div class="progress-bar" role="progressbar" style="width: 0%" id="progressBar"></div>
-                </div>
-                <div id="progressText">در حال آپلود فایل‌ها...</div>
-            </div>
-        </div>
-    </div>
-</div>

@@ -45,7 +45,7 @@ class BankController extends Controller
 
         Bank::create($data);
 
-        return redirect()->route('admin.settings.banks')->with('success', 'بانک با موفقیت اضافه شد');
+        return redirect()->route('panel.settings.banks')->with('success', 'بانک با موفقیت اضافه شد');
     }
 
     /**
@@ -80,7 +80,7 @@ class BankController extends Controller
 
         $bank->update($data);
 
-        return redirect()->route('admin.settings.banks')->with('success', 'بانک با موفقیت به‌روزرسانی شد');
+        return redirect()->route('panel.settings.banks')->with('success', 'بانک با موفقیت به‌روزرسانی شد');
     }
 
     /**
@@ -92,13 +92,13 @@ class BankController extends Controller
 
         // Check if bank has any associated accounts
         if ($bank->employeeBankAccounts()->count() > 0) {
-            return redirect()->route('admin.settings.banks')
+            return redirect()->route('panel.settings.banks')
                            ->with('error', 'این بانک دارای حساب‌های مرتبط است و قابل حذف نیست');
         }
 
         $bank->delete();
 
-        return redirect()->route('admin.settings.banks')->with('success', 'بانک با موفقیت حذف شد');
+        return redirect()->route('panel.settings.banks')->with('success', 'بانک با موفقیت حذف شد');
     }
 
     /**
@@ -108,7 +108,7 @@ class BankController extends Controller
     {
         // Check if banks already exist
         if (Bank::count() > 0) {
-            return redirect()->route('admin.settings.banks')
+            return redirect()->route('panel.settings.banks')
                            ->with('error', 'بانک‌ها قبلاً تعریف شده‌اند');
         }
 
@@ -149,7 +149,7 @@ class BankController extends Controller
             Bank::create($bank);
         }
 
-        return redirect()->route('admin.settings.banks')
+        return redirect()->route('panel.settings.banks')
                        ->with('success', '30 بانک پیش‌فرض با موفقیت اضافه شدند');
     }
 }

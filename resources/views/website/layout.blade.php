@@ -8,6 +8,7 @@
     <meta name="keywords" content="پیمانکاری, ساخت و ساز, داروگ, سلر سازی, محوطه سازی, جاده سازی, پیمانکار, پروژه عمرانی">
     <meta name="author" content="کاخ‌سازان داروگ">
     <meta name="robots" content="index, follow">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="@yield('title', 'کاخ‌سازان داروگ - داستان ساخت و ساز')">

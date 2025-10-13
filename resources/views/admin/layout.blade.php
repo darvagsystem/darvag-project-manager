@@ -10,6 +10,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.0.96/css/materialdesignicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <style>
+        /* Fix click issues globally */
+        * {
+            pointer-events: auto !important;
+        }
+
+        a, button, .btn, input[type="submit"], input[type="button"] {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            z-index: 999 !important;
+        }
+
+        .admin-content {
+            pointer-events: auto !important;
+        }
+
+        .admin-main {
+            pointer-events: auto !important;
+        }
+    </style>
     @stack('styles')
 </head>
 <body>
@@ -27,8 +47,30 @@
         </div>
     </main>
 
+    <!-- Simple Modal -->
+    @include('admin.partials.simple-modal')
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Fix click issues globally
+            console.log('Fixing click issues...');
+
+            // Force enable pointer events for all clickable elements
+            const clickableElements = document.querySelectorAll('a, button, .btn, input[type="submit"], input[type="button"], [onclick]');
+            clickableElements.forEach(element => {
+                element.style.pointerEvents = 'auto';
+                element.style.cursor = 'pointer';
+                element.style.zIndex = '999';
+                element.style.position = 'relative';
+            });
+
+            // Remove any blocking overlays
+            const overlays = document.querySelectorAll('.overlay, .modal-backdrop, .loading-overlay');
+            overlays.forEach(overlay => {
+                overlay.style.display = 'none';
+                overlay.style.pointerEvents = 'none';
+            });
+
             // Mobile sidebar toggle
             const sidebarToggle = document.createElement('button');
             sidebarToggle.className = 'mobile-toggle';
@@ -73,12 +115,67 @@
                     }
                 }
             });
+
+            // Continuous click fix (every second)
+            setInterval(function() {
+                const clickableElements = document.querySelectorAll('a, button, .btn, input[type="submit"], input[type="button"], [onclick]');
+                clickableElements.forEach(element => {
+                    if (element.style.pointerEvents !== 'auto') {
+                        element.style.pointerEvents = 'auto';
+                        element.style.cursor = 'pointer';
+                        element.style.zIndex = '999';
+                        element.style.position = 'relative';
+                    }
+                });
+            }, 1000);
         });
     </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script>
+        // Profile dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileTrigger = document.querySelector('.profile-trigger');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            if (profileTrigger && dropdownMenu) {
+                profileTrigger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const isOpen = dropdownMenu.classList.contains('show');
+
+                    // Close all other dropdowns
+                    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                        if (menu !== dropdownMenu) {
+                            menu.classList.remove('show');
+                        }
+                    });
+
+                    // Toggle current dropdown
+                    if (isOpen) {
+                        dropdownMenu.classList.remove('show');
+                        profileTrigger.setAttribute('aria-expanded', 'false');
+                    } else {
+                        dropdownMenu.classList.add('show');
+                        profileTrigger.setAttribute('aria-expanded', 'true');
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!profileTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.classList.remove('show');
+                        profileTrigger.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script src="{{ asset('js/persian-date-simple.js') }}"></script>
     @stack('scripts')
     @yield('scripts')
 </body>

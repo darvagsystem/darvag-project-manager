@@ -99,6 +99,38 @@ class Project extends Model
         return $this->hasMany(ProjectEmployee::class);
     }
 
+    /**
+     * Get the milestones for this project.
+     */
+    public function milestones()
+    {
+        return $this->hasMany(ProjectMilestone::class);
+    }
+
+    /**
+     * Get the tasks for this project.
+     */
+    public function tasks()
+    {
+        return $this->hasMany(ProjectTask::class);
+    }
+
+    /**
+     * Get the resources for this project.
+     */
+    public function resources()
+    {
+        return $this->hasMany(ProjectResource::class);
+    }
+
+    /**
+     * Get the risks for this project.
+     */
+    public function risks()
+    {
+        return $this->hasMany(ProjectRisk::class);
+    }
+
 
     /**
      * Get the formatted status.

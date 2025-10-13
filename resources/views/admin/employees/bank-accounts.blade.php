@@ -4,30 +4,38 @@
 
 @section('content')
 <div class="page-header">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <h1 class="page-title">حساب‌های بانکی</h1>
-            <p class="page-subtitle">مدیریت حساب‌های بانکی {{ $employee->full_name }} - {{ $employee->employee_code }}</p>
+    <div class="header-content">
+        <div class="header-info">
+            <div class="breadcrumb">
+                <a href="{{ route('panel.employees.index') }}" class="breadcrumb-link">مدیریت پرسنل</a>
+                <span class="breadcrumb-separator">/</span>
+                <span class="breadcrumb-current">حساب‌های بانکی</span>
+            </div>
+            <h1 class="page-title">
+                <i class="fas fa-credit-card"></i>
+                حساب‌های بانکی
+            </h1>
+            <p class="page-subtitle">
+                <i class="fas fa-user"></i>
+                {{ $employee->full_name }}
+                <span class="employee-code">({{ $employee->employee_code }})</span>
+            </p>
         </div>
         <div class="header-actions">
-            <button class="btn btn-primary" onclick="showAddAccountModal()">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
+            <button class="btn btn-primary btn-lg" onclick="showAddAccountModal()">
+                <i class="fas fa-plus"></i>
                 افزودن حساب بانکی
             </button>
-            <a href="{{ route('admin.settings.banks') }}" class="btn btn-secondary">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-                مدیریت بانک‌ها
-            </a>
-            <a href="{{ route('employees.index') }}" class="btn btn-light">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                بازگشت
-            </a>
+            <div class="action-group">
+                <a href="{{ route('panel.settings.banks.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-university"></i>
+                    مدیریت بانک‌ها
+                </a>
+                <a href="{{ route('panel.employees.index') }}" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-right"></i>
+                    بازگشت
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -55,138 +63,114 @@
     </div>
 </div>
 
-<!-- Bank Accounts Grid -->
-<div class="bank-accounts-grid">
-    @forelse($bankAccounts as $account)
-    <div class="bank-card {{ $account->is_default ? 'default-account' : '' }}">
-        <!-- Bank Card Design -->
-        <div class="card-front {{ $account->is_default ? 'default-account' : '' }}">
-            <!-- Bank Header -->
-            <div class="bank-header">
-                <div class="bank-logo-section">
-                    <div class="bank-logo">
-                        @if($account->bank->logo)
-                            <img src="{{ asset('storage/' . $account->bank->logo) }}" alt="{{ $account->bank->name }}">
-                        @else
-                            <div class="bank-logo-placeholder">
-                                <i class="fas fa-university"></i>
+<!-- Bank Accounts Table -->
+<div class="bank-accounts-container">
+    @if($bankAccounts->count() > 0)
+    <div class="table-responsive">
+        <table class="bank-accounts-table">
+            <thead>
+                <tr>
+                    <th>بانک</th>
+                    <th>نام صاحب حساب</th>
+                    <th>شماره حساب</th>
+                    <th>شماره کارت</th>
+                    <th>شماره شبا (IBAN)</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($bankAccounts as $account)
+                <tr class="{{ $account->is_default ? 'default-account' : '' }}">
+                    <td>
+                        <div class="bank-info">
+                            @if($account->bank->logo)
+                                <img src="{{ asset('storage/' . $account->bank->logo) }}" alt="{{ $account->bank->name }}" class="bank-logo">
+                            @else
+                                <div class="bank-logo-placeholder">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                            @endif
+                            <div class="bank-details">
+                                <div class="bank-name">{{ $account->bank->name }}</div>
+                                @if($account->is_default)
+                                    <span class="default-badge">حساب اصلی</span>
+                                @endif
                             </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="account-holder">{{ $account->account_holder_name }}</div>
+                    </td>
+                    <td>
+                        @if($account->account_number)
+                            <span class="account-number">{{ $account->account_number }}</span>
+                        @else
+                            <span class="text-muted">-</span>
                         @endif
-                    </div>
-                    <div class="bank-name-section">
-                        <div class="bank-name-persian">{{ $account->bank->name }}</div>
-                        <div class="bank-name-english">Bank Card</div>
-                    </div>
-                </div>
-                @if($account->is_default)
-                    <span class="card-type-badge">حساب اصلی</span>
-                @endif
-            </div>
-
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="card-number-section">
-                    @if($account->card_number)
-                    <div class="card-number">{{ formatCardNumber($account->card_number) }}</div>
-                    @else
-                    <div class="card-number-placeholder">**** **** **** ****</div>
-                    @endif
-                </div>
-
-                <div class="card-footer">
-                    <div class="card-holder">
-                        <div class="card-holder-label">صاحب حساب</div>
-                        <div class="card-holder-name">{{ $account->account_holder_name }}</div>
-                    </div>
-                    <div class="card-expiry">
-                        <div class="card-expiry-label">بانک</div>
-                        <div class="card-expiry-value">{{ $account->bank->name }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-status">
-                @if($account->is_active)
-                    <span class="status-indicator active"></span>
-                    <span class="status-text">فعال</span>
-                @else
-                    <span class="status-indicator inactive"></span>
-                    <span class="status-text">غیرفعال</span>
-                @endif
-            </div>
-        </div>
-
-        <!-- Card Back - Additional Info -->
-        <div class="card-back">
-            <div class="card-back-header">
-                <h4>اطلاعات حساب</h4>
-            </div>
-
-            <div class="card-back-details">
-                @if($account->account_number)
-                <div class="back-detail-item">
-                    <span class="back-detail-label">شماره حساب</span>
-                    <span class="back-detail-value">{{ $account->account_number }}</span>
-                </div>
-                @endif
-
-                @if($account->iban)
-                <div class="back-detail-item">
-                    <span class="back-detail-label">شماره IBAN</span>
-                    <span class="back-detail-value iban-text">{{ $account->iban }}</span>
-                </div>
-                @endif
-
-                @if($account->sheba_number)
-                <div class="back-detail-item">
-                    <span class="back-detail-label">شماره شبا</span>
-                    <span class="back-detail-value sheba-text">{{ formatShebaNumber($account->sheba_number) }}</span>
-                </div>
-                @endif
-
-                @if($account->notes)
-                <div class="back-detail-item full-width">
-                    <span class="back-detail-label">یادداشت</span>
-                    <span class="back-detail-value notes-text">{{ $account->notes }}</span>
-                </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Card Actions -->
-        <div class="card-actions">
-            @if(!$account->is_default)
-            <button class="action-btn primary" onclick="setAsDefault({{ $account->id }})" title="تنظیم به عنوان اصلی">
-                <i class="fas fa-star"></i>
-            </button>
-            @endif
-
-            <button class="action-btn edit" onclick="editAccount({{ $account->id }})" title="ویرایش">
-                <i class="fas fa-edit"></i>
-            </button>
-
-            <button class="action-btn delete" onclick="confirmDeleteAccount({{ $account->id }}, '{{ $account->bank->name }}')" title="حذف">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
+                    </td>
+                    <td>
+                        @if($account->card_number)
+                            <span class="card-number">{{ formatCardNumber($account->card_number) }}</span>
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($account->iban)
+                            <span class="iban-number">{{ formatShebaNumber($account->iban) }}</span>
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
+                    </td>
+                    <td>
+                        <div class="status-cell">
+                            @if($account->is_active)
+                                <span class="status-badge status-active">
+                                    <i class="fas fa-check-circle"></i>
+                                    فعال
+                                </span>
+                            @else
+                                <span class="status-badge status-inactive">
+                                    <i class="fas fa-times-circle"></i>
+                                    غیرفعال
+                                </span>
+                            @endif
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            @if(!$account->is_default)
+                            <button class="btn btn-sm btn-outline-warning" onclick="setAsDefault({{ $account->id }})" title="تنظیم به عنوان اصلی">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            @endif
+                            <a href="{{ route('panel.employee-bank-accounts.edit', $account->id) }}" class="btn btn-sm btn-outline-primary" title="ویرایش">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteAccount({{ $account->id }}, '{{ $account->bank->name }}')" title="حذف">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
-    @empty
+    @else
     <div class="empty-state">
         <div class="empty-icon">
-            <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-            </svg>
+            <i class="fas fa-credit-card"></i>
         </div>
         <h3>هنوز حساب بانکی ای ثبت نشده</h3>
         <p>برای افزودن حساب بانکی جدید روی دکمه "افزودن حساب بانکی" کلیک کنید.</p>
         <button class="btn btn-primary" onclick="showAddAccountModal()">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
+            <i class="fas fa-plus"></i>
             افزودن اولین حساب بانکی
         </button>
     </div>
-    @endforelse
+    @endif
 </div>
 
 <!-- Add/Edit Account Modal -->
@@ -221,7 +205,7 @@
                                 <div>
                                     <h4>هیچ بانکی تعریف نشده</h4>
                                     <p>برای افزودن حساب بانکی، ابتدا باید بانک‌ها را تعریف کنید.</p>
-                                    <a href="{{ route('admin.settings.banks') }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('panel.settings.banks.index') }}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-plus"></i>
                                         مدیریت بانک‌ها
                                     </a>
@@ -243,17 +227,23 @@
 
                 <div class="form-group">
                     <label for="card_number" class="form-label">شماره کارت</label>
-                    <input type="text" id="card_number" name="card_number" class="form-input" placeholder="1234-5678-9012-3456" maxlength="19">
+                    <div class="input-group">
+                        <input type="text" id="card_number" name="card_number" class="form-input" placeholder="1234-5678-9012-3456" maxlength="19">
+                        <button type="button" id="getBankInfoBtn" class="btn btn-outline-primary" onclick="getBankInfoFromCard()">
+                            <i class="fas fa-search"></i>
+                            دریافت اطلاعات
+                        </button>
+                    </div>
+                    <div id="cardInfoLoading" class="loading-indicator" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        در حال دریافت اطلاعات...
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="iban" class="form-label">شماره IBAN</label>
+                    <label for="iban" class="form-label">شماره شبا (IBAN)</label>
                     <input type="text" id="iban" name="iban" class="form-input" placeholder="IR123456789012345678901234" maxlength="26">
-                </div>
-
-                <div class="form-group">
-                    <label for="sheba_number" class="form-label">شماره شبا</label>
-                    <input type="text" id="sheba_number" name="sheba_number" class="form-input" placeholder="IR12 3456 7890 1234 5678 90" maxlength="26">
+                    <small class="form-text text-muted" style="color: #6c757d; font-size: 12px;">شماره شبا همان IBAN است</small>
                 </div>
 
                 <div class="form-group full-width">
@@ -347,6 +337,128 @@ function formatShebaNumber($sheba) {
 
 @push('styles')
 <style>
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.header-info {
+    flex: 1;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.breadcrumb-link {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+    opacity: 0.8;
+}
+
+.breadcrumb-separator {
+    opacity: 0.6;
+}
+
+.breadcrumb-current {
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title i {
+    font-size: 24px;
+    opacity: 0.9;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    margin: 0;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.employee-code {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.action-group {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn-outline-secondary {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+}
+
+.btn-outline-secondary:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+    color: white;
+}
+
+.btn-outline-light {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+    color: white;
+}
+
 /* Page Layout */
 .employee-info-card {
     background: white;
@@ -414,77 +526,68 @@ function formatShebaNumber($sheba) {
     text-align: center;
 }
 
-/* Bank Cards Grid */
-.bank-accounts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 30px;
-    margin-bottom: 30px;
-    perspective: 1000px;
-}
-
-/* Bank Card Design */
-.bank-card {
-    position: relative;
-    width: 100%;
-    height: 220px;
-    transform-style: preserve-3d;
-    transition: transform 0.6s ease;
-    cursor: default;
-}
-
-.bank-card:hover {
-    transform: rotateY(10deg) rotateX(5deg);
-}
-
-.bank-card.default-account {
-    transform: scale(1.02);
-}
-
-.bank-card.default-account:hover {
-    transform: scale(1.05) rotateY(10deg) rotateX(5deg);
-}
-
-.bank-card.flipped {
-    transform: rotateY(180deg);
-}
-
-.bank-card.flipped.default-account {
-    transform: scale(1.02) rotateY(180deg);
-}
-
-/* Card Front - Real Bank Card Style */
-.card-front {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 15px;
-    padding: 0;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    color: #212529;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #dee2e6;
-}
-
-/* Bank Header Section */
-.bank-header {
+/* Bank Accounts Table */
+.bank-accounts-container {
     background: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 30px;
 }
 
-.bank-logo-section {
+.table-responsive {
+    overflow-x: auto;
+}
+
+.bank-accounts-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.bank-accounts-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.bank-accounts-table th {
+    padding: 16px 20px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    white-space: nowrap;
+}
+
+.bank-accounts-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.bank-accounts-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.bank-accounts-table tbody tr.default-account {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border-left: 4px solid #f59e0b;
+}
+
+.bank-accounts-table tbody tr.default-account:hover {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+}
+
+.bank-accounts-table td {
+    padding: 16px 20px;
+    vertical-align: middle;
+    border: none;
+}
+
+/* Bank Info Cell */
+.bank-info {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .bank-logo {
@@ -498,6 +601,7 @@ function formatShebaNumber($sheba) {
     color: white;
     font-weight: bold;
     font-size: 18px;
+    flex-shrink: 0;
 }
 
 .bank-logo img {
@@ -512,387 +616,148 @@ function formatShebaNumber($sheba) {
     font-size: 20px;
 }
 
-.bank-name-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.bank-name-persian {
-    font-size: 14px;
-    font-weight: 600;
-    color: #212529;
-    margin: 0;
-}
-
-.bank-name-english {
-    font-size: 12px;
-    color: #6c757d;
-    margin: 0;
-}
-
-.card-type-badge {
-    background: #dc3545;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-/* Card Body */
-.card-body {
-    flex: 1;
-    background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-}
-
-.card-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: #dc3545;
-}
-
-/* Card Number Section */
-.card-number-section {
-    text-align: center;
-    margin: 20px 0;
-    position: relative;
-}
-
-.card-number {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    font-family: 'Courier New', monospace;
-    color: #212529;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.card-number-placeholder {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    font-family: 'Courier New', monospace;
-    color: #6c757d;
-}
-
-/* Card Footer */
-.card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: auto;
-}
-
-.card-holder, .card-expiry {
-    display: flex;
-    flex-direction: column;
-}
-
-.card-holder-label, .card-expiry-label {
-    font-size: 10px;
-    color: #6c757d;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.card-holder-name, .card-expiry-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: #212529;
-}
-
-/* Card Status */
-.card-status {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.status-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.status-indicator.active {
-    background: #28a745;
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
-}
-
-.status-indicator.inactive {
-    background: #dc3545;
-    box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
-}
-
-.status-text {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6c757d;
-}
-
-/* Default Account Styling */
-.card-front.default-account {
-    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-}
-
-.card-front.default-account .card-body {
-    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-}
-
-.card-front.default-account::after {
-    content: '⭐';
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    font-size: 20px;
-    color: #ff9800;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-/* Remove old styles - they are replaced above */
-
-/* Card Back */
-.card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    backface-visibility: hidden;
-    transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    color: #374151;
-}
-
-.card-back-header {
-    border-bottom: 2px solid #e5e7eb;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-}
-
-.card-back-header h4 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.card-back-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.back-detail-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.back-detail-item.full-width {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.back-detail-label {
-    font-size: 12px;
-    color: #6b7280;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.back-detail-value {
-    font-size: 14px;
-    color: #1f2937;
-    font-weight: 600;
-    font-family: 'Courier New', monospace;
-}
-
-.iban-text, .sheba-text {
-    direction: ltr;
-    text-align: left;
-    background: #f8fafc;
-    padding: 4px 8px;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
-}
-
-.notes-text {
-    font-family: inherit;
-    line-height: 1.4;
-    background: #f8fafc;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-/* Card Actions */
-.card-actions {
-    position: absolute;
-    bottom: -15px;
-    right: 20px;
-    display: flex;
-    gap: 8px;
-    z-index: 10;
-}
-
-.action-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    font-size: 14px;
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-}
-
-.action-btn.primary {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white;
-}
-
-.action-btn.edit {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
-}
-
-.action-btn.delete {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-}
-
-.account-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.bank-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 4px;
-}
-
-.account-holder {
-    font-size: 14px;
-    color: #6b7280;
-}
-
-.account-badges {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.badge-primary {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.badge-success {
-    background: #dcfce7;
-    color: #15803d;
-}
-
-.badge-inactive {
-    background: #f3f4f6;
-    color: #6b7280;
-}
-
-.account-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.detail-item {
+.bank-details {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.detail-item.full-width {
-    grid-column: 1 / -1;
-}
-
-.detail-label {
-    font-size: 12px;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.detail-value {
+.bank-name {
     font-size: 14px;
+    font-weight: 600;
     color: #1f2937;
-    font-weight: 500;
-    font-family: 'Courier New', monospace;
 }
 
-.card-number,
-.iban-number,
-.sheba-number {
+.default-badge {
+    background: #f59e0b;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+    width: fit-content;
+}
+
+/* Account Info */
+.account-holder {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.account-number, .card-number, .iban-number {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #f8fafc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+    display: inline-block;
+}
+
+.card-number {
     direction: ltr;
     text-align: left;
-    background: #f9fafb;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
 }
 
-.account-actions {
+.iban-number {
+    direction: ltr;
+    text-align: left;
+    font-size: 12px;
+}
+
+.text-muted {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Status Cell */
+.status-cell {
+    display: flex;
+    align-items: center;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.status-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-badge.status-inactive {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.status-badge i {
+    font-size: 14px;
+}
+
+/* Action Buttons */
+.action-buttons {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap;
+    align-items: center;
 }
+
+.action-buttons .btn {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.action-buttons .btn-outline-warning {
+    color: #f59e0b;
+    border-color: #f59e0b;
+}
+
+.action-buttons .btn-outline-warning:hover {
+    background: #f59e0b;
+    color: white;
+}
+
+.action-buttons .btn-outline-primary {
+    color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.action-buttons .btn-outline-primary:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.action-buttons .btn-outline-danger {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.action-buttons .btn-outline-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+
 
 /* Empty State */
 .empty-state {
@@ -1024,6 +889,97 @@ function formatShebaNumber($sheba) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
+}
+
+/* Input Group Styles */
+.input-group {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.input-group .form-input {
+    flex: 1;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    white-space: nowrap;
+    padding: 12px 16px;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    color: #3b82f6;
+    font-size: 14px;
+}
+
+.loading-indicator i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Notification Styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px 20px;
+    z-index: 9999;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    border-right: 4px solid #3b82f6;
+    min-width: 300px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-success {
+    border-right-color: #10b981;
+}
+
+.notification-error {
+    border-right-color: #ef4444;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-content i {
+    font-size: 18px;
+}
+
+.notification-success .notification-content i {
+    color: #10b981;
+}
+
+.notification-error .notification-content i {
+    color: #ef4444;
+}
+
+.notification-content span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
 }
 
 .form-group {
@@ -1257,55 +1213,48 @@ function formatShebaNumber($sheba) {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .bank-accounts-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+    .bank-accounts-table {
+        font-size: 12px;
     }
 
-    .bank-card {
-        height: 200px;
-    }
-
-    .bank-header {
-        padding: 12px 15px;
+    .bank-accounts-table th,
+    .bank-accounts-table td {
+        padding: 12px 8px;
     }
 
     .bank-logo {
-        width: 35px;
-        height: 35px;
-        font-size: 16px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
     }
 
-    .bank-name-persian {
+    .bank-name {
         font-size: 12px;
     }
 
-    .bank-name-english {
+    .default-badge {
+        font-size: 9px;
+        padding: 1px 6px;
+    }
+
+    .account-number, .card-number, .iban-number {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+
+    .status-badge {
         font-size: 10px;
+        padding: 4px 8px;
     }
 
-    .card-body {
-        padding: 15px;
+    .action-buttons {
+        flex-direction: column;
+        gap: 4px;
     }
 
-    .card-number, .card-number-placeholder {
-        font-size: 20px;
-        letter-spacing: 3px;
-    }
-
-    .card-holder-name, .card-expiry-value {
-        font-size: 12px;
-    }
-
-    .card-actions {
-        bottom: -10px;
-        right: 15px;
-    }
-
-    .action-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 12px;
+    .action-buttons .btn {
+        padding: 4px 8px;
+        font-size: 10px;
     }
 
     .employee-info-card {
@@ -1328,54 +1277,38 @@ function formatShebaNumber($sheba) {
 }
 
 @media (max-width: 480px) {
-    .bank-card {
-        height: 180px;
-    }
-
-    .bank-header {
-        padding: 10px 12px;
+    .bank-accounts-table th,
+    .bank-accounts-table td {
+        padding: 8px 4px;
     }
 
     .bank-logo {
-        width: 30px;
-        height: 30px;
-        font-size: 14px;
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
     }
 
-    .bank-name-persian {
+    .bank-name {
         font-size: 11px;
     }
 
-    .bank-name-english {
+    .account-holder {
+        font-size: 12px;
+    }
+
+    .account-number, .card-number, .iban-number {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+
+    .status-badge {
         font-size: 9px;
+        padding: 3px 6px;
     }
 
-    .card-body {
-        padding: 12px;
-    }
-
-    .card-number, .card-number-placeholder {
-        font-size: 18px;
-        letter-spacing: 2px;
-    }
-
-    .card-holder-name, .card-expiry-value {
-        font-size: 11px;
-    }
-
-    .card-holder-label, .card-expiry-label {
+    .action-buttons .btn {
+        padding: 3px 6px;
         font-size: 9px;
-    }
-
-    .card-actions {
-        bottom: -8px;
-        right: 12px;
-    }
-
-    .action-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 11px;
     }
 }
 </style>
@@ -1395,13 +1328,60 @@ function showAddAccountModal() {
 
 // Edit account
 function editAccount(accountId) {
-    // In a real implementation, you would fetch the account data via AJAX
-    // For now, we'll just show the modal with the title changed
     document.getElementById('modalTitle').textContent = 'ویرایش حساب بانکی';
     document.getElementById('accountId').value = accountId;
     document.getElementById('accountModal').style.display = 'flex';
 
-    // TODO: Populate form with account data
+    // Show loading state
+    const form = document.getElementById('accountForm');
+    form.style.opacity = '0.5';
+    form.style.pointerEvents = 'none';
+
+    // Fetch account data
+    console.log('Fetching account data for ID:', accountId);
+    fetch(`{{ url('/panel/employee-bank-accounts') }}/${accountId}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            if (data.success) {
+                const account = data.data;
+
+                // Populate form fields
+                document.getElementById('bank_id').value = account.bank_id || '';
+                document.getElementById('account_holder_name').value = account.account_holder_name || '';
+                document.getElementById('account_number').value = account.account_number || '';
+                document.getElementById('card_number').value = account.card_number || '';
+                document.getElementById('iban').value = account.iban || '';
+                document.getElementById('notes').value = account.notes || '';
+
+                // Set checkboxes
+                document.getElementById('is_default').checked = account.is_default || false;
+                document.getElementById('is_active').checked = account.is_active !== false;
+
+                showNotification('اطلاعات حساب بارگذاری شد', 'success');
+            } else {
+                showNotification('خطا در بارگذاری اطلاعات: ' + (data.message || 'خطای نامشخص'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('خطا در ارتباط با سرور', 'error');
+        })
+        .finally(() => {
+            // Remove loading state
+            form.style.opacity = '1';
+            form.style.pointerEvents = 'auto';
+        });
 }
 
 // Close account modal
@@ -1420,31 +1400,49 @@ function saveAccount() {
 
     let url, method;
     if (accountId) {
-        url = `/employee-bank-accounts/${accountId}`;
+        url = `{{ url('/panel/employee-bank-accounts') }}/${accountId}`;
         formData.append('_method', 'PUT');
         method = 'POST';
     } else {
-        url = '/employees/{{ $employee->id }}/bank-accounts';
+        url = '{{ route("panel.employees.bank-accounts.store", $employee->id) }}';
         method = 'POST';
     }
 
+    console.log('Sending request to:', url, 'Method:', method);
     fetch(url, {
         method: method,
         body: formData
     })
     .then(response => {
         console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
 
         if (!response.ok) {
-            if (response.status === 422) {
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
                 return response.json().then(data => {
-                    throw new Error('خطا در اعتبارسنجی: ' + JSON.stringify(data.errors));
+                    throw new Error('خطا در اعتبارسنجی: ' + JSON.stringify(data.errors || data));
+                });
+            } else {
+                // If not JSON, get text content
+                return response.text().then(text => {
+                    console.log('Response text:', text);
+                    throw new Error(`خطای سرور (${response.status}): پاسخ غیرمنتظره دریافت شد`);
                 });
             }
-            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return response.json();
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        } else {
+            return response.text().then(text => {
+                console.log('Response text:', text);
+                throw new Error('پاسخ غیرمنتظره از سرور دریافت شد');
+            });
+        }
     })
     .then(data => {
         console.log('Response data:', data);
@@ -1457,14 +1455,22 @@ function saveAccount() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('خطا در ذخیره اطلاعات: ' + error.message);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+
+        let errorMessage = 'خطا در ذخیره اطلاعات';
+        if (error.message) {
+            errorMessage += ': ' + error.message;
+        }
+
+        showNotification(errorMessage, 'error');
     });
 }
 
 // Set account as default
 function setAsDefault(accountId) {
     const form = document.getElementById('setDefaultForm');
-    form.action = `/employees/{{ $employee->id }}/bank-accounts/${accountId}/set-default`;
+    form.action = `/panel/employees/{{ $employee->id }}/bank-accounts/${accountId}/set-default`;
     form.submit();
 }
 
@@ -1485,7 +1491,7 @@ function closeDeleteModal() {
 function deleteAccount() {
     if (currentAccountId) {
         const form = document.getElementById('deleteAccountForm');
-        form.action = `/employees/{{ $employee->id }}/bank-accounts/${currentAccountId}`;
+        form.action = `/panel/employees/{{ $employee->id }}/bank-accounts/${currentAccountId}`;
         form.submit();
     }
 }
@@ -1496,10 +1502,108 @@ document.getElementById('card_number').addEventListener('input', function(e) {
     value = value.replace(/(\d{4})(?=\d)/g, '$1-');
     if (value.length > 19) value = value.substr(0, 19);
     e.target.value = value;
+
+    // Enable/disable get info button based on card number length
+    const getInfoBtn = document.getElementById('getBankInfoBtn');
+    const cardNumber = value.replace(/\D/g, '');
+    getInfoBtn.disabled = cardNumber.length !== 16;
 });
 
-// Format SHEBA number input
-document.getElementById('sheba_number').addEventListener('input', function(e) {
+// Get bank info from card number
+function getBankInfoFromCard() {
+    const cardNumber = document.getElementById('card_number').value.replace(/\D/g, '');
+    const loadingIndicator = document.getElementById('cardInfoLoading');
+    const getInfoBtn = document.getElementById('getBankInfoBtn');
+
+    if (cardNumber.length !== 16) {
+        alert('لطفاً شماره کارت 16 رقمی وارد کنید');
+        return;
+    }
+
+    // Show loading
+    loadingIndicator.style.display = 'flex';
+    getInfoBtn.disabled = true;
+    getInfoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال دریافت...';
+
+    // Make API request
+    fetch('{{ route("panel.get-bank-info-from-card") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            card_number: cardNumber
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Fill form fields with received data
+            if (data.data.bank_id) {
+                document.getElementById('bank_id').value = data.data.bank_id;
+            }
+            if (data.data.account_holder_name) {
+                document.getElementById('account_holder_name').value = data.data.account_holder_name;
+            }
+            if (data.data.account_number) {
+                document.getElementById('account_number').value = data.data.account_number;
+            }
+            if (data.data.iban) {
+                document.getElementById('iban').value = data.data.iban;
+            }
+
+            // Show success message
+            showNotification('اطلاعات بانک با موفقیت دریافت شد', 'success');
+        } else {
+            showNotification(data.message || 'خطا در دریافت اطلاعات', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('خطا در ارتباط با سرور', 'error');
+    })
+    .finally(() => {
+        // Hide loading
+        loadingIndicator.style.display = 'none';
+        getInfoBtn.disabled = false;
+        getInfoBtn.innerHTML = '<i class="fas fa-search"></i> دریافت اطلاعات';
+    });
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Show notification
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+
+    // Remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Format IBAN input
+document.getElementById('iban').addEventListener('input', function(e) {
     let value = e.target.value.replace(/[^0-9]/g, '');
     if (value.length > 22) value = value.substr(0, 22);
 
@@ -1525,25 +1629,10 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Bank card flip functionality - DISABLED
-// Cards no longer flip on click to prevent position changes
+// Initialize table functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const bankCards = document.querySelectorAll('.bank-card');
-
-    bankCards.forEach(card => {
-        // Remove click event listener to prevent card flipping
-        // card.addEventListener('click', function() {
-        //     this.classList.toggle('flipped');
-        // });
-
-        // Action buttons work independently
-        const actionButtons = card.querySelectorAll('.action-btn');
-        actionButtons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        });
-    });
+    // Add any table-specific functionality here if needed
+    console.log('Bank accounts table initialized');
 });
 </script>
 @endpush

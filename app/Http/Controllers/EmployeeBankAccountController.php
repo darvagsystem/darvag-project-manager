@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Models\EmployeeBankAccount;
 use App\Models\Bank;
+use App\Services\ActivityLogService;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeBankAccountController extends Controller
@@ -13,10 +14,9 @@ class EmployeeBankAccountController extends Controller
     /**
      * Display employee bank accounts
      */
-    public function index($employeeId)
+    public function index(Employee $employee)
     {
-        $employee = Employee::findOrFail($employeeId);
-        $bankAccounts = EmployeeBankAccount::where('employee_id', $employeeId)
+        $bankAccounts = EmployeeBankAccount::where('employee_id', $employee->id)
                                          ->with('bank')
                                          ->orderBy('is_default', 'desc')
                                          ->orderBy('created_at', 'desc')
@@ -39,7 +39,6 @@ class EmployeeBankAccountController extends Controller
                 'account_number' => 'nullable|string|max:50',
                 'iban' => 'nullable|string|max:26',
                 'card_number' => 'nullable|string|max:19',
-                'sheba_number' => 'nullable|string|max:26',
                 'notes' => 'nullable|string',
                 'is_default' => 'nullable|boolean',
                 'is_active' => 'nullable|boolean'
@@ -67,12 +66,18 @@ class EmployeeBankAccountController extends Controller
                 $data['card_number'] = str_replace([' ', '-'], '', $data['card_number']);
             }
 
-            // Clean sheba number if provided
-            if (!empty($data['sheba_number'])) {
-                $data['sheba_number'] = strtoupper(str_replace(' ', '', $data['sheba_number']));
-            }
 
             $bankAccount = EmployeeBankAccount::create($data);
+
+            // Log the activity
+            ActivityLogService::logActivity('bank_account_created', [
+                'employee_id' => $bankAccount->employee_id,
+                'employee_name' => $bankAccount->employee->full_name,
+                'bank_account_id' => $bankAccount->id,
+                'bank_name' => $bankAccount->bank->name,
+                'account_holder' => $bankAccount->account_holder_name,
+                'is_default' => $bankAccount->is_default
+            ]);
 
             DB::commit();
 
@@ -112,8 +117,8 @@ class EmployeeBankAccountController extends Controller
                 'bank_id' => 'required|exists:banks,id',
                 'account_holder_name' => 'required|string|max:255',
                 'account_number' => 'nullable|string|max:50',
-                'iban' => 'nullable|string|size:24',
-                'card_number' => 'nullable|string|size:16',
+                'iban' => 'nullable|string|max:26',
+                'card_number' => 'nullable|string|max:19',
                 'notes' => 'nullable|string',
                 'is_default' => 'boolean',
                 'is_active' => 'boolean'
@@ -132,56 +137,34 @@ class EmployeeBankAccountController extends Controller
                                   ->update(['is_default' => false]);
             }
 
-            // Validate IBAN format if provided
-            if ($data['iban']) {
+            // Clean IBAN format if provided
+            if (!empty($data['iban'])) {
                 $data['iban'] = strtoupper(str_replace(' ', '', $data['iban']));
-                if (!preg_match('/^[0-9]{24}$/', $data['iban'])) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'فرمت شماره شبا صحیح نیست'
-                    ]);
-                }
             }
 
-            // Validate card number if provided
-            if ($data['card_number']) {
-                $data['card_number'] = str_replace(' ', '', $data['card_number']);
-                if (!preg_match('/^[0-9]{16}$/', $data['card_number'])) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'شماره کارت باید 16 رقم باشد'
-                    ]);
-                }
+            // Clean card number if provided
+            if (!empty($data['card_number'])) {
+                $data['card_number'] = str_replace([' ', '-'], '', $data['card_number']);
             }
 
             $bankAccount->update($data);
 
             DB::commit();
 
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'حساب بانکی با موفقیت به‌روزرسانی شد'
-                ]);
-            }
-
-            return redirect()->route('employees.bank-accounts', $bankAccount->employee_id)
-                           ->with('success', 'حساب بانکی با موفقیت به‌روزرسانی شد');
+            // Always return JSON for AJAX requests
+            return response()->json([
+                'success' => true,
+                'message' => 'حساب بانکی با موفقیت به‌روزرسانی شد'
+            ]);
 
         } catch (\Exception $e) {
             DB::rollback();
             \Log::error('Bank account update error: ' . $e->getMessage());
 
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'خطا در به‌روزرسانی اطلاعات: ' . $e->getMessage()
-                ]);
-            }
-
-            return redirect()->back()
-                           ->with('error', 'خطا در به‌روزرسانی اطلاعات: ' . $e->getMessage())
-                           ->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در به‌روزرسانی اطلاعات: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -279,7 +262,7 @@ class EmployeeBankAccountController extends Controller
                 ]);
             }
 
-            return redirect()->route('employees.bank-accounts', $employeeId)
+            return redirect()->route('panel.employees.bank-accounts', $employeeId)
                            ->with('success', 'حساب بانکی با موفقیت حذف شد');
 
         } catch (\Exception $e) {
@@ -315,6 +298,25 @@ class EmployeeBankAccountController extends Controller
                 'success' => false,
                 'message' => 'حساب بانکی یافت نشد'
             ]);
+        }
+    }
+
+    /**
+     * Show edit form for bank account
+     */
+    public function edit($id)
+    {
+        try {
+            $bankAccount = EmployeeBankAccount::with('bank')->findOrFail($id);
+            $employee = $bankAccount->employee;
+            $banks = Bank::active()->get();
+
+            return view('admin.employees.bank-accounts-edit', compact('bankAccount', 'employee', 'banks'));
+
+        } catch (\Exception $e) {
+            \Log::error('Bank account edit error: ' . $e->getMessage());
+            return redirect()->route('panel.employees.index')
+                           ->with('error', 'حساب بانکی یافت نشد');
         }
     }
 
@@ -421,5 +423,54 @@ class EmployeeBankAccountController extends Controller
             'valid' => $isValid,
             'message' => $isValid ? 'شماره کارت معتبر است' : 'شماره کارت نامعتبر است'
         ]);
+    }
+
+    /**
+     * دریافت اطلاعات بانک از شماره کارت
+     */
+    public function getBankInfoFromCard(Request $request)
+    {
+        $request->validate([
+            'card_number' => 'required|string|min:16|max:19'
+        ]);
+
+        $cardNumber = preg_replace('/[^0-9]/', '', $request->input('card_number'));
+
+        // استفاده از CardToIbanController موجود
+        $cardToIbanController = new \App\Http\Controllers\CardToIbanController();
+        $result = $cardToIbanController->convert($request);
+
+        if ($result->getStatusCode() === 200) {
+            $data = $result->getData(true);
+            if ($data['success']) {
+                // تبدیل پاسخ به فرمت مورد نیاز
+                $bankData = $data['data'];
+
+                // پیدا کردن بانک بر اساس کد بانک
+                $bank = Bank::where('code', $bankData['bank_code'])->first();
+
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'card_number' => $bankData['card_number'],
+                        'iban' => $bankData['iban'],
+                        'account_holder_name' => $bankData['owner'],
+                        'bank_name' => $bankData['bank_name'],
+                        'bank_id' => $bank ? $bank->id : null,
+                        'bank_code' => $bankData['bank_code']
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => $data['message'] ?? 'خطا در دریافت اطلاعات'
+                ]);
+            }
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'خطا در ارتباط با سرویس تبدیل کارت به شبا'
+            ]);
+        }
     }
 }

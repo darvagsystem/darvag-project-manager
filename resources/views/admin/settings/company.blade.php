@@ -9,7 +9,7 @@
             <h1 class="page-title">تنظیمات شرکت</h1>
             <p class="page-subtitle">مدیریت اطلاعات کلی شرکت و تنظیمات سیستم</p>
         </div>
-        <a href="{{ route('admin.settings') }}" class="btn btn-secondary">
+        <a href="{{ route('panel.settings.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-right"></i>
             بازگشت به تنظیمات
         </a>
@@ -36,7 +36,7 @@
 @endif
 
 <div class="settings-container">
-    <form action="{{ route('admin.settings.company.update') }}" method="POST" enctype="multipart/form-data" class="settings-form">
+    <form action="{{ route('panel.settings.company.update') }}" method="POST" enctype="multipart/form-data" class="settings-form">
         @csrf
 
         <!-- Company Basic Information -->
@@ -155,7 +155,7 @@
                 <i class="fas fa-save"></i>
                 ذخیره تنظیمات
             </button>
-            <a href="{{ route('admin.settings') }}" class="btn btn-secondary">
+            <a href="{{ route('panel.settings.index') }}" class="btn btn-secondary">
                 <i class="fas fa-times"></i>
                 انصراف
             </a>

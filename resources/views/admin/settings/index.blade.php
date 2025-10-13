@@ -36,7 +36,7 @@
             <p>مدیریت اطلاعات کلی شرکت، لوگو و اطلاعات تماس</p>
         </div>
         <div class="card-actions">
-            <a href="{{ route('admin.settings.company') }}" class="btn btn-primary">
+            <a href="{{ route('panel.settings.company') }}" class="btn btn-primary">
                 <i class="fas fa-cog"></i>
                 تنظیمات
             </a>
@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="card-actions">
-            <a href="{{ route('admin.settings.banks') }}" class="btn btn-success">
+            <a href="{{ route('panel.settings.banks.index') }}" class="btn btn-success">
                 <i class="fas fa-edit"></i>
                 مدیریت
             </a>
@@ -77,7 +77,7 @@
             </div>
         </div>
         <div class="card-actions">
-            <a href="{{ route('admin.users') }}" class="btn btn-warning">
+            <a href="{{ route('panel.users.index') }}" class="btn btn-warning">
                 <i class="fas fa-user-cog"></i>
                 مدیریت
             </a>
@@ -97,7 +97,7 @@
             </div>
         </div>
         <div class="card-actions">
-            <a href="{{ route('admin.backup') }}" class="btn btn-info">
+            <a href="#" class="btn btn-info" onclick="alert('این قابلیت در حال توسعه است')">
                 <i class="fas fa-cloud-download-alt"></i>
                 پشتیبان‌گیری
             </a>
@@ -117,7 +117,7 @@
             </div>
         </div>
         <div class="card-actions">
-            <a href="{{ route('admin.logs') }}" class="btn btn-secondary">
+            <a href="{{ route('panel.logs') }}" class="btn btn-secondary">
                 <i class="fas fa-list"></i>
                 مشاهده
             </a>
@@ -186,6 +186,46 @@
 
 @endsection
 
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ensure all links are clickable
+    const links = document.querySelectorAll('a');
+    links.forEach(link => {
+        link.style.pointerEvents = 'auto';
+        link.style.cursor = 'pointer';
+        link.style.zIndex = '999';
+
+        // Add click event listener for debugging
+        link.addEventListener('click', function(e) {
+            console.log('Link clicked:', this.href);
+        });
+    });
+
+    // Ensure all buttons are clickable
+    const buttons = document.querySelectorAll('button, .btn');
+    buttons.forEach(button => {
+        button.style.pointerEvents = 'auto';
+        button.style.cursor = 'pointer';
+        button.style.zIndex = '999';
+
+        // Add click event listener for debugging
+        button.addEventListener('click', function(e) {
+            console.log('Button clicked:', this);
+        });
+    });
+
+    // Remove any overlays that might be blocking clicks
+    const overlays = document.querySelectorAll('.overlay, .modal-backdrop');
+    overlays.forEach(overlay => {
+        overlay.style.display = 'none';
+    });
+
+    console.log('Click fix applied');
+});
+</script>
+@endpush
+
 @push('styles')
 <style>
 .settings-grid {
@@ -204,6 +244,7 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    pointer-events: auto;
 }
 
 .setting-card:hover {
@@ -313,6 +354,9 @@
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
+    pointer-events: auto;
+    z-index: 10;
+    position: relative;
 }
 
 .btn-primary {
@@ -387,6 +431,17 @@
 .alert-danger {
     background: rgba(239, 68, 68, 0.1);
     color: #991B1B;
+}
+
+/* Fix click issues */
+* {
+    pointer-events: auto !important;
+}
+
+a, button, .btn {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 999 !important;
 }
 
 /* Modal Styles */

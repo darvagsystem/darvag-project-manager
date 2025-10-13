@@ -44,7 +44,7 @@
     </div>
 </div>
 
-<form class="project-form" method="POST">
+<form class="project-form" method="POST" action="{{ route('panel.projects.update', $project) }}">
     @csrf
     @method('PUT')
 
@@ -130,13 +130,15 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="initial_estimate" class="form-label">برآورد اولیه (ریال) *</label>
-                    <input type="number" id="initial_estimate" name="initial_estimate" class="form-input" value="{{ $project->initial_estimate }}" required placeholder="45000000000">
+                    <input type="text" id="initial_estimate" name="initial_estimate" class="form-input money-input" value="{{ number_format($project->initial_estimate) }}" required placeholder="45,000,000,000">
+                    <input type="hidden" id="initial_estimate_raw" name="initial_estimate_raw" value="{{ $project->initial_estimate }}">
                     <small class="form-help">مبلغ برآورد اولیه پروژه</small>
                 </div>
 
                 <div class="form-group">
                     <label for="final_amount" class="form-label">مبلغ نهایی (ریال) *</label>
-                    <input type="number" id="final_amount" name="final_amount" class="form-input" value="{{ $project->final_amount }}" required placeholder="48500000000">
+                    <input type="text" id="final_amount" name="final_amount" class="form-input money-input" value="{{ number_format($project->final_amount) }}" required placeholder="48,500,000,000">
+                    <input type="hidden" id="final_amount_raw" name="final_amount_raw" value="{{ $project->final_amount }}">
                     <small class="form-help">مبلغ نهایی قرارداد</small>
                 </div>
 
@@ -752,6 +754,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize money inputs
+    initializeMoneyInputs();
+
     // Image Cropper Variables
     let cropper = null;
     const imageInput = document.getElementById('featured_image');
@@ -815,12 +820,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const reader = new FileReader();
                 reader.onload = function() {
                     croppedImageInput.value = reader.result;
-                    
+
                     // Show preview
                     imagePreview.src = reader.result;
                     imagePreviewContainer.style.display = 'block';
                     selectImageBtn.textContent = 'تغییر تصویر';
-                    
+
                     // Close modal
                     imageCropperModal.hide();
                 };
@@ -848,14 +853,69 @@ document.addEventListener('DOMContentLoaded', function() {
         progressText.textContent = value + '%';
     });
 
+    // Money formatting functions
+    function formatMoney(value) {
+        // Remove all non-numeric characters
+        const numericValue = value.replace(/[^\d]/g, '');
+
+        // Add commas every 3 digits
+        return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function parseMoney(value) {
+        // Remove all non-numeric characters and return as number
+        return parseInt(value.replace(/[^\d]/g, '')) || 0;
+    }
+
+    // Initialize money inputs
+    function initializeMoneyInputs() {
+        const moneyInputs = document.querySelectorAll('.money-input');
+
+        moneyInputs.forEach(input => {
+            // Format on input
+            input.addEventListener('input', function() {
+                const cursorPosition = this.selectionStart;
+                const oldValue = this.value;
+                const newValue = formatMoney(this.value);
+
+                this.value = newValue;
+
+                // Adjust cursor position
+                const newCursorPosition = cursorPosition + (newValue.length - oldValue.length);
+                this.setSelectionRange(newCursorPosition, newCursorPosition);
+
+                // Update hidden field with raw value
+                const hiddenField = this.nextElementSibling;
+                if (hiddenField && hiddenField.type === 'hidden') {
+                    hiddenField.value = parseMoney(this.value);
+                }
+            });
+
+            // Format on focus
+            input.addEventListener('focus', function() {
+                if (this.value && !isNaN(parseMoney(this.value))) {
+                    this.value = formatMoney(this.value);
+                }
+            });
+
+            // Update hidden field on blur
+            input.addEventListener('blur', function() {
+                const hiddenField = this.nextElementSibling;
+                if (hiddenField && hiddenField.type === 'hidden') {
+                    hiddenField.value = parseMoney(this.value);
+                }
+            });
+        });
+    }
+
     // Auto-calculate coefficient
     const initialEstimate = document.getElementById('initial_estimate');
     const finalAmount = document.getElementById('final_amount');
     const coefficient = document.getElementById('contract_coefficient');
 
     function calculateCoefficient() {
-        const initial = parseFloat(initialEstimate.value) || 0;
-        const final = parseFloat(finalAmount.value) || 0;
+        const initial = parseMoney(initialEstimate.value) || 0;
+        const final = parseMoney(finalAmount.value) || 0;
 
         if (initial > 0 && final > 0) {
             const calc = (final / initial).toFixed(2);
@@ -869,18 +929,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form validation
     const form = document.querySelector('.project-form');
     form.addEventListener('submit', function(e) {
-        e.preventDefault();
+        console.log('Form submit event triggered');
 
         // Basic validation
         const requiredFields = form.querySelectorAll('[required]');
         let hasError = false;
 
+        console.log('Required fields found:', requiredFields.length);
+
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
-                field.style.borderColor = 'var(--error-color)';
+                console.log('Field is empty:', field.name);
+                field.style.borderColor = '#dc3545';
                 hasError = true;
             } else {
-                field.style.borderColor = 'var(--border-light)';
+                field.style.borderColor = '#d1d5db';
             }
         });
 
@@ -891,21 +954,47 @@ document.addEventListener('DOMContentLoaded', function() {
         if (startDate && endDate) {
             if (startDate >= endDate) {
                 alert('تاریخ پایان باید بعد از تاریخ شروع باشد');
-                hasError = true;
+                e.preventDefault();
+                return false;
             }
         }
 
-        if (!hasError) {
-            alert('تغییرات پروژه با موفقیت ذخیره شد!');
-            window.location.href = '{{ route("panel.projects.index") }}';
+        if (hasError) {
+            console.log('Validation failed, preventing submit');
+            e.preventDefault();
+            return false;
         }
+
+        console.log('Validation passed, allowing form to submit');
+        // If validation passes, let the form submit normally
+        return true;
     });
 });
 
 function deleteProject() {
     if (confirm('آیا از حذف این پروژه اطمینان دارید؟\n\nتوجه: تمام اطلاعات مربوط به این پروژه حذف خواهد شد.')) {
-        alert('پروژه با موفقیت حذف شد!');
-        window.location.href = '{{ route("panel.projects.index") }}';
+        // Create a form to submit DELETE request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route("panel.projects.destroy", $project) }}';
+
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
+
+        // Add method override
+        const methodField = document.createElement('input');
+        methodField.type = 'hidden';
+        methodField.name = '_method';
+        methodField.value = 'DELETE';
+        form.appendChild(methodField);
+
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 </script>

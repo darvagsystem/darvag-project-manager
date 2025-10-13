@@ -58,7 +58,7 @@ class TagController extends Controller
 
         Tag::create($data);
 
-        return redirect()->route('admin.tags.index')
+        return redirect()->route('panel.tags.index')
             ->with('success', 'تگ با موفقیت ایجاد شد');
     }
 
@@ -103,7 +103,7 @@ class TagController extends Controller
 
         $tag->update($data);
 
-        return redirect()->route('admin.tags.index')
+        return redirect()->route('panel.tags.index')
             ->with('success', 'تگ با موفقیت به‌روزرسانی شد');
     }
 
@@ -114,7 +114,7 @@ class TagController extends Controller
     {
         $tag->delete();
 
-        return redirect()->route('admin.tags.index')
+        return redirect()->route('panel.tags.index')
             ->with('success', 'تگ با موفقیت حذف شد');
     }
 

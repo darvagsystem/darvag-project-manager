@@ -9,7 +9,7 @@
             <h1 class="page-title">مدیریت کارفرمایان</h1>
             <p class="page-subtitle">لیست کارفرمایان و مشتریان شرکت</p>
         </div>
-        <a href="{{ route('clients.create') }}" class="btn btn-primary">
+        <a href="{{ route('panel.clients.create') }}" class="btn btn-primary">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-left: 8px;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
@@ -137,12 +137,10 @@
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <a href="{{ route('clients.contacts.index', $client->id) }}" class="btn btn-sm btn-contacts" title="دفترچه تلفن">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
+                                <a href="{{ route('panel.clients.phonebook.index', $client->id) }}" class="btn btn-sm btn-phonebook" title="دفترچه تلفن">
+                                    <i class="mdi mdi-phone"></i>
                                 </a>
-                                <a href="{{ route('clients.edit', $client->id) }}" class="btn btn-sm btn-edit" title="ویرایش">
+                                <a href="{{ route('panel.clients.edit', $client->id) }}" class="btn btn-sm btn-edit" title="ویرایش">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
@@ -344,6 +342,16 @@
 
 .btn-edit:hover {
     background: var(--primary-color);
+    color: white;
+}
+
+.btn-phonebook {
+    background: rgba(33, 150, 243, 0.1);
+    color: #2196f3;
+}
+
+.btn-phonebook:hover {
+    background: #2196f3;
     color: white;
 }
 

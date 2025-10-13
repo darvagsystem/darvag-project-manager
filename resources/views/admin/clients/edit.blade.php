@@ -8,7 +8,7 @@
     <p class="page-subtitle">ویرایش اطلاعات "{{ $client->name }}"</p>
 </div>
 
-<form class="client-form" method="POST" enctype="multipart/form-data">
+<form class="client-form" method="POST" action="{{ route('panel.clients.update', $client->id) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
@@ -57,7 +57,7 @@
                         </svg>
                         <span>پیش‌نمایش لوگو</span>
                     </div>
-                    <img id="logo-preview" src="data:image/svg+xml;base64,{{ base64_encode('<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="12" fill="#e3f2fd"/><text x="60" y="70" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1976d2" text-anchor="middle">'. substr($client->name, 0, 2) .'</text></svg>') }}" alt="لوگو فعلی">
+                    <img id="logo-preview" src="{{ $client->logo ? asset('storage/' . $client->logo) : 'data:image/svg+xml;base64,' . base64_encode('<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="12" fill="#e3f2fd"/><text x="60" y="70" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1976d2" text-anchor="middle">'. substr($client->name, 0, 2) .'</text></svg>') }}" alt="لوگو فعلی">
                 </div>
 
                 <div class="logo-upload">
@@ -159,13 +159,7 @@
             </svg>
             ذخیره تغییرات
         </button>
-        <a href="{{ route('clients.contacts.index', $client['id']) }}" class="btn btn-contacts">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-            دفترچه تلفن
-        </a>
-        <a href="{{ route('clients.index') }}" class="btn btn-secondary">
+        <a href="{{ route('panel.clients.index') }}" class="btn btn-secondary">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
             </svg>
@@ -506,8 +500,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form validation
     const form = document.querySelector('.client-form');
     form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
         // Basic validation
         const requiredFields = form.querySelectorAll('[required]');
         let hasError = false;
@@ -521,11 +513,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        if (!hasError) {
-            // Here you would normally submit the form
-            alert('اطلاعات کارفرما با موفقیت به‌روزرسانی شد!');
-            window.location.href = '{{ route("clients.index") }}';
+        if (hasError) {
+            e.preventDefault();
+            alert('لطفاً تمام فیلدهای اجباری را پر کنید.');
         }
+        // If no errors, let the form submit naturally
     });
 });
 
@@ -533,7 +525,7 @@ function deleteClient() {
     if (confirm('آیا از حذف این کارفرما اطمینان دارید؟\n\nتوجه: تمام اطلاعات مربوط به این کارفرما حذف خواهد شد.')) {
         // Here you would normally send delete request
         alert('کارفرما با موفقیت حذف شد!');
-        window.location.href = '{{ route("clients.index") }}';
+        window.location.href = '{{ route("panel.clients.index") }}';
     }
 }
 </script>

@@ -119,7 +119,7 @@
                                         </td>
                                         <td>
                                             @if($file->project)
-                                                <a href="{{ route('projects.show', $file->project->id) }}" class="text-decoration-none">
+                                                <a href="{{ route('panel.projects.show', $file->project->id) }}" class="text-decoration-none">
                                                     {{ $file->project->name }}
                                                 </a>
                                             @else
@@ -137,12 +137,12 @@
                                         <td>
                                             <div class="btn-group" role="group">
                                                 @if(!$file->is_folder)
-                                                    <a href="{{ route('file-manager.download', $file->id) }}"
+                                                    <a href="{{ route('panel.file-manager.download', $file->id) }}"
                                                        class="btn btn-sm btn-outline-success" title="دانلود">
                                                         <i class="mdi mdi-download"></i>
                                                     </a>
                                                 @endif
-                                                <a href="{{ route('file-manager.index', ['tag' => $tag->id]) }}"
+                                                <a href="{{ route('panel.file-manager.index', ['tag' => $tag->id]) }}"
                                                    class="btn btn-sm btn-outline-primary" title="مشاهده در فایل منیجر">
                                                     <i class="mdi mdi-eye"></i>
                                                 </a>
@@ -163,7 +163,7 @@
                         <i class="mdi mdi-file-outline" style="font-size: 64px; color: #6c757d;"></i>
                         <h5 class="mt-3">هیچ فایلی با این تگ وجود ندارد</h5>
                         <p class="text-muted">فایل‌هایی که دارای تگ "{{ $tag->name }}" هستند در اینجا نمایش داده می‌شوند</p>
-                        <a href="{{ route('file-manager.index') }}" class="btn btn-primary">
+                        <a href="{{ route('panel.file-manager.index') }}" class="btn btn-primary">
                             <i class="mdi mdi-folder-open me-1"></i>
                             باز کردن فایل منیجر
                         </a>

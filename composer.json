@@ -7,11 +7,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.5",
         "maennchen/zipstream-php": "^3.1",
+        "morilog/jalali": "^3.4",
         "setasign/fpdi": "^2.6",
+        "spatie/laravel-permission": "^6.12",
         "tecnickcom/tcpdf": "^6.8"
     },
     "require-dev": {
