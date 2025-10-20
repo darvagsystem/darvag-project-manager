@@ -64,9 +64,52 @@ class EmployeeController extends Controller
 
      * Display a listing of employees.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::orderBy('employee_code')->get();
+        $query = Employee::query();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('employee_code', 'like', "%{$search}%")
+                  ->orWhere('national_code', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('mobile', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        // Education filter
+        if ($request->filled('education') && $request->education !== 'all') {
+            $query->where('education', $request->education);
+        }
+
+        // Marital status filter
+        if ($request->filled('marital_status') && $request->marital_status !== 'all') {
+            $query->where('marital_status', $request->marital_status);
+        }
+
+        // Sort functionality
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+
+        $allowedSortFields = ['employee_code', 'first_name', 'last_name', 'created_at', 'status'];
+        if (in_array($sortBy, $allowedSortFields)) {
+            $query->orderBy($sortBy, $sortDirection);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $employees = $query->with('creator')->get();
+
         return view('admin.employees.index', compact('employees'));
     }
 
@@ -118,6 +161,7 @@ class EmployeeController extends Controller
             }
 
             $data['employee_code'] = $employeeCode;
+            $data['created_by'] = auth()->id();
 
             // Handle null/empty values by setting defaults
             $data['marital_status'] = $data['marital_status'] ?: 'single';
@@ -294,5 +338,189 @@ class EmployeeController extends Controller
         $documentTypes = EmployeeDocument::getDocumentTypes();
 
         return view('admin.employees.documents', compact('employee', 'documents', 'documentTypes'));
+    }
+
+    /**
+     * Show employee profile
+     */
+    public function profile(Employee $employee)
+    {
+        $projects = $employee->projectEmployees()
+            ->with('project')
+            ->where('is_active', true)
+            ->get();
+
+        $totalProjects = $projects->count();
+        $totalAttendance = \App\Models\EmployeeAttendance::where('employee_id', $employee->id)->count();
+        $presentDays = \App\Models\EmployeeAttendance::where('employee_id', $employee->id)
+            ->where('status', 'present')
+            ->count();
+
+        return view('admin.employees.profile', compact('employee', 'projects', 'totalProjects', 'totalAttendance', 'presentDays'));
+    }
+
+    /**
+     * Show employee projects
+     */
+    public function projects(Employee $employee)
+    {
+        $projects = $employee->projectEmployees()
+            ->with(['project' => function($query) {
+                $query->with('client');
+            }])
+            ->where('is_active', true)
+            ->get();
+
+        return view('admin.employees.projects', compact('employee', 'projects'));
+    }
+
+    /**
+     * Show employee attendance
+     */
+    public function attendance(Employee $employee)
+    {
+        return view('admin.employees.attendance-livewire', compact('employee'));
+    }
+
+    /**
+     * Show employee attendance report
+     */
+    public function attendanceReport(Request $request, Employee $employee)
+    {
+        $projectId = $request->get('project_id');
+        $startDate = $request->get('start_date', '1404/07/01');
+        $endDate = $request->get('end_date', '1404/07/23');
+
+        // Get employee projects
+        $projects = $employee->projectEmployees()
+            ->with('project')
+            ->where('is_active', true)
+            ->get();
+
+        // Convert Persian dates to Gregorian
+        $startGregorian = \App\Services\PersianDateService::persianToCarbon($startDate);
+        $endGregorian = \App\Services\PersianDateService::persianToCarbon($endDate);
+
+        if (!$startGregorian || !$endGregorian) {
+            return redirect()->back()->with('error', 'تاریخ‌های وارد شده نامعتبر است.');
+        }
+
+        // Get attendance data
+        $query = \App\Models\EmployeeAttendance::where('employee_id', $employee->id)
+            ->whereBetween('attendance_date', [$startGregorian->format('Y-m-d'), $endGregorian->format('Y-m-d')])
+            ->with('project');
+
+        if ($projectId) {
+            $query->where('project_id', $projectId);
+        }
+
+        $attendanceRecords = $query->orderBy('attendance_date', 'desc')->get();
+
+        // Calculate statistics
+        $totalDays = $startGregorian->diffInDays($endGregorian) + 1;
+        $presentDays = $attendanceRecords->where('status', 'present')->count();
+        $absentDays = $attendanceRecords->where('status', 'absent')->count();
+        $lateDays = $attendanceRecords->where('status', 'late')->count();
+        $halfDays = $attendanceRecords->where('status', 'half_day')->count();
+        $vacationDays = $attendanceRecords->where('status', 'vacation')->count();
+        $sickLeaveDays = $attendanceRecords->where('status', 'sick_leave')->count();
+
+        $totalWorkingHours = $attendanceRecords->sum('working_hours');
+        $totalOvertimeHours = $attendanceRecords->sum('overtime_hours');
+        $attendanceRate = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 2) : 0;
+
+        $statistics = [
+            'total_days' => $totalDays,
+            'present_days' => $presentDays,
+            'absent_days' => $absentDays,
+            'late_days' => $lateDays,
+            'half_days' => $halfDays,
+            'vacation_days' => $vacationDays,
+            'sick_leave_days' => $sickLeaveDays,
+            'attendance_rate' => $attendanceRate,
+            'total_working_hours' => $totalWorkingHours,
+            'total_overtime_hours' => $totalOvertimeHours,
+        ];
+
+        return view('admin.employees.attendance-report', compact(
+            'employee',
+            'projects',
+            'attendanceRecords',
+            'statistics',
+            'startDate',
+            'endDate',
+            'projectId'
+        ));
+    }
+
+    /**
+     * Print employee attendance report
+     */
+    public function attendanceReportPrint(Request $request, Employee $employee)
+    {
+        $projectId = $request->get('project_id');
+        $startDate = $request->get('start_date', '1404/07/01');
+        $endDate = $request->get('end_date', '1404/07/23');
+
+        // Get employee projects
+        $projects = $employee->projectEmployees()
+            ->with('project')
+            ->where('is_active', true)
+            ->get();
+
+        // Convert Persian dates to Gregorian
+        $startGregorian = \App\Services\PersianDateService::persianToCarbon($startDate);
+        $endGregorian = \App\Services\PersianDateService::persianToCarbon($endDate);
+
+        if (!$startGregorian || !$endGregorian) {
+            return redirect()->back()->with('error', 'تاریخ‌های وارد شده نامعتبر است.');
+        }
+
+        // Get attendance data
+        $query = \App\Models\EmployeeAttendance::where('employee_id', $employee->id)
+            ->whereBetween('attendance_date', [$startGregorian->format('Y-m-d'), $endGregorian->format('Y-m-d')])
+            ->with('project');
+
+        if ($projectId) {
+            $query->where('project_id', $projectId);
+        }
+
+        $attendanceRecords = $query->orderBy('attendance_date', 'desc')->get();
+
+        // Calculate statistics
+        $totalDays = $startGregorian->diffInDays($endGregorian) + 1;
+        $presentDays = $attendanceRecords->where('status', 'present')->count();
+        $absentDays = $attendanceRecords->where('status', 'absent')->count();
+        $lateDays = $attendanceRecords->where('status', 'late')->count();
+        $halfDays = $attendanceRecords->where('status', 'half_day')->count();
+        $vacationDays = $attendanceRecords->where('status', 'vacation')->count();
+        $sickLeaveDays = $attendanceRecords->where('status', 'sick_leave')->count();
+
+        $totalWorkingHours = $attendanceRecords->sum('working_hours');
+        $totalOvertimeHours = $attendanceRecords->sum('overtime_hours');
+        $attendanceRate = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 2) : 0;
+
+        $statistics = [
+            'total_days' => $totalDays,
+            'present_days' => $presentDays,
+            'absent_days' => $absentDays,
+            'late_days' => $lateDays,
+            'half_days' => $halfDays,
+            'vacation_days' => $vacationDays,
+            'sick_leave_days' => $sickLeaveDays,
+            'attendance_rate' => $attendanceRate,
+            'total_working_hours' => $totalWorkingHours,
+            'total_overtime_hours' => $totalOvertimeHours,
+        ];
+
+        return view('admin.employees.attendance-report-print', compact(
+            'employee',
+            'projects',
+            'attendanceRecords',
+            'statistics',
+            'startDate',
+            'endDate',
+            'projectId'
+        ));
     }
 }

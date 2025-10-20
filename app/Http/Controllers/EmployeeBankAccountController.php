@@ -430,18 +430,20 @@ class EmployeeBankAccountController extends Controller
      */
     public function getBankInfoFromCard(Request $request)
     {
-        $request->validate([
-            'card_number' => 'required|string|min:16|max:19'
-        ]);
+        try {
+            $request->validate([
+                'card_number' => 'required|string|min:16|max:19'
+            ]);
 
-        $cardNumber = preg_replace('/[^0-9]/', '', $request->input('card_number'));
+            $cardNumber = preg_replace('/[^0-9]/', '', $request->input('card_number'));
 
-        // استفاده از CardToIbanController موجود
-        $cardToIbanController = new \App\Http\Controllers\CardToIbanController();
-        $result = $cardToIbanController->convert($request);
+            // استفاده از CardToIbanController موجود
+            $cardToIbanController = new \App\Http\Controllers\CardToIbanController();
+            $result = $cardToIbanController->convert($request);
 
-        if ($result->getStatusCode() === 200) {
+            // Get the data from the response
             $data = $result->getData(true);
+
             if ($data['success']) {
                 // تبدیل پاسخ به فرمت مورد نیاز
                 $bankData = $data['data'];
@@ -466,11 +468,12 @@ class EmployeeBankAccountController extends Controller
                     'message' => $data['message'] ?? 'خطا در دریافت اطلاعات'
                 ]);
             }
-        } else {
+        } catch (\Exception $e) {
+            \Log::error('getBankInfoFromCard error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در ارتباط با سرویس تبدیل کارت به شبا'
-            ]);
+                'message' => 'خطا در دریافت اطلاعات: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

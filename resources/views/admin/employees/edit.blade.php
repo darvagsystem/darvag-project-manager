@@ -27,7 +27,7 @@
             <p class="employee-info">کد پرسنلی: {{ $employee->employee_code }}</p>
             <div class="employee-meta">
                 <span class="employee-code">{{ $employee->national_code }}</span>
-                <span class="employee-hire-date">تاریخ ثبت: {{ $employee->created_at->format('Y/m/d') }}</span>
+                <span class="employee-hire-date">تاریخ ثبت: {{ \App\Helpers\DateHelper::toPersianDate($employee->created_at) }}</span>
             </div>
         </div>
     </div>

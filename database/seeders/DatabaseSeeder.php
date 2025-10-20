@@ -23,5 +23,8 @@ class DatabaseSeeder extends Seeder
 
         // Seed banks
         $this->call(BankSeeder::class);
+        
+        // Seed tags and categories
+        $this->call(TagSeeder::class);
     }
 }

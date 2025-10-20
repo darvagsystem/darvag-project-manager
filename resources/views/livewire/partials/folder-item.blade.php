@@ -1,46 +1,45 @@
 @php
-    $isExpanded = $this->isFolderExpanded($folder->id);
-    $stats = $this->folderStats[$folder->id] ?? null;
-    $subfolders = $this->getSubfolders($folder->id);
+    $isSelected = in_array('folder_' . $folder->id, $selectedItems ?? []);
 @endphp
 
-<div class="folder-item" wire:key="folder-{{ $folder->id }}">
-    <div class="folder-header {{ $isExpanded ? 'expanded' : '' }}"
-         wire:click="toggleFolder({{ $folder->id }})">
-        <i class="mdi mdi-folder {{ $isExpanded ? 'mdi-folder-open' : 'mdi-folder' }} folder-icon"></i>
+<div class="folder-item {{ $isSelected ? 'selected' : '' }}"
+     data-item-id="{{ $folder->id }}"
+     data-item-type="folder"
+     wire:click="selectItem({{ $folder->id }}, 'folder')"
+     wire:dblclick="openItem({{ $folder->id }}, 'folder')">
 
-        <div class="folder-info">
-            <div class="folder-name">{{ $folder->display_name ?: $folder->name }}</div>
-            @if($stats)
-                <div class="folder-stats">
-                    <div class="stat-item">
-                        <i class="mdi mdi-file stat-icon"></i>
-                        <span>{{ $stats['file_count'] }} فایل</span>
-                    </div>
-                    <div class="stat-item">
-                        <i class="mdi mdi-folder stat-icon"></i>
-                        <span>{{ $stats['subfolder_count'] }} پوشه</span>
-                    </div>
-                    @if($stats['total_size'] > 0)
-                        <div class="stat-item">
-                            <i class="mdi mdi-weight stat-icon"></i>
-                            <span>{{ $this->formatFileSize($stats['total_size']) }}</span>
-                        </div>
-                    @endif
-                </div>
-            @endif
-        </div>
+    <div class="file-icon">
+        <i class="mdi mdi-folder{{ $isSelected ? '' : '-outline' }}"></i>
+    </div>
 
-        @if($subfolders->count() > 0)
-            <i class="mdi mdi-chevron-{{ $isExpanded ? 'down' : 'right' }} chevron-icon"></i>
+    <div class="file-name">
+        {{ $folder->name }}
+        @if($folder->is_required)
+            <span class="badge bg-danger ms-1">الزامی</span>
         @endif
     </div>
 
-    @if($isExpanded && $subfolders->count() > 0)
-        <div class="folder-children">
-            @foreach($subfolders as $subfolder)
-                @include('livewire.partials.folder-item', ['folder' => $subfolder, 'level' => $level + 1])
-            @endforeach
-        </div>
+    @if($viewMode === 'details')
+        <div class="file-size">-</div>
+        <div class="file-type">پوشه</div>
+        <div class="file-date">{{ \App\Helpers\DateHelper::toPersianDateTime($folder->created_at) }}</div>
     @endif
+
+    <div class="file-actions">
+        <button class="btn btn-sm btn-outline-primary"
+                wire:click.stop="showProperties({{ $folder->id }}, 'folder')"
+                title="ویژگی‌ها">
+            <i class="mdi mdi-information"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-warning"
+                wire:click.stop="renameItem({{ $folder->id }}, 'folder')"
+                title="تغییر نام">
+            <i class="mdi mdi-pencil"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger"
+                wire:click.stop="deleteFolder({{ $folder->id }})"
+                title="حذف">
+            <i class="mdi mdi-delete"></i>
+        </button>
+    </div>
 </div>

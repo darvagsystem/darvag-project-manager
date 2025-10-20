@@ -11,23 +11,15 @@
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.0.96/css/materialdesignicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <style>
-        /* Fix click issues globally */
-        * {
-            pointer-events: auto !important;
-        }
-
-        a, button, .btn, input[type="submit"], input[type="button"] {
-            pointer-events: auto !important;
-            cursor: pointer !important;
-            z-index: 999 !important;
-        }
-
+        /* Basic click fixes */
         .admin-content {
-            pointer-events: auto !important;
+            position: relative;
+            z-index: 1;
         }
 
         .admin-main {
-            pointer-events: auto !important;
+            position: relative;
+            z-index: 1;
         }
     </style>
     @stack('styles')

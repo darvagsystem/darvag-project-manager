@@ -117,6 +117,7 @@
                     <label for="featured_image_alt" class="form-label">متن جایگزین تصویر</label>
                     <input type="text" id="featured_image_alt" name="featured_image_alt" class="form-input" value="{{ $project->featured_image_alt ?? '' }}" placeholder="توضیح کوتاه تصویر برای SEO">
                 </div>
+
             </div>
         </div>
 
@@ -129,15 +130,15 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="initial_estimate" class="form-label">برآورد اولیه (ریال) *</label>
-                    <input type="text" id="initial_estimate" name="initial_estimate" class="form-input money-input" value="{{ number_format($project->initial_estimate) }}" required placeholder="45,000,000,000">
+                    <label for="initial_estimate" class="form-label">برآورد اولیه (ریال)</label>
+                    <input type="text" id="initial_estimate" name="initial_estimate" class="form-input money-input" value="{{ $project->initial_estimate ? number_format($project->initial_estimate) : '' }}" placeholder="45,000,000,000">
                     <input type="hidden" id="initial_estimate_raw" name="initial_estimate_raw" value="{{ $project->initial_estimate }}">
                     <small class="form-help">مبلغ برآورد اولیه پروژه</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="final_amount" class="form-label">مبلغ نهایی (ریال) *</label>
-                    <input type="text" id="final_amount" name="final_amount" class="form-input money-input" value="{{ number_format($project->final_amount) }}" required placeholder="48,500,000,000">
+                    <label for="final_amount" class="form-label">مبلغ نهایی (ریال)</label>
+                    <input type="text" id="final_amount" name="final_amount" class="form-input money-input" value="{{ $project->final_amount ? number_format($project->final_amount) : '' }}" placeholder="48,500,000,000">
                     <input type="hidden" id="final_amount_raw" name="final_amount_raw" value="{{ $project->final_amount }}">
                     <small class="form-help">مبلغ نهایی قرارداد</small>
                 </div>

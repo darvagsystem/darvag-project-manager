@@ -11,7 +11,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('panel.dashboard');
         }
 
         return view('admin.auth.login');
@@ -26,11 +26,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($request->only('username', 'password'))) {
             $request->session()->regenerate();
-            
+
             // Log login activity
             ActivityLoggerService::logLogin(Auth::user());
-            
-            return redirect()->intended('dashboard');
+
+            return redirect()->intended(route('panel.dashboard'));
         }
 
         return back()->withErrors([
@@ -44,7 +44,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             ActivityLoggerService::logLogout(Auth::user());
         }
-        
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

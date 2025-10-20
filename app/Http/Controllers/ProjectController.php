@@ -40,8 +40,8 @@ class ProjectController extends Controller
                 'name' => 'required|string|max:255',
                 'client_id' => 'required|exists:clients,id',
                 'contract_number' => 'required|string|max:255|unique:projects',
-                'initial_estimate' => 'required|numeric|min:0',
-                'final_amount' => 'required|numeric|min:0',
+                'initial_estimate' => 'nullable|numeric|min:0',
+                'final_amount' => 'nullable|numeric|min:0',
                 'contract_coefficient' => 'required|numeric|min:0',
                 'department' => 'required|string|max:255',
                 'contract_start_date' => 'required|string',
@@ -65,8 +65,8 @@ class ProjectController extends Controller
             $data = $request->all();
 
             // Use raw values for money fields
-            $data['initial_estimate'] = $request->initial_estimate_raw;
-            $data['final_amount'] = $request->final_amount_raw;
+            $data['initial_estimate'] = $request->initial_estimate_raw ?: null;
+            $data['final_amount'] = $request->final_amount_raw ?: null;
 
             // Handle featured image upload (cropped or original)
             if ($request->filled('cropped_image')) {
@@ -158,8 +158,8 @@ class ProjectController extends Controller
                 'name' => 'required|string|max:255',
                 'client_id' => 'required|exists:clients,id',
                 'contract_number' => 'required|string|max:255|unique:projects,contract_number,' . $project->id,
-                'initial_estimate_raw' => 'required|numeric|min:0',
-                'final_amount_raw' => 'required|numeric|min:0',
+                'initial_estimate_raw' => 'nullable|numeric|min:0',
+                'final_amount_raw' => 'nullable|numeric|min:0',
                 'contract_coefficient' => 'required|numeric|min:0',
                 'department' => 'required|string|max:255',
                 'contract_start_date' => 'required|string',
@@ -183,8 +183,8 @@ class ProjectController extends Controller
             $data = $request->all();
 
             // Use raw values for money fields
-            $data['initial_estimate'] = $request->initial_estimate_raw;
-            $data['final_amount'] = $request->final_amount_raw;
+            $data['initial_estimate'] = $request->initial_estimate_raw ?: null;
+            $data['final_amount'] = $request->final_amount_raw ?: null;
 
             // Handle featured image upload (cropped or original)
             if ($request->filled('cropped_image')) {
@@ -261,67 +261,4 @@ class ProjectController extends Controller
         }
     }
 
-    /**
-     * Copy project structure from one project to another
-     */
-    public function copyStructure(Request $request)
-    {
-        try {
-            $request->validate([
-                'source_project_id' => 'required|integer|exists:projects,id',
-                'target_project_id' => 'required|integer|exists:projects,id'
-            ]);
-
-            $sourceProject = Project::findOrFail($request->source_project_id);
-            $targetProject = Project::findOrFail($request->target_project_id);
-
-            // Prevent copying from the same project to itself
-            if ($sourceProject->id === $targetProject->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'نمی‌توانید ساختار پروژه را به خودش کپی کنید.'
-                ], 400);
-            }
-
-            // Get only root folders from source project (no files)
-            $sourceItems = \App\Models\FileManager::where('project_id', $sourceProject->id)
-                ->whereNull('parent_id')
-                ->where('is_folder', true)
-                ->get();
-
-            $copiedCount = 0;
-
-            foreach ($sourceItems as $item) {
-                // Copy the structure recursively
-                $item->copyStructure($targetProject->id);
-                $copiedCount++;
-            }
-
-            // Log the activity
-            ActivityLoggerService::logCreated($targetProject, [
-                'action' => 'structure_copied',
-                'source_project' => $sourceProject->name,
-                'copied_items' => $copiedCount
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => "ساختار پوشه‌بندی با موفقیت کپی شد! ({$copiedCount} پوشه کپی شد)",
-                'copied_count' => $copiedCount
-            ]);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Project structure copy validation error: ' . json_encode($e->errors()));
-            return response()->json([
-                'success' => false,
-                'message' => 'خطا در اعتبارسنجی: ' . implode(', ', array_flatten($e->errors()))
-            ], 422);
-        } catch (\Exception $e) {
-            \Log::error('Project structure copy error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'خطا در کپی کردن ساختار: ' . $e->getMessage()
-            ], 500);
-        }
-    }
 }

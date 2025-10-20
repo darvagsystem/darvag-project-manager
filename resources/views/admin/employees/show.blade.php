@@ -243,7 +243,7 @@
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <span class="badge bg-info">{{ $document->type }}</span>
                                                         <small class="text-muted">
-                                                            {{ \Carbon\Carbon::parse($document->created_at)->format('Y/m/d') }}
+                                                            {{ \App\Helpers\DateHelper::toPersianDate($document->created_at) }}
                                                         </small>
                                                     </div>
                                                 </div>

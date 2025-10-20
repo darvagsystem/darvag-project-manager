@@ -77,6 +77,71 @@
     </div>
 </div>
 
+<!-- Search and Filter Section -->
+<div class="search-filter-section">
+    <form method="GET" action="{{ route('panel.employees.index') }}" class="search-form">
+        <div class="search-row">
+            <div class="search-group">
+                <label for="search" class="search-label">جستجو</label>
+                <input type="text" class="search-input" id="search" name="search"
+                       value="{{ request('search') }}" placeholder="نام، کد پرسنلی، کد ملی، تلفن...">
+            </div>
+
+            <div class="filter-group">
+                <label for="status" class="filter-label">وضعیت</label>
+                <select class="filter-select" id="status" name="status">
+                    <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>همه</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>فعال</option>
+                    <option value="vacation" {{ request('status') == 'vacation' ? 'selected' : '' }}>مرخصی</option>
+                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>غیرفعال</option>
+                    <option value="terminated" {{ request('status') == 'terminated' ? 'selected' : '' }}>خاتمه همکاری</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="education" class="filter-label">تحصیلات</label>
+                <select class="filter-select" id="education" name="education">
+                    <option value="all" {{ request('education') == 'all' ? 'selected' : '' }}>همه</option>
+                    <option value="diploma" {{ request('education') == 'diploma' ? 'selected' : '' }}>دیپلم</option>
+                    <option value="associate" {{ request('education') == 'associate' ? 'selected' : '' }}>فوق دیپلم</option>
+                    <option value="bachelor" {{ request('education') == 'bachelor' ? 'selected' : '' }}>لیسانس</option>
+                    <option value="master" {{ request('education') == 'master' ? 'selected' : '' }}>فوق لیسانس</option>
+                    <option value="phd" {{ request('education') == 'phd' ? 'selected' : '' }}>دکترا</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="marital_status" class="filter-label">تأهل</label>
+                <select class="filter-select" id="marital_status" name="marital_status">
+                    <option value="all" {{ request('marital_status') == 'all' ? 'selected' : '' }}>همه</option>
+                    <option value="single" {{ request('marital_status') == 'single' ? 'selected' : '' }}>مجرد</option>
+                    <option value="married" {{ request('marital_status') == 'married' ? 'selected' : '' }}>متأهل</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="sort_by" class="filter-label">مرتب‌سازی</label>
+                <select class="filter-select" id="sort_by" name="sort_by">
+                    <option value="created_at" {{ request('sort_by') == 'created_at' || !request('sort_by') ? 'selected' : '' }}>تاریخ ثبت</option>
+                    <option value="employee_code" {{ request('sort_by') == 'employee_code' ? 'selected' : '' }}>کد پرسنلی</option>
+                    <option value="first_name" {{ request('sort_by') == 'first_name' ? 'selected' : '' }}>نام</option>
+                    <option value="last_name" {{ request('sort_by') == 'last_name' ? 'selected' : '' }}>نام خانوادگی</option>
+                    <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>وضعیت</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <a href="{{ route('panel.employees.index') }}" class="btn btn-outline-secondary clear-btn">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
 <!-- Employees Table -->
 <div class="content-card">
     <div class="card-header">
@@ -85,10 +150,14 @@
             <p class="card-subtitle">اطلاعات کامل کارکنان شرکت</p>
         </div>
         <div class="filter-buttons">
-            <button class="filter-btn active" data-status="all">همه</button>
-            <button class="filter-btn" data-status="active">فعال</button>
-            <button class="filter-btn" data-status="vacation">مرخصی</button>
-            <button class="filter-btn" data-status="inactive">غیرفعال</button>
+            <button class="filter-btn {{ request('status') == 'all' || !request('status') ? 'active' : '' }}"
+                    onclick="filterByStatus('all')">همه</button>
+            <button class="filter-btn {{ request('status') == 'active' ? 'active' : '' }}"
+                    onclick="filterByStatus('active')">فعال</button>
+            <button class="filter-btn {{ request('status') == 'vacation' ? 'active' : '' }}"
+                    onclick="filterByStatus('vacation')">مرخصی</button>
+            <button class="filter-btn {{ request('status') == 'inactive' ? 'active' : '' }}"
+                    onclick="filterByStatus('inactive')">غیرفعال</button>
         </div>
     </div>
     <div class="card-body">
@@ -129,7 +198,14 @@
                         </td>
                         <td>
                             <div class="job-info">
-                                <div class="job-hire-date">تاریخ ثبت: {{ $employee->created_at->format('Y/m/d') }}</div>
+                                <div class="job-hire-date">تاریخ ثبت: {{ \App\Helpers\DateHelper::toPersianDate($employee->created_at) }}</div>
+                                @if($employee->creator)
+                                <div class="creator-info" style="margin-top: 4px;">
+                                    <span class="badge bg-info text-white" style="font-size: 11px; padding: 4px 8px;">
+                                        {{ $employee->creator->name ?? 'نامشخص' }}
+                                    </span>
+                                </div>
+                                @endif
                                 <div class="marital-status">{{ $employee->formatted_marital_status }}</div>
                             </div>
                         </td>
@@ -184,6 +260,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
                                     مدارک
+                                </a>
+                                <a href="{{ route('panel.employees.profile', $employee->id) }}" class="management-link" title="پروفایل">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    پروفایل
                                 </a>
                             </div>
                         </td>
@@ -919,8 +1001,143 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Responsive Modal */
+/* Search and Filter Styles */
+.search-filter-section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-form {
+    width: 100%;
+}
+
+.search-row {
+    display: flex;
+    align-items: end;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.search-group {
+    flex: 2;
+    min-width: 200px;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 120px;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    align-items: end;
+}
+
+.search-label, .filter-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.search-input, .filter-select {
+    width: 100%;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.search-input:focus, .filter-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.search-btn, .clear-btn {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.search-btn {
+    background: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    color: white;
+}
+
+.search-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.clear-btn {
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    background: white;
+}
+
+.clear-btn:hover {
+    background: var(--bg-light);
+    border-color: var(--text-muted);
+    color: var(--text-dark);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .search-row {
+        flex-wrap: wrap;
+    }
+
+    .search-group {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .filter-group {
+        min-width: 100px;
+    }
+}
+
 @media (max-width: 768px) {
+    .search-filter-section {
+        padding: 15px;
+    }
+
+    .search-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .search-group, .filter-group {
+        flex: none;
+        min-width: auto;
+    }
+
+    .button-group {
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .search-btn, .clear-btn {
+        flex: 1;
+        max-width: 60px;
+    }
+
     .modal-container {
         margin: 10px;
         max-height: 95vh;
@@ -970,6 +1187,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Quick filter by status
+function filterByStatus(status) {
+    const url = new URL(window.location);
+    if (status === 'all') {
+        url.searchParams.delete('status');
+    } else {
+        url.searchParams.set('status', status);
+    }
+    window.location.href = url.toString();
+}
 
 // Show employee profile modal
 function showEmployeeProfile(employeeId) {

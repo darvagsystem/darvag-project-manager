@@ -13,13 +13,15 @@ class Tag extends Model
         'allowed_extensions',
         'allowed_mime_types',
         'is_folder_tag',
+        'is_active',
         'category_id'
     ];
 
     protected $casts = [
         'allowed_extensions' => 'array',
         'allowed_mime_types' => 'array',
-        'is_folder_tag' => 'boolean'
+        'is_folder_tag' => 'boolean',
+        'is_active' => 'boolean'
     ];
 
     /**
@@ -27,49 +29,9 @@ class Tag extends Model
      */
     public function category()
     {
-        return $this->belongsTo(TagCategory::class);
+        return $this->belongsTo(TagCategory::class, 'category_id');
     }
 
-    /**
-     * فایل‌های مرتبط با این تگ
-     */
-    public function files()
-    {
-        return $this->belongsToMany(FileManager::class, 'file_manager_tag');
-    }
-
-    /**
-     * بررسی اینکه آیا فایل با این تگ سازگار است یا نه
-     */
-    public function isCompatibleWithFile(FileManager $file)
-    {
-        // اگر تگ مخصوص پوشه است
-        if ($this->is_folder_tag && !$file->is_folder) {
-            return false;
-        }
-
-        // اگر تگ مخصوص فایل است و فایل، پوشه است
-        if (!$this->is_folder_tag && $file->is_folder) {
-            return false;
-        }
-
-        // اگر پسوندهای مجاز تعریف شده
-        if (!empty($this->allowed_extensions)) {
-            $fileExtension = strtolower(pathinfo($file->name, PATHINFO_EXTENSION));
-            if (!in_array($fileExtension, $this->allowed_extensions)) {
-                return false;
-            }
-        }
-
-        // اگر MIME type های مجاز تعریف شده
-        if (!empty($this->allowed_mime_types) && $file->mime_type) {
-            if (!in_array($file->mime_type, $this->allowed_mime_types)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     /**
      * دریافت لیست پسوندهای مجاز به صورت متن
@@ -121,5 +83,21 @@ class Tag extends Model
         return $query->whereHas('category', function($q) {
             $q->where('is_required', true);
         });
+    }
+
+    /**
+     * Scope برای تگ‌های فعال
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * فایل‌هایی که این تگ را دارند
+     */
+    public function files()
+    {
+        return $this->belongsToMany(ArchiveFile::class, 'archive_file_tags', 'tag_id', 'archive_file_id');
     }
 }

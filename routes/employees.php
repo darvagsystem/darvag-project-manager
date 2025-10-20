@@ -46,6 +46,13 @@ Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
         Route::post('/bank-accounts', [EmployeeBankAccountController::class, 'store'])->name('bank-accounts.store');
         Route::get('/documents', [EmployeeController::class, 'documents'])->name('documents');
         Route::get('/default-account', [EmployeeBankAccountController::class, 'getDefaultAccount'])->name('default-account');
+
+        // Employee Profile & Attendance
+        Route::get('/profile', [EmployeeController::class, 'profile'])->name('profile');
+        Route::get('/projects', [EmployeeController::class, 'projects'])->name('projects');
+        Route::get('/attendance', [EmployeeController::class, 'attendance'])->name('attendance');
+        Route::get('/attendance/report', [EmployeeController::class, 'attendanceReport'])->name('attendance.report');
+        Route::get('/attendance/report/print', [EmployeeController::class, 'attendanceReportPrint'])->name('attendance.report.print');
     });
 
     // Employee Bank Accounts

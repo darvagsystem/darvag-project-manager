@@ -60,6 +60,21 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="category_id" class="form-label">دسته‌بندی <span class="text-danger">*</span></label>
+                        <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
+                            <option value="">انتخاب دسته‌بندی</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id', $tag->category_id) == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="is_folder_tag" name="is_folder_tag" value="1"
                                    {{ old('is_folder_tag', $tag->is_folder_tag) ? 'checked' : '' }}>
@@ -115,7 +130,7 @@
             <div class="card-body">
                 <div class="text-center">
                     <div id="tagPreview" class="mb-3">
-                        <span class="badge" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}; border: 1px solid {{ $tag->color }}40; font-size: 16px; padding: 8px 16px;">
+                        <span class="badge" style="background-color: {{ $tag->color }}; color: white; border: 1px solid {{ $tag->color }}; font-size: 16px; padding: 8px 16px; font-weight: 500;">
                             {{ $tag->name }}
                         </span>
                     </div>
@@ -135,11 +150,11 @@
                 </div>
                 <div class="mb-2">
                     <strong>تاریخ ایجاد:</strong>
-                    <span>{{ $tag->created_at->format('Y/m/d H:i') }}</span>
+                    <span>{{ \App\Helpers\DateHelper::toPersianDateTime($tag->created_at) }}</span>
                 </div>
                 <div class="mb-2">
                     <strong>آخرین به‌روزرسانی:</strong>
-                    <span>{{ $tag->updated_at->format('Y/m/d H:i') }}</span>
+                    <span>{{ \App\Helpers\DateHelper::toPersianDateTime($tag->updated_at) }}</span>
                 </div>
             </div>
         </div>
@@ -158,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const name = nameInput.value || 'نام تگ';
         const color = colorInput.value;
 
-        tagPreview.innerHTML = `<span class="badge" style="background-color: ${color}20; color: ${color}; border: 1px solid ${color}40; font-size: 16px; padding: 8px 16px;">${name}</span>`;
+        tagPreview.innerHTML = `<span class="badge" style="background-color: ${color} !important; color: white !important; border: 1px solid ${color}; font-size: 16px; padding: 8px 16px; font-weight: 500;">${name}</span>`;
         colorText.value = color;
     }
 

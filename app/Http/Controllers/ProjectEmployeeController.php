@@ -256,4 +256,150 @@ class ProjectEmployeeController extends Controller
             'dailyEmployees'
         ));
     }
+
+    /**
+     * Show the form for bulk assigning employees to a project.
+     */
+    public function bulkCreate(Project $project)
+    {
+        $assignedEmployeeIds = $project->projectEmployees()->pluck('employee_id')->toArray();
+        $availableEmployees = Employee::active()
+            ->whereNotIn('id', $assignedEmployeeIds)
+            ->orderBy('first_name')
+            ->get();
+
+        return view('admin.projects.employees.bulk-create', compact('project', 'availableEmployees'));
+    }
+
+    /**
+     * Store multiple employees assigned to a project.
+     */
+    public function bulkStore(Request $request, Project $project)
+    {
+        $isIndividualMode = $request->has('individual_salary_mode');
+        
+        if ($isIndividualMode) {
+            $request->validate([
+                'employee_ids' => 'required|array|min:1',
+                'employee_ids.*' => 'exists:employees,id',
+                'employee_salary_type.*' => 'required|in:monthly,daily',
+                'employee_salary_amount_raw.*' => 'required_if:employee_salary_type.*,monthly|nullable|numeric|min:0',
+                'employee_daily_salary_raw.*' => 'required_if:employee_salary_type.*,daily|nullable|numeric|min:0',
+                'working_days_per_month' => 'required|integer|min:1|max:31',
+                'absence_deduction_rate' => 'required|numeric|min:0|max:100',
+                'start_date' => 'required|string',
+                'end_date' => 'nullable|string',
+                'notes' => 'nullable|string|max:1000',
+            ]);
+        } else {
+            $request->validate([
+                'employee_ids' => 'required|array|min:1',
+                'employee_ids.*' => 'exists:employees,id',
+                'salary_type' => 'required|in:monthly,daily',
+                'salary_amount_raw' => 'required_if:salary_type,monthly|nullable|numeric|min:0',
+                'daily_salary_raw' => 'required_if:salary_type,daily|nullable|numeric|min:0',
+                'working_days_per_month' => 'required|integer|min:1|max:31',
+                'absence_deduction_rate' => 'required|numeric|min:0|max:100',
+                'start_date' => 'required|string',
+                'end_date' => 'nullable|string',
+                'notes' => 'nullable|string|max:1000',
+            ]);
+        }
+
+        // Check if any of the selected employees are already assigned to this project
+        $existingAssignments = $project->projectEmployees()
+            ->whereIn('employee_id', $request->employee_ids)
+            ->pluck('employee_id')
+            ->toArray();
+
+        if (!empty($existingAssignments)) {
+            $existingEmployeeNames = Employee::whereIn('id', $existingAssignments)
+                ->pluck('first_name', 'id')
+                ->toArray();
+
+            $names = implode('، ', $existingEmployeeNames);
+            return back()->withErrors(['employee_ids' => "کارمندان زیر قبلاً به این پروژه اختصاص یافته‌اند: {$names}"]);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $persianDateService = new PersianDateService();
+            $startDate = $persianDateService->persianToGregorian($request->start_date);
+            $endDate = $request->end_date ? $persianDateService->persianToGregorian($request->end_date) : null;
+
+            $createdCount = 0;
+            $errors = [];
+
+            foreach ($request->employee_ids as $employeeId) {
+                try {
+                    if ($isIndividualMode) {
+                        // Individual salary mode
+                        $salaryType = $request->input("employee_salary_type.{$employeeId}");
+                        $salaryAmount = null;
+                        $dailySalary = null;
+                        
+                        if ($salaryType === 'monthly') {
+                            $salaryAmount = $request->input("employee_salary_amount_raw.{$employeeId}");
+                        } elseif ($salaryType === 'daily') {
+                            $dailySalary = $request->input("employee_daily_salary_raw.{$employeeId}");
+                        }
+                        
+                        $projectEmployee = ProjectEmployee::create([
+                            'project_id' => $project->id,
+                            'employee_id' => $employeeId,
+                            'salary_type' => $salaryType,
+                            'salary_amount' => $salaryAmount,
+                            'daily_salary' => $dailySalary,
+                            'working_days_per_month' => $request->working_days_per_month,
+                            'absence_deduction_rate' => $request->absence_deduction_rate,
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'notes' => $request->notes,
+                            'is_active' => true,
+                        ]);
+                    } else {
+                        // Common salary mode
+                        $projectEmployee = ProjectEmployee::create([
+                            'project_id' => $project->id,
+                            'employee_id' => $employeeId,
+                            'salary_type' => $request->salary_type,
+                            'salary_amount' => $request->salary_type === 'monthly' ? $request->salary_amount_raw : null,
+                            'daily_salary' => $request->salary_type === 'daily' ? $request->daily_salary_raw : null,
+                            'working_days_per_month' => $request->working_days_per_month,
+                            'absence_deduction_rate' => $request->absence_deduction_rate,
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'notes' => $request->notes,
+                            'is_active' => true,
+                        ]);
+                    }
+
+                    $createdCount++;
+                } catch (\Exception $e) {
+                    $employee = Employee::find($employeeId);
+                    $errors[] = "خطا در اختصاص کارمند {$employee->full_name}: " . $e->getMessage();
+                }
+            }
+
+            if ($createdCount > 0) {
+                DB::commit();
+                $message = "{$createdCount} کارمند با موفقیت به پروژه اختصاص یافت.";
+
+                if (!empty($errors)) {
+                    $message .= " اما خطاهای زیر رخ داد: " . implode(' | ', $errors);
+                }
+
+                return redirect()->route('panel.projects.employees.index', $project)
+                    ->with('success', $message);
+            } else {
+                DB::rollBack();
+                return back()->withErrors(['employee_ids' => 'هیچ کارمندی اختصاص نیافت. لطفاً دوباره تلاش کنید.']);
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'خطا در اختصاص کارمندان: ' . $e->getMessage()]);
+        }
+    }
 }

@@ -10,15 +10,6 @@
             <p>به سیستم مدیریت پروژه‌ها خوش آمدید.</p>
 
             <div class="row mt-4">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">مدیریت فایل‌ها</h5>
-                            <p class="card-text">مدیریت فایل‌های عمومی سیستم</p>
-                            <a href="{{ route('panel.file-manager.index') }}" class="btn btn-primary">مشاهده</a>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="col-md-4">
                     <div class="card">

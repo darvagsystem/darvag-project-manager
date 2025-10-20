@@ -224,10 +224,8 @@ class ActivityLoggerService
             'App\Models\Employee' => 'کارمند',
             'App\Models\Client' => 'مشتری',
             'App\Models\FileManager' => 'فایل',
-            'App\Models\Task' => 'وظیفه',
             'App\Models\User' => 'کاربر',
             'App\Models\ProjectMilestone' => 'مایل‌استون',
-            'App\Models\ProjectTask' => 'وظیفه پروژه',
             'App\Models\ProjectResource' => 'منبع پروژه',
             'App\Models\ProjectRisk' => 'ریسک پروژه',
             default => class_basename($className)

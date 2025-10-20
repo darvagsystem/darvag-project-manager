@@ -27,7 +27,7 @@ class TagCategory extends Model
      */
     public function tags()
     {
-        return $this->hasMany(Tag::class);
+        return $this->hasMany(Tag::class, 'category_id');
     }
 
     /**
@@ -36,7 +36,7 @@ class TagCategory extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($category) {
             if (empty($category->slug)) {
                 $category->slug = Str::slug($category->name);
@@ -76,5 +76,29 @@ class TagCategory extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('sort_order')->orderBy('name');
+    }
+
+    /**
+     * دریافت متن پروژه‌های مورد نیاز
+     */
+    public function getRequiredForProjectsTextAttribute()
+    {
+        if (!$this->is_required || empty($this->required_for_projects)) {
+            return 'همه پروژه‌ها';
+        }
+
+        $projectTypes = [
+            'construction' => 'ساختمانی',
+            'industrial' => 'صنعتی',
+            'infrastructure' => 'زیرساختی',
+            'energy' => 'انرژی',
+            'petrochemical' => 'پتروشیمی'
+        ];
+
+        $translated = array_map(function($type) use ($projectTypes) {
+            return $projectTypes[$type] ?? $type;
+        }, $this->required_for_projects);
+
+        return implode('، ', $translated);
     }
 }

@@ -51,18 +51,61 @@
                     <span class="nav-badge">4</span>
                 </a>
             </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">مدیریت وظایف</div>
             <div class="nav-item">
-                <a href="{{ route('panel.file-manager.index') }}" class="nav-link {{ Request::routeIs('panel.file-manager.*') ? 'active' : '' }}">
+                <a href="{{ route('tasks.index') }}" class="nav-link {{ Request::routeIs('tasks.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 7 5-5 5 5"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
-                    <span class="nav-text">مدیریت فایل‌ها</span>
+                    <span class="nav-text">وظایف</span>
+                    @if(\App\Models\Task::overdue()->count() > 0)
+                        <span class="nav-badge">{{ \App\Models\Task::overdue()->count() }}</span>
+                    @endif
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('tasks.my-tasks') }}" class="nav-link {{ Request::routeIs('tasks.my-tasks') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span class="nav-text">وظایف من</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('tasks.overdue') }}" class="nav-link {{ Request::routeIs('tasks.overdue') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <span class="nav-text">وظایف معوق</span>
+                    @if(\App\Models\Task::overdue()->count() > 0)
+                        <span class="nav-badge bg-danger">{{ \App\Models\Task::overdue()->count() }}</span>
+                    @endif
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="{{ route('task-categories.index') }}" class="nav-link {{ Request::routeIs('task-categories.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    <span class="nav-text">دسته‌بندی وظایف</span>
                 </a>
             </div>
         </div>
 
-
+        <div class="nav-section">
+            <div class="nav-section-title">بایگانی</div>
+            <div class="nav-item">
+                <a href="{{ route('archives.index') }}" class="nav-link {{ Request::routeIs('archives.*') ? 'active' : '' }}">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <span class="nav-text">بایگانی پروژه‌ها</span>
+                </a>
+            </div>
+        </div>
 
             <!-- <!-- Documents and Forms Section change veiw -->
         <div class="nav-section">
@@ -87,25 +130,6 @@
 
 
 
-        <div class="nav-section">
-            <div class="nav-section-title">وظایف و فعالیت‌ها</div>
-            <div class="nav-item">
-                <a href="{{ route('panel.tasks.index') }}" class="nav-link {{ Request::routeIs('panel.tasks.*') ? 'active' : '' }}">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                    </svg>
-                    <span class="nav-text">مدیریت وظایف</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('panel.checklists.index') }}" class="nav-link {{ Request::routeIs('panel.checklists.*') ? 'active' : '' }}">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="nav-text">چک لیست‌ها</span>
-                </a>
-            </div>
-        </div>
 
         <div class="nav-section">
             <div class="nav-section-title">ابزارها</div>
@@ -118,14 +142,6 @@
                     @if(\App\Models\ContactMessage::new()->count() > 0)
                         <span class="nav-badge">{{ \App\Models\ContactMessage::new()->count() }}</span>
                     @endif
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="{{ route('panel.upload-files') }}" class="nav-link {{ Request::routeIs('panel.upload-files*') ? 'active' : '' }}">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <span class="nav-text">آپلود فایل‌ها</span>
                 </a>
             </div>
             <div class="nav-item">
@@ -214,7 +230,7 @@
         <div class="nav-section">
             <div class="nav-section-title">راهنما</div>
             <div class="nav-item">
-                <a href="{{ route('panel.help.index') }}" class="nav-link {{ Request::routeIs('help.*') ? 'active' : '' }}"></a>
+                <a href="{{ route('panel.help.index') }}" class="nav-link {{ Request::routeIs('help.*') ? 'active' : '' }}">
                     <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>

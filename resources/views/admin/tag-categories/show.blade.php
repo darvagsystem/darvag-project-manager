@@ -67,11 +67,11 @@
                                 @endif
                                 <tr>
                                     <td><strong>تاریخ ایجاد:</strong></td>
-                                    <td>{{ $tagCategory->created_at->format('Y/m/d H:i') }}</td>
+                                    <td>{{ \App\Helpers\DateHelper::toPersianDateTime($tagCategory->created_at) }}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>آخرین به‌روزرسانی:</strong></td>
-                                    <td>{{ $tagCategory->updated_at->format('Y/m/d H:i') }}</td>
+                                    <td>{{ \App\Helpers\DateHelper::toPersianDateTime($tagCategory->updated_at) }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -118,7 +118,7 @@
                                                     <span class="badge bg-success">فایل</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $tag->created_at->format('Y/m/d') }}</td>
+                                            <td>{{ \App\Helpers\DateHelper::toPersianDate($tag->created_at) }}</td>
                                             <td>
                                                 <a href="{{ route('panel.tags.edit', $tag) }}" class="btn btn-sm btn-outline-warning">
                                                     <i class="fas fa-edit"></i>

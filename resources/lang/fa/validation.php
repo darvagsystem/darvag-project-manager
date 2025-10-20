@@ -1,0 +1,270 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validation Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines contain the default error messages used by
+    | the validator class. Some of these rules have multiple versions such
+    | as the size rules. Feel free to tweak each of these messages here.
+    |
+    */
+
+    'accepted' => 'فیلد :attribute باید پذیرفته شود.',
+    'accepted_if' => 'فیلد :attribute باید زمانی که :other برابر :value است، پذیرفته شود.',
+    'active_url' => 'فیلد :attribute یک URL معتبر نیست.',
+    'after' => 'فیلد :attribute باید تاریخی بعد از :date باشد.',
+    'after_or_equal' => 'فیلد :attribute باید تاریخی بعد از یا برابر :date باشد.',
+    'alpha' => 'فیلد :attribute باید فقط شامل حروف باشد.',
+    'alpha_dash' => 'فیلد :attribute باید فقط شامل حروف، اعداد، خط تیره و زیرخط باشد.',
+    'alpha_num' => 'فیلد :attribute باید فقط شامل حروف و اعداد باشد.',
+    'array' => 'فیلد :attribute باید یک آرایه باشد.',
+    'ascii' => 'فیلد :attribute باید فقط شامل کاراکترهای تک‌بایتی الفبا و اعداد باشد.',
+    'before' => 'فیلد :attribute باید تاریخی قبل از :date باشد.',
+    'before_or_equal' => 'فیلد :attribute باید تاریخی قبل از یا برابر :date باشد.',
+    'between' => [
+        'array' => 'فیلد :attribute باید بین :min و :max آیتم داشته باشد.',
+        'file' => 'فیلد :attribute باید بین :min و :max کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute باید بین :min و :max باشد.',
+        'string' => 'فیلد :attribute باید بین :min و :max کاراکتر باشد.',
+    ],
+    'boolean' => 'فیلد :attribute باید true یا false باشد.',
+    'can' => 'فیلد :attribute حاوی مقداری غیرمجاز است.',
+    'confirmed' => 'تأیید فیلد :attribute مطابقت ندارد.',
+    'current_password' => 'رمز عبور اشتباه است.',
+    'date' => 'فیلد :attribute یک تاریخ معتبر نیست.',
+    'date_equals' => 'فیلد :attribute باید تاریخی برابر :date باشد.',
+    'date_format' => 'فیلد :attribute با فرمت :format مطابقت ندارد.',
+    'decimal' => 'فیلد :attribute باید :decimal رقم اعشار داشته باشد.',
+    'declined' => 'فیلد :attribute باید رد شود.',
+    'declined_if' => 'فیلد :attribute باید زمانی که :other برابر :value است، رد شود.',
+    'different' => 'فیلد :attribute و :other باید متفاوت باشند.',
+    'digits' => 'فیلد :attribute باید :digits رقم باشد.',
+    'digits_between' => 'فیلد :attribute باید بین :min و :max رقم باشد.',
+    'dimensions' => 'فیلد :attribute ابعاد تصویر نامعتبر دارد.',
+    'distinct' => 'فیلد :attribute مقدار تکراری دارد.',
+    'doesnt_end_with' => 'فیلد :attribute نباید با یکی از موارد زیر پایان یابد: :values.',
+    'doesnt_start_with' => 'فیلد :attribute نباید با یکی از موارد زیر شروع شود: :values.',
+    'email' => 'فیلد :attribute باید یک آدرس ایمیل معتبر باشد.',
+    'ends_with' => 'فیلد :attribute باید با یکی از موارد زیر پایان یابد: :values.',
+    'enum' => 'فیلد :attribute انتخاب شده نامعتبر است.',
+    'exists' => 'فیلد :attribute انتخاب شده نامعتبر است.',
+    'extensions' => 'فیلد :attribute باید یکی از پسوندهای زیر را داشته باشد: :values.',
+    'file' => 'فیلد :attribute باید یک فایل باشد.',
+    'filled' => 'فیلد :attribute باید مقداری داشته باشد.',
+    'gt' => [
+        'array' => 'فیلد :attribute باید بیش از :value آیتم داشته باشد.',
+        'file' => 'فیلد :attribute باید بزرگ‌تر از :value کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute باید بزرگ‌تر از :value باشد.',
+        'string' => 'فیلد :attribute باید بیش از :value کاراکتر داشته باشد.',
+    ],
+    'gte' => [
+        'array' => 'فیلد :attribute باید :value آیتم یا بیشتر داشته باشد.',
+        'file' => 'فیلد :attribute باید بزرگ‌تر یا مساوی :value کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute باید بزرگ‌تر یا مساوی :value باشد.',
+        'string' => 'فیلد :attribute باید :value کاراکتر یا بیشتر داشته باشد.',
+    ],
+    'hex_color' => 'فیلد :attribute باید یک رنگ هگزادسیمال معتبر باشد.',
+    'image' => 'فیلد :attribute باید یک تصویر باشد.',
+    'in' => 'فیلد :attribute انتخاب شده نامعتبر است.',
+    'in_array' => 'فیلد :attribute در :other وجود ندارد.',
+    'integer' => 'فیلد :attribute باید یک عدد صحیح باشد.',
+    'ip' => 'فیلد :attribute باید یک آدرس IP معتبر باشد.',
+    'ipv4' => 'فیلد :attribute باید یک آدرس IPv4 معتبر باشد.',
+    'ipv6' => 'فیلد :attribute باید یک آدرس IPv6 معتبر باشد.',
+    'json' => 'فیلد :attribute باید یک رشته JSON معتبر باشد.',
+    'lowercase' => 'فیلد :attribute باید حروف کوچک باشد.',
+    'lt' => [
+        'array' => 'فیلد :attribute باید کمتر از :value آیتم داشته باشد.',
+        'file' => 'فیلد :attribute باید کوچک‌تر از :value کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute باید کوچک‌تر از :value باشد.',
+        'string' => 'فیلد :attribute باید کمتر از :value کاراکتر داشته باشد.',
+    ],
+    'lte' => [
+        'array' => 'فیلد :attribute نباید بیش از :value آیتم داشته باشد.',
+        'file' => 'فیلد :attribute باید کوچک‌تر یا مساوی :value کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute باید کوچک‌تر یا مساوی :value باشد.',
+        'string' => 'فیلد :attribute باید :value کاراکتر یا کمتر داشته باشد.',
+    ],
+    'mac_address' => 'فیلد :attribute باید یک آدرس MAC معتبر باشد.',
+    'max' => [
+        'array' => 'فیلد :attribute نباید بیش از :max آیتم داشته باشد.',
+        'file' => 'فیلد :attribute نباید بیش از :max کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute نباید بیش از :max باشد.',
+        'string' => 'فیلد :attribute نباید بیش از :max کاراکتر داشته باشد.',
+    ],
+    'max_digits' => 'فیلد :attribute نباید بیش از :max رقم داشته باشد.',
+    'mimes' => 'فیلد :attribute باید فایلی از نوع: :values باشد.',
+    'mimetypes' => 'فیلد :attribute باید فایلی از نوع: :values باشد.',
+    'min' => [
+        'array' => 'فیلد :attribute باید حداقل :min آیتم داشته باشد.',
+        'file' => 'فیلد :attribute باید حداقل :min کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute باید حداقل :min باشد.',
+        'string' => 'فیلد :attribute باید حداقل :min کاراکتر داشته باشد.',
+    ],
+    'min_digits' => 'فیلد :attribute باید حداقل :min رقم داشته باشد.',
+    'missing' => 'فیلد :attribute باید غایب باشد.',
+    'missing_if' => 'فیلد :attribute باید زمانی که :other برابر :value است، غایب باشد.',
+    'missing_unless' => 'فیلد :attribute باید غایب باشد مگر اینکه :other برابر :value باشد.',
+    'missing_with' => 'فیلد :attribute باید زمانی که :values موجود است، غایب باشد.',
+    'missing_with_all' => 'فیلد :attribute باید زمانی که :values موجود است، غایب باشد.',
+    'multiple_of' => 'فیلد :attribute باید مضربی از :value باشد.',
+    'not_in' => 'فیلد :attribute انتخاب شده نامعتبر است.',
+    'not_regex' => 'فرمت فیلد :attribute نامعتبر است.',
+    'numeric' => 'فیلد :attribute باید یک عدد باشد.',
+    'password' => [
+        'letters' => 'فیلد :attribute باید حداقل یک حرف داشته باشد.',
+        'mixed' => 'فیلد :attribute باید حداقل یک حرف بزرگ و یک حرف کوچک داشته باشد.',
+        'numbers' => 'فیلد :attribute باید حداقل یک عدد داشته باشد.',
+        'symbols' => 'فیلد :attribute باید حداقل یک نماد داشته باشد.',
+        'uncompromised' => 'فیلد :attribute داده شده در نشت داده ظاهر شده است. لطفاً :attribute متفاوتی انتخاب کنید.',
+    ],
+    'present' => 'فیلد :attribute باید موجود باشد.',
+    'present_if' => 'فیلد :attribute باید زمانی که :other برابر :value است، موجود باشد.',
+    'present_unless' => 'فیلد :attribute باید موجود باشد مگر اینکه :other برابر :value باشد.',
+    'present_with' => 'فیلد :attribute باید زمانی که :values موجود است، موجود باشد.',
+    'present_with_all' => 'فیلد :attribute باید زمانی که :values موجود است، موجود باشد.',
+    'prohibited' => 'فیلد :attribute ممنوع است.',
+    'prohibited_if' => 'فیلد :attribute زمانی که :other برابر :value است، ممنوع است.',
+    'prohibited_unless' => 'فیلد :attribute ممنوع است مگر اینکه :other در :values باشد.',
+    'prohibits' => 'فیلد :attribute مانع از وجود :other می‌شود.',
+    'regex' => 'فرمت فیلد :attribute نامعتبر است.',
+    'required' => 'فیلد :attribute الزامی است.',
+    'required_array_keys' => 'فیلد :attribute باید ورودی‌هایی برای: :values داشته باشد.',
+    'required_if' => 'فیلد :attribute زمانی که :other برابر :value است، الزامی است.',
+    'required_if_accepted' => 'فیلد :attribute زمانی که :other پذیرفته شده است، الزامی است.',
+    'required_unless' => 'فیلد :attribute الزامی است مگر اینکه :other در :values باشد.',
+    'required_with' => 'فیلد :attribute زمانی که :values موجود است، الزامی است.',
+    'required_with_all' => 'فیلد :attribute زمانی که :values موجود است، الزامی است.',
+    'required_without' => 'فیلد :attribute زمانی که :values موجود نیست، الزامی است.',
+    'required_without_all' => 'فیلد :attribute زمانی که هیچ یک از :values موجود نیست، الزامی است.',
+    'same' => 'فیلد :attribute و :other باید مطابقت داشته باشند.',
+    'size' => [
+        'array' => 'فیلد :attribute باید شامل :size آیتم باشد.',
+        'file' => 'فیلد :attribute باید :size کیلوبایت باشد.',
+        'numeric' => 'فیلد :attribute باید :size باشد.',
+        'string' => 'فیلد :attribute باید :size کاراکتر باشد.',
+    ],
+    'starts_with' => 'فیلد :attribute باید با یکی از موارد زیر شروع شود: :values.',
+    'string' => 'فیلد :attribute باید یک رشته باشد.',
+    'timezone' => 'فیلد :attribute باید یک منطقه زمانی معتبر باشد.',
+    'unique' => 'فیلد :attribute قبلاً ثبت شده است.',
+    'uploaded' => 'آپلود فیلد :attribute ناموفق بود.',
+    'uppercase' => 'فیلد :attribute باید حروف بزرگ باشد.',
+    'url' => 'فیلد :attribute باید یک URL معتبر باشد.',
+    'ulid' => 'فیلد :attribute باید یک ULID معتبر باشد.',
+    'uuid' => 'فیلد :attribute باید یک UUID معتبر باشد.',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify custom validation messages for attributes using the
+    | convention "rule.attribute" to name the lines. This makes it quick to
+    | specify a specific custom language line for a given attribute rule.
+    |
+    */
+
+    'custom' => [
+        'attribute-name' => [
+            'rule-name' => 'custom-message',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Attributes
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used to swap our attribute placeholder
+    | with something more reader friendly such as "E-Mail Address" instead
+    | of "email". This simply helps us make our message more expressive.
+    |
+    */
+
+    'attributes' => [
+        'name' => 'نام',
+        'username' => 'نام کاربری',
+        'email' => 'ایمیل',
+        'password' => 'رمز عبور',
+        'password_confirmation' => 'تأیید رمز عبور',
+        'city' => 'شهر',
+        'country' => 'کشور',
+        'address' => 'آدرس',
+        'phone' => 'تلفن',
+        'mobile' => 'موبایل',
+        'age' => 'سن',
+        'sex' => 'جنسیت',
+        'gender' => 'جنسیت',
+        'day' => 'روز',
+        'month' => 'ماه',
+        'year' => 'سال',
+        'hour' => 'ساعت',
+        'minute' => 'دقیقه',
+        'second' => 'ثانیه',
+        'title' => 'عنوان',
+        'content' => 'محتوا',
+        'description' => 'توضیحات',
+        'excerpt' => 'خلاصه',
+        'date' => 'تاریخ',
+        'time' => 'زمان',
+        'available' => 'موجود',
+        'size' => 'اندازه',
+        'first_name' => 'نام',
+        'last_name' => 'نام خانوادگی',
+        'national_code' => 'کد ملی',
+        'employee_code' => 'کد پرسنلی',
+        'birth_date' => 'تاریخ تولد',
+        'hire_date' => 'تاریخ استخدام',
+        'salary' => 'حقوق',
+        'position' => 'سمت',
+        'department' => 'بخش',
+        'education' => 'تحصیلات',
+        'marital_status' => 'وضعیت تأهل',
+        'status' => 'وضعیت',
+        'project_name' => 'نام پروژه',
+        'contract_number' => 'شماره قرارداد',
+        'start_date' => 'تاریخ شروع',
+        'end_date' => 'تاریخ پایان',
+        'budget' => 'بودجه',
+        'client_name' => 'نام مشتری',
+        'client_phone' => 'تلفن مشتری',
+        'client_email' => 'ایمیل مشتری',
+        'tag_name' => 'نام تگ',
+        'tag_color' => 'رنگ تگ',
+        'category_name' => 'نام دسته‌بندی',
+        'file_name' => 'نام فایل',
+        'file_path' => 'مسیر فایل',
+        'file_size' => 'اندازه فایل',
+        'mime_type' => 'نوع فایل',
+        'extension' => 'پسوند فایل',
+        'folder_name' => 'نام پوشه',
+        'parent_id' => 'پوشه والد',
+        'archive_name' => 'نام بایگانی',
+        'archive_description' => 'توضیحات بایگانی',
+        'payment_amount' => 'مبلغ پرداخت',
+        'payment_date' => 'تاریخ پرداخت',
+        'payment_type' => 'نوع پرداخت',
+        'bank_name' => 'نام بانک',
+        'account_number' => 'شماره حساب',
+        'iban' => 'شماره شبا',
+        'card_number' => 'شماره کارت',
+        'salary_type' => 'نوع حقوق',
+        'salary_amount' => 'مبلغ حقوق',
+        'daily_salary' => 'حقوق روزانه',
+        'working_days_per_month' => 'تعداد روزهای کاری در ماه',
+        'absence_deduction_rate' => 'درصد کسر غیبت',
+        'notes' => 'یادداشت‌ها',
+        'is_active' => 'وضعیت فعال',
+        'is_required' => 'الزامی',
+        'required_for_projects' => 'الزامی برای پروژه‌ها',
+        'description' => 'توضیحات',
+        'created_at' => 'تاریخ ایجاد',
+        'updated_at' => 'تاریخ به‌روزرسانی',
+    ],
+
+];

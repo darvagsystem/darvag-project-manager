@@ -111,6 +111,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
             </div>
         </div>
 
@@ -123,8 +124,8 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="initial_estimate" class="form-label">برآورد اولیه (ریال) *</label>
-                    <input type="number" id="initial_estimate" name="initial_estimate" class="form-input @error('initial_estimate') is-invalid @enderror" value="{{ old('initial_estimate') }}" required placeholder="45000000000">
+                    <label for="initial_estimate" class="form-label">برآورد اولیه (ریال)</label>
+                    <input type="number" id="initial_estimate" name="initial_estimate" class="form-input @error('initial_estimate') is-invalid @enderror" value="{{ old('initial_estimate') }}" placeholder="45000000000">
                     <small class="form-help">مبلغ برآورد اولیه پروژه</small>
                     @error('initial_estimate')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -132,8 +133,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="final_amount" class="form-label">مبلغ نهایی (ریال) *</label>
-                    <input type="number" id="final_amount" name="final_amount" class="form-input @error('final_amount') is-invalid @enderror" value="{{ old('final_amount') }}" required placeholder="48500000000">
+                    <label for="final_amount" class="form-label">مبلغ نهایی (ریال)</label>
+                    <input type="number" id="final_amount" name="final_amount" class="form-input @error('final_amount') is-invalid @enderror" value="{{ old('final_amount') }}" placeholder="48500000000">
                     <small class="form-help">مبلغ نهایی قرارداد</small>
                     @error('final_amount')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -678,12 +679,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const reader = new FileReader();
                 reader.onload = function() {
                     croppedImageInput.value = reader.result;
-                    
+
                     // Show preview
                     imagePreview.src = reader.result;
                     imagePreviewContainer.style.display = 'block';
                     selectImageBtn.style.display = 'none';
-                    
+
                     // Close modal
                     imageCropperModal.hide();
                 };

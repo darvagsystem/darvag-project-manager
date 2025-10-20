@@ -101,6 +101,18 @@
                                 کارمندان پروژه
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">
+                                <i class="mdi mdi-credit-card me-1"></i>
+                                پرداخت‌ها
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="finance-tab" data-bs-toggle="tab" data-bs-target="#finance" type="button" role="tab">
+                                <i class="mdi mdi-chart-line me-1"></i>
+                                مالی و سود/زیان
+                            </button>
+                        </li>
                     </ul>
                 </div>
                 <div class="card-body">
@@ -282,6 +294,232 @@
                                     </a>
                                 </div>
                             @endif
+                        </div>
+
+                        <!-- Payments Tab -->
+                        <div class="tab-pane fade" id="payments" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">پرداخت‌های پروژه</h6>
+                                <div>
+                                    <a href="{{ route('panel.projects.payments.create', $project) }}" class="btn btn-sm btn-primary me-2">
+                                        <i class="mdi mdi-plus me-1"></i>
+                                        ثبت پرداخت جدید
+                                    </a>
+                                    <a href="{{ route('panel.projects.payments.index', $project) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="mdi mdi-credit-card me-1"></i>
+                                        مشاهده همه پرداخت‌ها
+                                    </a>
+                                </div>
+                            </div>
+
+                            @php
+                                $recentPayments = $project->payments()->with(['recipient', 'creator'])->latest()->take(5)->get();
+                                $totalAmount = $project->payments()->sum('amount');
+                                $completedAmount = $project->payments()->where('status', 'completed')->sum('amount');
+                                $pendingAmount = $project->payments()->where('status', 'pending')->sum('amount');
+                            @endphp
+
+                            <!-- Payment Statistics -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-credit-card-outline" style="font-size: 2rem;"></i>
+                                            <h4 class="mt-2 mb-0">{{ number_format($totalAmount, 0, '.', ',') }}</h4>
+                                            <small>کل مبلغ پرداخت‌ها</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-check-circle-outline" style="font-size: 2rem;"></i>
+                                            <h4 class="mt-2 mb-0">{{ number_format($completedAmount, 0, '.', ',') }}</h4>
+                                            <small>مبلغ پرداخت شده</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-clock-outline" style="font-size: 2rem;"></i>
+                                            <h4 class="mt-2 mb-0">{{ number_format($pendingAmount, 0, '.', ',') }}</h4>
+                                            <small>مبلغ در انتظار</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if($recentPayments->count() > 0)
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>دریافت‌کننده</th>
+                                                <th>مبلغ</th>
+                                                <th>نوع پرداخت</th>
+                                                <th>تاریخ</th>
+                                                <th>وضعیت</th>
+                                                <th>عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($recentPayments as $payment)
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                                                                 style="width: 32px; height: 32px; font-size: 14px;">
+                                                                {{ substr($payment->recipient->recipient_name, 0, 1) }}
+                                                            </div>
+                                                            <div>
+                                                                <div class="fw-bold">{{ $payment->recipient->recipient_name }}</div>
+                                                                <small class="text-muted">{{ $payment->recipient->recipient_code }}</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="fw-bold">{{ number_format($payment->amount, 0, '.', ',') }} {{ $payment->currency }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-info">{{ $payment->payment_type }}</span>
+                                                    </td>
+                                                    <td>{{ $payment->payment_date->format('Y/m/d') }}</td>
+                                                    <td>
+                                                        <span class="badge bg-{{ $payment->status_color }}">
+                                                            {{ $payment->status_text }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ route('panel.projects.payments.show', [$project, $payment]) }}"
+                                                           class="btn btn-sm btn-outline-primary" title="مشاهده">
+                                                            <i class="mdi mdi-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="mdi mdi-credit-card-off" style="font-size: 48px; color: #6c757d;"></i>
+                                    <h6 class="mt-2">هنوز پرداختی ثبت نشده</h6>
+                                    <p class="text-muted">برای شروع، اولین پرداخت را ثبت کنید</p>
+                                    <a href="{{ route('panel.projects.payments.create', $project) }}" class="btn btn-primary">
+                                        <i class="mdi mdi-plus me-1"></i>
+                                        ثبت اولین پرداخت
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Finance Tab -->
+                        <div class="tab-pane fade" id="finance" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">مدیریت مالی پروژه</h6>
+                                <div>
+                                    <a href="{{ route('panel.projects.finance.dashboard', $project) }}" class="btn btn-sm btn-primary me-2">
+                                        <i class="mdi mdi-chart-line me-1"></i>
+                                        داشبورد مالی
+                                    </a>
+                                    <a href="{{ route('panel.projects.finance.profit-loss', $project) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="mdi mdi-calculator me-1"></i>
+                                        گزارش سود/زیان
+                                    </a>
+                                </div>
+                            </div>
+
+                            @php
+                                $totalIncome = $project->incomes()->where('status', 'received')->sum('amount');
+                                $totalExpenses = $project->expenses()->where('status', 'paid')->sum('amount');
+                                $totalPayments = $project->payments()->where('status', 'completed')->sum('amount');
+                                $grossProfit = $totalIncome - $totalExpenses;
+                                $netProfit = $totalIncome - $totalPayments;
+                            @endphp
+
+                            <!-- Financial Overview -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-trending-up" style="font-size: 2rem;"></i>
+                                            <h4 class="mt-2 mb-0">{{ number_format($totalIncome, 0, '.', ',') }}</h4>
+                                            <small>کل درآمد</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-danger text-white">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-trending-down" style="font-size: 2rem;"></i>
+                                            <h4 class="mt-2 mb-0">{{ number_format($totalExpenses, 0, '.', ',') }}</h4>
+                                            <small>کل هزینه‌ها</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-credit-card" style="font-size: 2rem;"></i>
+                                            <h4 class="mt-2 mb-0">{{ number_format($totalPayments, 0, '.', ',') }}</h4>
+                                            <small>کل پرداخت‌ها</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card {{ $netProfit >= 0 ? 'bg-success' : 'bg-warning' }} text-white">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-calculator" style="font-size: 2rem;"></i>
+                                            <h4 class="mt-2 mb-0">{{ number_format($netProfit, 0, '.', ',') }}</h4>
+                                            <small>{{ $netProfit >= 0 ? 'سود خالص' : 'زیان خالص' }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-trending-up text-success" style="font-size: 3rem;"></i>
+                                            <h5 class="mt-2">درآمدها</h5>
+                                            <p class="text-muted">مدیریت درآمدهای پروژه</p>
+                                            <a href="{{ route('panel.projects.finance.incomes', $project) }}" class="btn btn-outline-success">
+                                                <i class="mdi mdi-eye me-1"></i>
+                                                مشاهده درآمدها
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-trending-down text-danger" style="font-size: 3rem;"></i>
+                                            <h5 class="mt-2">هزینه‌ها</h5>
+                                            <p class="text-muted">مدیریت هزینه‌های پروژه</p>
+                                            <a href="{{ route('panel.projects.finance.expenses', $project) }}" class="btn btn-outline-danger">
+                                                <i class="mdi mdi-eye me-1"></i>
+                                                مشاهده هزینه‌ها
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <i class="mdi mdi-chart-pie text-info" style="font-size: 3rem;"></i>
+                                            <h5 class="mt-2">گزارش‌ها</h5>
+                                            <p class="text-muted">گزارش‌های مالی و تحلیلی</p>
+                                            <a href="{{ route('panel.projects.finance.dashboard', $project) }}" class="btn btn-outline-info">
+                                                <i class="mdi mdi-chart-line me-1"></i>
+                                                داشبورد مالی
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>

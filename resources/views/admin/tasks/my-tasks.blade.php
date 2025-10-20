@@ -1,125 +1,146 @@
-@extends('admin.layouts.app')
+@extends('admin.layout')
 
-@section('title', 'کارهای من')
+@section('title', 'وظایف من')
 
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-user-tasks"></i>
-                        کارهای من
-                    </h3>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">وظایف من</h3>
+                    <div>
+                        <a href="{{ route('tasks.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> وظیفه جدید
+                        </a>
+                        <a href="{{ route('tasks.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-list"></i> همه وظایف
+                        </a>
+                    </div>
                 </div>
+
                 <div class="card-body">
-                    <!-- فیلترها -->
-                    <div class="row mb-3">
+                    <!-- Filters -->
+                    <div class="row mb-4">
                         <div class="col-md-12">
-                            <form method="GET" class="form-inline">
-                                <div class="form-group mr-2">
-                                    <select name="status" class="form-control">
-                                        <option value="">همه وضعیت‌ها</option>
-                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>در انتظار</option>
-                                        <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>در حال انجام</option>
-                                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>تکمیل شده</option>
-                                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>لغو شده</option>
+                            <form method="GET" action="{{ route('tasks.my-tasks') }}" class="row g-3">
+                                <div class="col-md-3">
+                                    <input type="text" name="search" class="form-control" placeholder="جستجو در عنوان و توضیحات..." value="{{ request('search') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <select name="status" class="form-select">
+                                        <option value="all">همه وضعیت‌ها</option>
+                                        @foreach($statuses as $key => $label)
+                                            <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
-                                <button type="submit" class="btn btn-info">
-                                    <i class="fas fa-search"></i>
-                                    جستجو
-                                </button>
-                                <a href="{{ route('panel.tasks.my-tasks') }}" class="btn btn-secondary">
-                                    <i class="fas fa-times"></i>
-                                    پاک کردن
-                                </a>
+                                <div class="col-md-1">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
 
-                    <!-- جدول کارها -->
+                    <!-- Tasks Table -->
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th>عنوان</th>
-                                    <th>پروژه</th>
                                     <th>وضعیت</th>
                                     <th>اولویت</th>
+                                    <th>پروژه</th>
+                                    <th>دسته‌بندی</th>
+                                    <th>تاریخ سررسید</th>
                                     <th>پیشرفت</th>
-                                    <th>تاریخ موعد</th>
                                     <th>عملیات</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($tasks as $task)
-                                    <tr>
+                                    <tr class="{{ $task->is_overdue ? 'table-danger' : '' }}">
                                         <td>
-                                            <strong>{{ $task->title }}</strong>
-                                            @if($task->description)
-                                                <br><small class="text-muted">{{ Str::limit($task->description, 50) }}</small>
-                                            @endif
+                                            <div>
+                                                <strong>{{ $task->title }}</strong>
+                                                @if($task->is_overdue)
+                                                    <span class="badge bg-danger ms-1">معوق</span>
+                                                @endif
+                                                @if($task->description)
+                                                    <br><small class="text-muted">{{ Str::limit($task->description, 50) }}</small>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ $task->status == 'completed' ? 'success' : ($task->status == 'in_progress' ? 'primary' : ($task->status == 'cancelled' ? 'danger' : 'warning')) }}">
+                                                {{ $task->formatted_status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ $task->priority == 'urgent' ? 'danger' : ($task->priority == 'high' ? 'warning' : ($task->priority == 'low' ? 'secondary' : 'info')) }}">
+                                                {{ $task->formatted_priority }}
+                                            </span>
                                         </td>
                                         <td>
                                             @if($task->project)
-                                                <span class="badge badge-info">{{ $task->project->name }}</span>
+                                                <a href="{{ route('panel.projects.show', $task->project) }}" class="text-decoration-none">
+                                                    {{ $task->project->name }}
+                                                </a>
                                             @else
                                                 <span class="text-muted">بدون پروژه</span>
                                             @endif
                                         </td>
                                         <td>
-                                            <span class="badge badge-{{ $task->status_color }}">
-                                                {{ $task->status_text }}
-                                            </span>
+                                            @if($task->category)
+                                                <span class="badge" style="background-color: {{ $task->category->color }}; color: white;">
+                                                    {{ $task->category->name }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted">بدون دسته‌بندی</span>
+                                            @endif
                                         </td>
                                         <td>
-                                            <span class="badge badge-{{ $task->priority_color }}">
-                                                {{ $task->priority_text }}
-                                            </span>
+                                            @if($task->due_date)
+                                                {{ \App\Helpers\DateHelper::toPersianDateTime($task->due_date) }}
+                                            @else
+                                                <span class="text-muted">تعین نشده</span>
+                                            @endif
                                         </td>
                                         <td>
-                                            <div class="progress" style="width: 100px;">
+                                            <div class="progress" style="height: 20px;">
                                                 <div class="progress-bar" role="progressbar" style="width: {{ $task->progress }}%">
                                                     {{ $task->progress }}%
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            @if($task->due_date)
-                                                {{ $task->due_date->format('Y/m/d') }}
-                                                @if($task->due_date->isPast() && $task->status != 'completed')
-                                                    <br><small class="text-danger">منقضی شده</small>
-                                                @endif
-                                            @else
-                                                <span class="text-muted">تعیین نشده</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="{{ route('panel.tasks.show', $task) }}" class="btn btn-sm btn-info">
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ route('tasks.show', $task) }}" class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('panel.tasks.edit', $task) }}" class="btn btn-sm btn-warning">
+                                                <a href="{{ route('tasks.edit', $task) }}" class="btn btn-sm btn-outline-warning">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                @if($task->canBeStartedBy(auth()->id()))
-                                                    <button class="btn btn-sm btn-success" onclick="startTask({{ $task->id }})">
-                                                        <i class="fas fa-play"></i>
-                                                    </button>
-                                                @endif
-                                                @if($task->canBeCompletedBy(auth()->id()))
-                                                    <button class="btn btn-sm btn-primary" onclick="completeTask({{ $task->id }})">
-                                                        <i class="fas fa-check"></i>
-                                                    </button>
+                                                @if($task->status !== 'completed')
+                                                    <form method="POST" action="{{ route('tasks.update-status', $task) }}" class="d-inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="status" value="completed">
+                                                        <button type="submit" class="btn btn-sm btn-outline-success" onclick="return confirm('آیا مطمئن هستید که این وظیفه تکمیل شده است؟')">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </form>
                                                 @endif
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">هیچ کاری یافت نشد</td>
+                                        <td colspan="8" class="text-center text-muted py-4">
+                                            هیچ وظیفه‌ای یافت نشد
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -136,47 +157,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-function startTask(taskId) {
-    if (confirm('آیا مطمئن هستید که می‌خواهید این کار را شروع کنید؟')) {
-        fetch(`/panel/tasks/${taskId}/start`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.message);
-            }
-        });
-    }
-}
-
-function completeTask(taskId) {
-    if (confirm('آیا مطمئن هستید که می‌خواهید این کار را تکمیل کنید؟')) {
-        fetch(`/panel/tasks/${taskId}/complete`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.message);
-            }
-        });
-    }
-}
-</script>
-@endpush

@@ -13,8 +13,8 @@ class TagCategoryController extends Controller
      */
     public function index()
     {
-        $categories = TagCategory::ordered()->get();
-        return view('admin.tag-categories.index', compact('categories'));
+        $tagCategories = TagCategory::ordered()->get();
+        return view('admin.tag-categories.index', compact('tagCategories'));
     }
 
     /**

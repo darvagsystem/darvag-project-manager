@@ -46,7 +46,7 @@
                                 @foreach($tags as $tag)
                                     <tr>
                                         <td>
-                                            <span class="badge" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }}; border: 1px solid {{ $tag->color }}40;">
+                                            <span class="badge" style="background-color: {{ $tag->color }} !important; color: white !important; border: 1px solid {{ $tag->color }}; font-weight: 500; padding: 6px 12px;">
                                                 {{ $tag->name }}
                                             </span>
                                         </td>
@@ -78,7 +78,7 @@
                                                 {{ $tag->files->count() }}
                                             </a>
                                         </td>
-                                        <td>{{ $tag->created_at->format('Y/m/d H:i') }}</td>
+                                        <td>{{ \App\Helpers\DateHelper::toPersianDateTime($tag->created_at) }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <a href="{{ route('panel.tags.files', $tag) }}" class="btn btn-sm btn-outline-info" title="مشاهده فایل‌ها">

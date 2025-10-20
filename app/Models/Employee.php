@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Employee extends Model
 {
@@ -24,7 +25,8 @@ class Employee extends Model
         'address',
         'emergency_contact',
         'avatar',
-        'notes'
+        'notes',
+        'created_by'
     ];
 
     /**
@@ -91,6 +93,14 @@ class Employee extends Model
     public function projectEmployees()
     {
         return $this->hasMany(ProjectEmployee::class);
+    }
+
+    /**
+     * Get the user who created this employee.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
 

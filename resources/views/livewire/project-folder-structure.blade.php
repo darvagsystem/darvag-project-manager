@@ -2,7 +2,7 @@
     @if($this->getRootFolders()->count() > 0)
         <div class="folder-tree">
             @foreach($this->getRootFolders() as $folder)
-                @include('livewire.partials.folder-item', ['folder' => $folder, 'level' => 0])
+                @include('livewire.partials.folder-item', ['folder' => $folder, 'level' => 0, 'viewMode' => $viewMode])
             @endforeach
         </div>
     @else

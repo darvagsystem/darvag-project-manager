@@ -2,19 +2,24 @@
 
 namespace App\Livewire;
 
-use App\Models\FileManager;
+use App\Models\Archive;
+use App\Models\ArchiveFolder;
+use App\Models\ArchiveFile;
 use App\Models\Project;
 use Livewire\Component;
 
 class ProjectFolderStructure extends Component
 {
     public $project;
+    public $archive;
     public $expandedFolders = [];
     public $folderStats = [];
+    public $viewMode = 'list';
 
     public function mount($projectId)
     {
         $this->project = Project::findOrFail($projectId);
+        $this->archive = $this->project->archive;
         $this->loadFolderStats();
     }
 
@@ -25,12 +30,13 @@ class ProjectFolderStructure extends Component
 
     public function getFolderStats()
     {
-        $folders = FileManager::where('project_id', $this->project->id)
-            ->where('is_folder', true)
-            ->get();
+        if (!$this->archive) {
+            return [];
+        }
 
+        $folders = ArchiveFolder::where('archive_id', $this->archive->id)->get();
         $stats = [];
-        
+
         foreach ($folders as $folder) {
             $stats[$folder->id] = [
                 'folder' => $folder,
@@ -45,28 +51,37 @@ class ProjectFolderStructure extends Component
 
     public function getFileCount($folderId)
     {
-        return FileManager::where('project_id', $this->project->id)
-            ->where('parent_id', $folderId)
-            ->where('is_folder', false)
+        if (!$this->archive) {
+            return 0;
+        }
+
+        return ArchiveFile::where('archive_id', $this->archive->id)
+            ->where('folder_id', $folderId)
             ->count();
     }
 
     public function getSubfolderCount($folderId)
     {
-        return FileManager::where('project_id', $this->project->id)
+        if (!$this->archive) {
+            return 0;
+        }
+
+        return ArchiveFolder::where('archive_id', $this->archive->id)
             ->where('parent_id', $folderId)
-            ->where('is_folder', true)
             ->count();
     }
 
     public function getTotalSize($folderId)
     {
-        $files = FileManager::where('project_id', $this->project->id)
-            ->where('parent_id', $folderId)
-            ->where('is_folder', false)
+        if (!$this->archive) {
+            return 0;
+        }
+
+        $files = ArchiveFile::where('archive_id', $this->archive->id)
+            ->where('folder_id', $folderId)
             ->get();
 
-        return $files->sum('size');
+        return $files->sum('file_size');
     }
 
     public function toggleFolder($folderId)
@@ -87,8 +102,11 @@ class ProjectFolderStructure extends Component
 
     public function getRootFolders()
     {
-        return FileManager::where('project_id', $this->project->id)
-            ->where('is_folder', true)
+        if (!$this->archive) {
+            return collect();
+        }
+
+        return ArchiveFolder::where('archive_id', $this->archive->id)
             ->whereNull('parent_id')
             ->orderBy('name')
             ->get();
@@ -96,8 +114,11 @@ class ProjectFolderStructure extends Component
 
     public function getSubfolders($parentId)
     {
-        return FileManager::where('project_id', $this->project->id)
-            ->where('is_folder', true)
+        if (!$this->archive) {
+            return collect();
+        }
+
+        return ArchiveFolder::where('archive_id', $this->archive->id)
             ->where('parent_id', $parentId)
             ->orderBy('name')
             ->get();

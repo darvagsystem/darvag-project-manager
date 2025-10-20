@@ -48,19 +48,4 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Get the checklists for the user.
-     */
-    public function checklists()
-    {
-        return $this->hasMany(Checklist::class);
-    }
-
-    /**
-     * Get the checklist categories for the user.
-     */
-    public function checklistCategories()
-    {
-        return $this->hasMany(ChecklistCategory::class);
-    }
 }

@@ -49,33 +49,6 @@ class Project extends Model
         return $this->belongsTo(Client::class);
     }
 
-    /**
-     * Get project files and folders
-     */
-    public function files()
-    {
-        return $this->hasMany(FileManager::class);
-    }
-
-    /**
-     * Get root folders for this project
-     */
-    public function rootFolders()
-    {
-        return $this->hasMany(FileManager::class)
-            ->where('is_folder', true)
-            ->whereNull('parent_id');
-    }
-
-    /**
-     * Get root files for this project
-     */
-    public function rootFiles()
-    {
-        return $this->hasMany(FileManager::class)
-            ->where('is_folder', false)
-            ->whereNull('parent_id');
-    }
 
     /**
      * Get the employees assigned to this project.
@@ -100,6 +73,30 @@ class Project extends Model
     }
 
     /**
+     * Get the payments for this project.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Get the incomes for this project.
+     */
+    public function incomes()
+    {
+        return $this->hasMany(ProjectIncome::class);
+    }
+
+    /**
+     * Get the expenses for this project.
+     */
+    public function expenses()
+    {
+        return $this->hasMany(ProjectExpense::class);
+    }
+
+    /**
      * Get the milestones for this project.
      */
     public function milestones()
@@ -107,13 +104,6 @@ class Project extends Model
         return $this->hasMany(ProjectMilestone::class);
     }
 
-    /**
-     * Get the tasks for this project.
-     */
-    public function tasks()
-    {
-        return $this->hasMany(ProjectTask::class);
-    }
 
     /**
      * Get the resources for this project.
@@ -294,5 +284,29 @@ class Project extends Model
     {
         // Since we're storing Persian dates as strings, we can't check overdue
         return $query->where('status', '!=', 'completed');
+    }
+
+    /**
+     * Get the attendance records for this project.
+     */
+    public function attendances()
+    {
+        return $this->hasMany(EmployeeAttendance::class);
+    }
+
+    /**
+     * Get the archive for this project.
+     */
+    public function archive()
+    {
+        return $this->hasOne(Archive::class);
+    }
+
+    /**
+     * Get the tag requirements for this project.
+     */
+    public function tagRequirements()
+    {
+        return $this->hasMany(ProjectTagRequirement::class);
     }
 }

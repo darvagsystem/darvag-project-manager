@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectEmployeeController;
-use App\Http\Controllers\FileManagerController;
 use App\Models\Project;
 
 // Route Model Binding for projects
@@ -39,29 +38,20 @@ Route::middleware('auth')->prefix('panel')->name('panel.')->group(function () {
         Route::post('/employees/{projectEmployee}/toggle-status', [ProjectEmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
         Route::get('/employees-report', [ProjectEmployeeController::class, 'report'])->name('employees.report');
 
-        // Project File Manager
-        Route::prefix('filemanager')->name('filemanager.')->group(function () {
-            Route::get('/', function(Project $project) {
-                return view('admin.file-manager.project-livewire', compact('project'));
-            })->name('index');
-            Route::get('/files', [FileManagerController::class, 'getFiles'])->name('files');
-            Route::post('/create-folder', [FileManagerController::class, 'createFolder'])->name('create-folder');
-            Route::post('/upload', [FileManagerController::class, 'upload'])->name('upload');
-            Route::post('/upload-chunk', [FileManagerController::class, 'uploadChunk'])->name('upload-chunk');
-            Route::get('/thumbnail/{file}', [FileManagerController::class, 'thumbnail'])->name('thumbnail');
-            Route::get('/thumbnail', [FileManagerController::class, 'thumbnailPost'])->name('thumbnail.post');
-            Route::get('/download/{file}', [FileManagerController::class, 'download'])->name('download');
-            Route::post('/download', [FileManagerController::class, 'downloadPost'])->name('download.post');
-            Route::put('/{file}/rename', [FileManagerController::class, 'rename'])->name('rename');
-            Route::post('/rename', [FileManagerController::class, 'renamePost'])->name('rename.post');
-            Route::post('/delete', [FileManagerController::class, 'delete'])->name('delete');
+        // Bulk employee operations
+        Route::get('/employees/bulk/create', [ProjectEmployeeController::class, 'bulkCreate'])->name('employees.bulk-create');
+        Route::post('/employees/bulk/store', [ProjectEmployeeController::class, 'bulkStore'])->name('employees.bulk-store');
 
-            // Tag routes
-            Route::get('/tags', [FileManagerController::class, 'getTags'])->name('tags');
-            Route::post('/{file}/tags', [FileManagerController::class, 'addTag'])->name('add-tag');
-            Route::delete('/{file}/tags/{tag}', [FileManagerController::class, 'removeTag'])->name('remove-tag');
-            Route::get('/filter/tag/{tag}', [FileManagerController::class, 'filterByTag'])->name('filter-tag');
-        });
+        // File Manager - redirect to archive management
+        Route::get('/filemanager', function(Project $project) {
+            $archive = $project->archive;
+            if (!$archive) {
+                return redirect()->route('panel.projects.show', $project)
+                    ->with('error', 'این پروژه هنوز بایگانی ندارد. لطفاً ابتدا بایگانی ایجاد کنید.');
+            }
+            return redirect()->route('panel.archives.manage', $archive);
+        })->name('filemanager.index');
+
     });
 
 });

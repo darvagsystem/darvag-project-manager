@@ -119,7 +119,7 @@
                                     </div>
                                     <h5 class="card-title">مدیریت حضور و غیاب</h5>
                                     <p class="card-text text-muted">راهنمای ثبت و مدیریت حضور و غیاب</p>
-                                    <a href="{{ route('panel.help.attendance') }}" class="btn btn-secondary btn-sm">مشاهده راهنما</a>
+                                    <a href="{{ route('panel.help.employees') }}" class="btn btn-secondary btn-sm">مشاهده راهنما</a>
                                 </div>
                             </div>
                         </div>

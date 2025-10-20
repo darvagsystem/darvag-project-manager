@@ -83,4 +83,12 @@ class ProjectEmployee extends Model
     {
         return $this->absence_deduction_rate . '%';
     }
+
+    /**
+     * Get the attendance records for this project employee.
+     */
+    public function attendances()
+    {
+        return $this->hasMany(EmployeeAttendance::class);
+    }
 }

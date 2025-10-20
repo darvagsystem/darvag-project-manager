@@ -1515,6 +1515,9 @@ function getBankInfoFromCard() {
     const loadingIndicator = document.getElementById('cardInfoLoading');
     const getInfoBtn = document.getElementById('getBankInfoBtn');
 
+    console.log('Card number:', cardNumber);
+    console.log('Card number length:', cardNumber.length);
+
     if (cardNumber.length !== 16) {
         alert('لطفاً شماره کارت 16 رقمی وارد کنید');
         return;
@@ -1524,6 +1527,8 @@ function getBankInfoFromCard() {
     loadingIndicator.style.display = 'flex';
     getInfoBtn.disabled = true;
     getInfoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال دریافت...';
+
+    console.log('Making API request to:', '{{ route("panel.get-bank-info-from-card") }}');
 
     // Make API request
     fetch('{{ route("panel.get-bank-info-from-card") }}', {
@@ -1536,26 +1541,36 @@ function getBankInfoFromCard() {
             card_number: cardNumber
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
             // Fill form fields with received data
             if (data.data.bank_id) {
                 document.getElementById('bank_id').value = data.data.bank_id;
+                console.log('Set bank_id to:', data.data.bank_id);
             }
             if (data.data.account_holder_name) {
                 document.getElementById('account_holder_name').value = data.data.account_holder_name;
+                console.log('Set account_holder_name to:', data.data.account_holder_name);
             }
             if (data.data.account_number) {
                 document.getElementById('account_number').value = data.data.account_number;
+                console.log('Set account_number to:', data.data.account_number);
             }
             if (data.data.iban) {
                 document.getElementById('iban').value = data.data.iban;
+                console.log('Set iban to:', data.data.iban);
             }
 
             // Show success message
             showNotification('اطلاعات بانک با موفقیت دریافت شد', 'success');
         } else {
+            console.log('API returned error:', data.message);
             showNotification(data.message || 'خطا در دریافت اطلاعات', 'error');
         }
     })

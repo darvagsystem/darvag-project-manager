@@ -104,8 +104,6 @@ class ActivityLog extends Model
             'App\Models\Project' => 'پروژه',
             'App\Models\Employee' => 'کارمند',
             'App\Models\Client' => 'مشتری',
-            'App\Models\FileManager' => 'فایل',
-            'App\Models\Task' => 'وظیفه',
             'App\Models\User' => 'کاربر',
             default => class_basename($this->model_type)
         };
@@ -133,11 +131,11 @@ class ActivityLog extends Model
     public function scopeForModel($query, $modelType, $modelId = null)
     {
         $query = $query->where('model_type', $modelType);
-        
+
         if ($modelId) {
             $query->where('model_id', $modelId);
         }
-        
+
         return $query;
     }
 
